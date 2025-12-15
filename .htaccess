@@ -1,0 +1,21 @@
+AddType video/ogg .ogv
+AddType video/mp4 .mp4
+AddType video/webm .webm
+AddType text/x-component .htc
+SetEnvIfNoCase Request_URI \.(ogv|mp4|webm)$ no-gzip dont-vary
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?$1 [L]
+RewriteRule ^ - [L]
+
+#Gzip
+<ifmodule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript text/javascript
+</ifmodule>
+#End Gzip
+
+php_value upload_max_filesize 200M 
+php_value post_max_size 200M 
+php_value max_execution_time 3000

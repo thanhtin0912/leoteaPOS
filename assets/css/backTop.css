@@ -1,0 +1,29 @@
+/*Main stylesheet for Backtop jQuery Plugin */
+#backTop{
+    width:28px;
+    height:23px;
+    padding:10px;
+    border-radius:4px;
+    text-indent:-9999px;
+    cursor:pointer;
+    z-index:999999999;
+	display:none;
+	box-sizing:content-box;
+	-webkit-box-sizing:content-box;
+}
+#backTop.white{
+     background:url(../images/top.png) no-repeat center center rgba(255,255,255,0.8);
+    border:1px solid #ccc;
+}
+#backTop.black{
+    background:url(../images/top.png) no-repeat center center rgba(255,255,255,0.8);
+}
+#backTop.red{
+     background:url(../images/top.png) no-repeat center center rgba(255,255,255,0.8);
+    border:1px solid #fff;
+}
+#backTop.green{
+     background:url(../images/top.png) no-repeat center center rgba(255,255,255,0.8);
+    border:1px solid #fff;
+}
+

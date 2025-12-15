@@ -1,0 +1,4 @@
+Config chay multi Language
+Link refer: http://jeromejaglale.com/doc/php/codeigniter_i18n
+- Rename 2 file MY_Config, MY_Lang (bo dau _ dang trc)
+- Mo file routes.php bo 2 dong ghi chu phia duoi //Config Router Multi Language

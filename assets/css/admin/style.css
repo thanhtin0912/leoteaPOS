@@ -1,0 +1,51 @@
+.ui-sortable:after {
+	clear: both;
+}
+
+#list-images .image-item {
+	margin: 7px;
+	position: relative;
+	float: left;
+}
+
+#list-images .image-item-highlight {
+	width: 110px;
+	border:1px dotted red;
+	height: 110px;
+}
+
+#list-images .image-item .img-thumbnail {
+	width: 100%;
+	height: auto;
+}
+
+#list-images .image-item .del-icon {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	display: none;
+	opacity: 0.5;
+}
+
+#list-images .image-item .del-icon:hover {
+	opacity: 1;
+}
+
+#list-images .image-item:hover {
+	cursor: pointer;
+}
+
+#list-images .image-item:hover .del-icon {
+	display: block;
+}
+.fileinput-filename {
+	width: 200px !important;
+}
+.restore{
+	display: none;
+	background-color: #a7a7a7 !important;
+}
+a .restore:hover{
+
+	background-color: #888 !important;
+}
