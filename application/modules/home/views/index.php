@@ -94,7 +94,7 @@ function quickViewDetailProduct(id) {
 
                 str += '</form>'
                 //
-                if (p.toppings && p.toppings.length) {
+                if (p.toppings && p.toppings.length && p.limit_topping > 0) {
                     let options = p.toppings
                     str += '<hr>';
                     str += '<div class="collection-collapse-block">';
@@ -308,9 +308,10 @@ function selectSizeProduct() {
     <div class="tab-product-main">
         <div class="tab-prodcut-contain">
             <ul class="tabs tab-title">
+                <li class="current"><a href="tab-all">TẤT CẢ</a></li>
                 <?php if($cates) { ?>
                 <?php foreach ($cates as $key => $c): ;?>
-                <li class="<?php if($key == 0) {echo 'current';};?>"><a href="tab-<?=$c->id ?>"><?=$c->name ?> </a></li>
+                <li class=""><a href="tab-<?=$c->id ?>"><?=$c->name ?> </a></li>
                 <?php endforeach ?>
                 <?php } ?>
             </ul>
@@ -328,8 +329,39 @@ function selectSizeProduct() {
             <div class="col pr-0">
                 <div class="theme-tab product ">
                     <div class="tab-content-cls">
+                        <div id="tab-all" class="tab-content active default">
+                            <div class="collection-product-wrapper">
+                                <div class="product-wrapper-grid product">
+                                    <div class="row">
+                                        <?php foreach ($products as $key => $p): ;?>
+                                        <div class="col-xl-2 col-lg-3 col-md-3 col-12 col-grid-box">
+                                            <div class="product-box d-flex d-md-block">
+                                                <div class="product-imgbox w-responsive">
+                                                    <div class="product-front">
+                                                        <a href="javascript:void(0)"
+                                                            onclick="quickViewDetailProduct(<?=$p->id?>)"> <img
+                                                                src="<?=PATH_URL.$p->image ?>" class="img-fluid  "
+                                                                alt="product"> </a>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="product-detail detail-center1 text-left text-md-center align-content-center w-100 pt-2">
+                                                    <a href="javascript:void(0)"
+                                                        onclick="quickViewDetailProduct(<?=$p->id?>)">
+                                                        <h6><?=$p->name ?></h6>
+                                                    </a>
+                                                    <span class="detail-price"><?=number_format($p->price) ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach ?>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
                         <?php foreach ($cates as $key => $c): ;?>
-                        <div id="tab-<?=$c->id ?>" class="tab-content <?php if($key == 0) {echo 'active default';};?>">
+                        <div id="tab-<?=$c->id ?>" class="tab-content">
                             <div class="collection-product-wrapper">
                                 <div class="product-wrapper-grid product">
                                     <div class="row">

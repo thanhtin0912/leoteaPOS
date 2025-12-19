@@ -201,7 +201,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 							</div>
 							<label class="control-label col-md-2">Tối đa số topping: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-1">
-								<input value="<?php if(isset($result->limit_topping)) { print $result->limit_topping; }else{ print '';} ?>" type="text" name="limitToppingAdmincp" id="limitToppingAdmincp" class="form-control"/>
+								<input value="<?php if(isset($result->limit_topping)) { print $result->limit_topping; }else{ print 5;} ?>" type="text" name="limitToppingAdmincp" id="limitToppingAdmincp" class="form-control"/>
 							</div>
 							<label class="control-label col-md-2">Mặc định size hiển thị: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-1">

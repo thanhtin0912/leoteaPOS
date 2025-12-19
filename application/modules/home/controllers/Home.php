@@ -342,14 +342,14 @@ class Home extends MX_Controller {
 
 				if ($invoiceCode) {
 					$info = $this->session->userdata('userLogin');
-					// $printBill = $this->home->getPrinter($info->storeId,'BILL');
-					// if($printBill) {
-					// 	$this->printBill($printBill[0]->ip,$invoiceCode,$cart,$total);
-					// }
-					// $printTem = $this->home->getPrinter($info->storeId,'TEM');
-					// if($printTem) {
-					// 	$this->printTem($printTem [0]->ip,$invoiceCode,$cart);
-					// }
+					$printBill = $this->home->getPrinter($info->storeId,'BILL');
+					if($printBill) {
+						$this->printBill($printBill[0]->ip,$invoiceCode,$cart,$total);
+					}
+					$printTem = $this->home->getPrinter($info->storeId,'TEM');
+					if($printTem) {
+						$this->printTem($printTem [0]->ip,$invoiceCode,$cart);
+					}
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -370,39 +370,102 @@ class Home extends MX_Controller {
 			return $item->amount;
 		}, $cart));
 		$tr = '';
+		// foreach ($cart as $item) {
+		// 	$name = $item->name . ($item->size ? " ({$item->size})" : "");
+		// 	$tr .= $this->formatItem($name, $item->amount, $item->totalPrice - $item->priceTopping). "\n";
+		// 	if (!empty($item->toppings)) {
+		// 		foreach ($item->toppings as $t) {
+		// 			$tr .= "   + " . $t->name .' x'.$t->qty.' ---- '. number_format($t->price, 0)."\n";
+		// 		}
+		// 	}
+		// }
+		$info = $this->session->userdata('userLogin');
+
+		$receipt = [];
+		$receipt[] = ['type' => 'center', 'text' => $info->storeName , 'size' => 22];
+		$receipt[] = ['type' => 'center', 'text' => 'HÓA ĐƠN THANH TOÁN' , 'size' => 22];
+		$receipt[] = ['type' => '2col', 'a' => $res, 'b' => date('Y-m-d H:i:s')];
+		$receipt[] = ['type' => '2col', 'a' => 'Thu ngân: '.$info->phone, 'b' => 'Phục vụ: '.$info->phone ];
+		$receipt[] = ['type' => 'line'];
 		foreach ($cart as $item) {
 			$name = $item->name . ($item->size ? " ({$item->size})" : "");
-			$tr .= $this->formatItem($name, $item->amount, $item->totalPrice - $item->priceTopping). "\n";
+			$receipt[] = [
+				'type' => '3col', 
+				'a' => $name , 
+				'b' => $item->amount, 
+				'c' => number_format($item->totalPrice - $item->priceTopping, 0)
+			];
 			if (!empty($item->toppings)) {
 				foreach ($item->toppings as $t) {
-					$tr .= "   + " . $t->name .' x'.$t->qty.' ---- '. number_format($t->price, 0)."\n";
+					$receipt[] = [
+						'type' => '3col', 
+						'a' => '+ ' . $t->name , 
+						'b' => $t->qty.'x'.$item->amount, 
+						'c' => number_format($t->price*$item->amount*$t->qty, 0),
+						'indent' => 20,
+						'bold' => true
+					];
 				}
 			}
 		}
-		$info = $this->session->userdata('userLogin');
-		$createBy = $this->formatItem('Thu ngân: '.$info->phone, '', 'Phục vụ: '.$info->phone);
-		$text = [
-			$info->storeName,
-			'HÓA ĐƠN - '.$res ,
-			'Ngày lập: '. date('Y-m-d H:i:s'),
-			$createBy,
-			'----------------------------------------------',
-			$tr,
-			'----------------------------------------------',
-			$this->formatItem('Tổng:', $totalAmount, $total),
-			'Cảm ơn quý khách!'
-		];
-		$bill = implode("\n", $text);
+		$receipt[] = ['type' => 'line'];
+		$receipt[] = ['type' => '3col', 'a' => 'Tổng: ', 'b' => $totalAmount, 'c' => number_format($total,0) ];
+		$receipt[] = ['type' => 'center', 'text' => 'Cảm ơn quý khách!'];
+	
         // Nối chuỗi
         try {
-            $this->posprinter->print_text($bill);
+            // $this->posprinter->print_text($bill);
+			$this->posprinter->print($receipt);
         } catch (Exception $e) {
             echo "Lỗi khi in: ".$e->getMessage();
         }
-		$this->posprinter->close();
+		// $this->posprinter->close();
     }
 
+	// dugf chung máy in bill
 	public function printTem($ip,$res,$cart) {
+        $this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
+		$totalAmount = array_sum(array_map(function($item){
+			return $item->amount;
+		}, $cart));
+		$int= 1;
+		foreach ($cart as $key => $item) {
+			for ($i=0; $i < $item->amount; $i++) { 
+				$name = $item->name . ($item->size ? " ({$item->size})" : "");
+				$perItem = $int.'/'.$totalAmount;
+				// in tem cho từng ly
+				$receipt = [];
+				$receipt[] = ['type' => 'center', 'text' => $perItem, 'size' => 24];
+				$receipt[] = ['type' => '2col', 'a' => $res, 'b' => date('Y-m-d H:i:s')];
+				$receipt[] = ['type' => 'line'];
+				$name = $item->name . ($item->size ? " ({$item->size})" : "");
+				$receipt[] = [
+					'type' => '2col', 
+					'a' => $name , 
+					'b' => number_format($item->totalPrice/$item->amount, 0)
+				];
+				if (!empty($item->toppings)) {
+					foreach ($item->toppings as $t) {
+						$receipt[] = [
+							'type' => '2col', 
+							'a' => '+ ' . $t->name.' x'.$t->qty , 
+							'b' => '',
+						];
+					}
+				}
+				
+				try {
+					$this->posprinter->print($receipt);
+				} catch (Exception $e) {
+					echo "Lỗi khi in: ".$e->getMessage();
+				}
+				$int++;
+			}
+		}
+		$this->posprinter->close();
+    }	
+
+	public function printTem_maytem($ip,$res,$cart) {
         $this->load->library('TemPrinter');
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
@@ -429,8 +492,6 @@ class Home extends MX_Controller {
 				if (!empty($item->topping)) {
 					$commands .=  'TEXT 210,95,"1",0,1,1,"'.vn_to_ascii($item->topping)."\" \n";
 				}
-
-				
 				$commands .= "PRINT 1\n";
 				// $text = [
 				// 	date('Y-m-d H:i:s',time()),

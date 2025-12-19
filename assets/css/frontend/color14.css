@@ -26303,7 +26303,7 @@ body.dark {
 }
 .size-radio-content p {
   margin-bottom: 10px !important;
-  font-size: calc(11px + (18 - 14) * ((100vw - 320px) / (1920 - 320))); 
+  font-size: calc(10px + (18 - 14) * ((100vw - 320px) / (1920 - 320))); 
 }
 
 .size-radio-input:checked+.size-radio-label:before {
