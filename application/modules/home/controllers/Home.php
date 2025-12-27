@@ -468,7 +468,7 @@ class Home extends MX_Controller {
     }	
 
 	public function printTem($ip,$code,$cart,$note) {
-        $this->load->library('TemPrinter');
+        $this->load->library('TemPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
 		}, $cart));

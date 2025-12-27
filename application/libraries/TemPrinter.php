@@ -4,23 +4,22 @@ require_once APPPATH . 'third_party/escpos-php/vendor/autoload.php';
 
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\EscposImage;
 
 class TemPrinter {
 
     private $printer;
     private $connector;
-    private $width = 460; // pixel width of printable area
-    private $fontFile   = APPPATH . 'fonts/NotoSans-Regular.ttf';
-    private $fontBold   = APPPATH . 'fonts/NotoSans-BlackItalic.ttf';
-    private $fontSize   = 16;
-    private $padding    = 15;
-    private $lineHeight = 28; // khoảng cách dòng
 
     public function __construct($params = array()) 
     {
+        $ip = isset($params['ip']) ? $params['ip'] : "192.168.1.201";
+        $port = isset($params['port']) ? $params['port'] : 9100;
+        // chỉ mở khi in connection
+        $this->connector = new NetworkPrintConnector($ip, $port);
         // chỉ mở ONE connection
-        $this->connector = new WindowsPrintConnector("smb://ADMIN/XP356B");
+        //$this->connector = new WindowsPrintConnector("smb://ADMIN/XP356B");
         $this->printer = new Printer($this->connector);
     }
 
