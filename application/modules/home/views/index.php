@@ -1,5 +1,5 @@
 <script type="text/javascript">
-$(document).on('click', '#listToppingCheck .qty-box', function (e) {
+$(document).on('click', '#listToppingCheck .qty-box', function(e) {
     const qtyBox = e.target.closest('.qty-box');
     if (!qtyBox) return; // Không click vào .qty-box thì bỏ qua
 
@@ -18,8 +18,8 @@ $(document).on('click', '#listToppingCheck .qty-box', function (e) {
         value = Math.min(max, value + 1);
         input.value = value;
     }
-  });
-$(document).on('click', '#qtyProduct .qty-box', function (e) {
+});
+$(document).on('click', '#qtyProduct .qty-box', function(e) {
     const qtyBox = e.target.closest('.qty-box');
     if (!qtyBox) return; // Không click vào .qty-box thì bỏ qua
 
@@ -39,6 +39,7 @@ $(document).on('click', '#qtyProduct .qty-box', function (e) {
         input.value = value;
     }
 });
+
 function quickViewDetailProduct(id) {
     var isLogin = $('#checkUserInfo').val();
     if (isLogin) {
@@ -60,7 +61,7 @@ function quickViewDetailProduct(id) {
                 str += '<h3>' + p['name'] + '</h3>'
                 str += '<h6 class="fm-number" id="txtPrice">' + price + '</h6>'
                 str += '<div id="qtyProduct">'
-                str += '<div class="qty-box">'
+                str += '<div class="qty-box pt-2">'
                 str += '<div class="input-group">'
                 str += '<button class="qty-minus"></button>'
                 str += '<input class="qty-adj form-control" type="number" value="1" id="qtyItem' + id + '"/>'
@@ -72,23 +73,34 @@ function quickViewDetailProduct(id) {
                 str += '</div>'
                 str += '</div>'
                 str += '</div>'
+                
+                str += '</div>'
+                str += '</div>'
+                str += '<div class="delivery-detail-contian">'
+                str += '<div class="input-group">'
+                str += '<input type="text" id="note" class="form-control" placeholder="Ghi chú">'
                 str += '</div>'
                 str += '</div>'
                 //
                 str += '<hr>';
                 str += '<form class="size-new" name="selectSize">'
                 str += '<input type="hidden" value="0" id="sizePriceNow" />'
-                
+
                 $.each(p.price_size, function(key, value) {
-                    if (value!='') {
-                    str += '<div class="card-product-option-item custom-radio mb-0" ><input type="radio" value="'+key+'" '+ (key == p.is_size ? 'checked' : '')  + ' name="sizeProduct" id="size'+key+'" onclick="selectSizeProduct()"'
-                    str += 'class="size-radio-input" data-size="'+value+'"> <label for="size'+key+'" class="size-radio-label p-1">'
-                    str += '<div class="size-radio-content">'
-                    str += '<p class="size-name"> Size '+ key + ': </p>'
-                    str += '<p class="size-price"> <span class="fm-number">' + (Number(p['price']) + Number(value)) + '</span>đ </p>'
-                    str += '</div>'
-                    str += '</label>'
-                    str += '</div>'
+                    if (value != '') {
+                        str +=
+                            '<div class="card-product-option-item custom-radio mb-0" ><input type="radio" value="' +
+                            key + '" ' + (key == p.is_size ? 'checked' : '') +
+                            ' name="sizeProduct" id="size' + key + '" onclick="selectSizeProduct()"'
+                        str += 'class="size-radio-input" data-size="' + value + '"> <label for="size' +
+                            key + '" class="size-radio-label p-1">'
+                        str += '<div class="size-radio-content">'
+                        str += '<p class="size-name"> Size ' + key + ': </p>'
+                        str += '<p class="size-price"> <span class="fm-number">' + (Number(p['price']) +
+                            Number(value)) + '</span>đ </p>'
+                        str += '</div>'
+                        str += '</label>'
+                        str += '</div>'
                     }
                 });
 
@@ -114,14 +126,18 @@ function quickViewDetailProduct(id) {
                         str += '<label class="custom-control-label form-check-label" for="topping' + i + '">' +
                             options[i].name + '</label>';
                         str += '</div>';
-                        if(options[i].isMulti && options[i].isMulti > 0) {
-                        str += '<div class="qty-box">';
-                        str += '<div class="input-group border-0">';
-                        str += '<button type="button" class="btn quantity-left-minus add-to-cart-qty pl-1"></button>';
-                        str += '<input class="form-control input-number qty-input border-0" type="number" value="1" min=1 max="' + options[i].saleableQty + '" />';
-                        str += '<button type="button" class="btn quantity-right-plus add-to-cart-qty pl-1"></button>';
-                        str += '</div>';
-                        str += '</div>';
+                        if (options[i].isMulti && options[i].isMulti > 0) {
+                            str += '<div class="qty-box">';
+                            str += '<div class="input-group border-0">';
+                            str +=
+                                '<button type="button" class="btn quantity-left-minus add-to-cart-qty pl-1"></button>';
+                            str +=
+                                '<input class="form-control input-number qty-input border-0" type="number" value="1" min=1 max="' +
+                                options[i].saleableQty + '" />';
+                            str +=
+                                '<button type="button" class="btn quantity-right-plus add-to-cart-qty pl-1"></button>';
+                            str += '</div>';
+                            str += '</div>';
                         }
 
                         str +=
@@ -140,7 +156,8 @@ function quickViewDetailProduct(id) {
                     '<button type="submit" class="btn btn-theme btn-normal btn-sm" onclick="addCart(' +
                     id + ')">Thêm món</button>';
                 str +=
-                    '<button type="submit" class="btn btn-theme btn-normal bg-info btn-sm" onclick="linkCheckout(' + id + ')">Tính tiền</button>';
+                    '<button type="submit" class="btn btn-theme btn-normal bg-info btn-sm" onclick="linkCheckout(' +
+                    id + ')">Tính tiền</button>';
                 str += '</div>';
 
                 $('#quickViewOrderProduct').children().remove();
@@ -168,13 +185,13 @@ function selectItem(ind, id) {
     let $checkbox = $('#topping' + ind);
     let $toppingContainer = $checkbox.closest('.collection-filter-checkbox');
     let $qtyBox = $toppingContainer.find('.qty-box');
-    if ($qtyBox.length) { 
+    if ($qtyBox.length) {
         qtyValue = Number($qtyBox.find('.qty-input').val());
     }
     if (itemCheck.checked == true) {
         // check 
-        $('#txtPrice').html(priceRealTime + (toppingPrice*qtyValue)).number(true, 0)
-        if ($qtyBox.length) { 
+        $('#txtPrice').html(priceRealTime + (toppingPrice * qtyValue)).number(true, 0)
+        if ($qtyBox.length) {
             $qtyBox.find('.qty-input').prop('disabled', true);
             $qtyBox.find('.add-to-cart-qty').prop('disabled', true);
         }
@@ -202,8 +219,8 @@ function selectItem(ind, id) {
         //     document.getElementById('selectAllItems').checked = true;
         // }
     } else {
-        $('#txtPrice').html(priceRealTime - (toppingPrice*qtyValue)).number(true, 0)
-        if ($qtyBox.length) { 
+        $('#txtPrice').html(priceRealTime - (toppingPrice * qtyValue)).number(true, 0)
+        if ($qtyBox.length) {
             $qtyBox.find('.qty-input').prop('disabled', false);
             $qtyBox.find('.add-to-cart-qty').prop('disabled', false);
         }
@@ -264,7 +281,6 @@ function selectSizeProduct() {
 </div>
 <!--title end-->
 
-<!--product box start -->
 <section class=" ratio_asos product  section-big-pb-space">
     <div class="custom-container  addtocart_count ">
         <div class="row">

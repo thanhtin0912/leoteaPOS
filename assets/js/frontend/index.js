@@ -107,15 +107,16 @@ function addCart(id){
     }
     let size = $('input[name="sizeProduct"]:checked').val();
     let amount = $('#qtyItem'+id).val();
-    
+    let note = $('#note').val();
+
     if (!toppingSelected.length) {
         toppingSelected = toppingSelected.toString()
     }
-    console.log(toppingSelected);
     $.post(root+'home/addcart',{
         id:      id,
         size: size,
         amount: amount,
+        note: note,
         topping: toppingSelected,
         csrf_token:     $('#csrf_token').val()
     },function(res){
@@ -189,8 +190,10 @@ function updateItemCart(id, index){
 function checkout(){
     $('#btnCheckout').prop('disabled', true);
     let delivery = $('input[name="orderType"]:checked').val();
+    let note =    $('#note').val()
     $.post(root+'home/checkoutCart',{
         delivery:      delivery,
+        note: note,
         csrf_token:     $('#csrf_token').val()
     },function(res){
         // var res = JSON.parse(data);

@@ -26,17 +26,6 @@ class PosPrinter {
         $this->printer = new Printer($this->connector);
     }
 
-    public function print_text($text)
-    {
-        try {
-            $text_ascii = vn_to_ascii($text); // bỏ dấu
-            // $this->printer->setLineSpacing(5);
-            $this->printer->text($text_ascii . "\n\n");
-            $this->printer->cut();
-        } catch (Exception $e) {
-            return ["status" => false, "message" => $e->getMessage()];
-        }
-    }
 
     public function print(array $receipt)
     {
@@ -58,7 +47,8 @@ class PosPrinter {
     public function renderReceiptToImage(array $receipt)
     {
         // 1️⃣ Canvas lớn (cắt sau)
-        $canvasHeight = 500;
+        $canvasHeight = 3000;
+
         $im = imagecreatetruecolor($this->width, $canvasHeight);
         $white = imagecolorallocate($im, 255, 255, 255);
         imagefilledrectangle($im, 0, 0, $this->width, $canvasHeight, $white);

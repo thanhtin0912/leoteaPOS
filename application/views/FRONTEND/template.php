@@ -12,20 +12,6 @@
     <link rel="icon" href="<?= PATH_URL; ?>assets/images/logo.jpg" type="image/x-icon">
     <link rel="shortcut icon" href="<?= PATH_URL; ?>assets/images/logo.jpg" type="image/x-icon">
 
-    <!--Google font-->
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Coiny&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Aclonica&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Alatsi&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Aclonica&display=swap" rel="stylesheet"> -->
-
     <!--icon css-->
     <link rel="stylesheet" type="text/css" href="<?= PATH_URL; ?>assets/css/frontend/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="<?= PATH_URL; ?>assets/css/frontend/themify.css">
@@ -42,7 +28,7 @@
     <!-- Theme css -->
     <link rel="stylesheet" type="text/css" href="<?= PATH_URL; ?>assets/css/frontend/color14.css" media="screen"
         id="color">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="<?= PATH_URL; ?>assets/js/frontend/jquery-1.9.1.min.js"></script>
 </head>
 
 <body class="bg-light">
@@ -300,42 +286,7 @@
             </form>
         </div>
     </div>
-    <!--Newsletter modal popup start-->
-    <div class="modal fade bd-example-modal-lg theme-modal" id="exampleModal" tabindex="-1" role="dialog"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="news-latter">
-                        <div class="modal-bg">
-                            <div class="newslatter-main">
-                                <div class="offer-content">
-                                    <div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                        <h2>newsletter</h2>
-                                        <p>Subscribe to our website mailling list <br> and get a Offer, Just for you!
-                                        </p>
-                                        <div class="form-group mx-sm-3">
-                                            <input type="email" class="form-control" name="EMAIL" id="mce-EMAIL"
-                                                placeholder="Enter your email" required="required">
-                                            <button type="submit" class="btn btn-theme btn-normal btn-sm "
-                                                id="mc-submit">subscribe</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="imd-wrraper">
-                                    <img src="../assets/images/farming/product/5.jpg" alt="newsletterimg"
-                                        class="img-fluid bg-img">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--Newsletter Modal popup end-->
+
 
     <script src="<?= PATH_URL; ?>assets/js/frontend/index.js"></script>
     <!-- latest jquery-->

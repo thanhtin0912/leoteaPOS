@@ -1,3 +1,39 @@
+@font-face {
+  font-family: 'Coiny';
+  src: url('../../css/fonts/Coiny-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aclonica';
+  src: url('../../css/fonts/Aclonica-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Raleway';
+  src: url('../../css/fonts/Raleway-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../../css/fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../../css/fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @-webkit-keyframes rotation {
   from {
     -webkit-transform: rotateY(0deg);
@@ -394,7 +430,6 @@ html {
   scroll-behavior: smooth; }
 
 body {
-  font-family: "Roboto", sans-serif;
   font-size: 14px;
   color: #777;
   background-color: rgba(30, 154, 5, 0.5); }
@@ -2511,7 +2546,7 @@ button {
       font-size: calc(20px + (30 - 20) * ((100vw - 320px) / (1920 - 320)));
       color: #71cd44;
       font-weight: 400;
-      font-family: "Courgette", cursive;
+      font-family: "Aclonica", cursive;
       margin-bottom: 9px;
       text-transform: capitalize;
       letter-spacing: 0.05em; }
@@ -14776,7 +14811,7 @@ ul.sosiyal {
     font-size: calc(18px + (36 - 18) * ((100vw - 320px) / (1920 - 320)));
     color: #f3725c;
     font-weight: 400;
-    font-family: "Courgette", cursive;
+    font-family: "Aclonica", cursive;
     text-transform: capitalize;
     margin-bottom: 18px; }
   .sale-banenr .sale-banenr-contain h2 {

@@ -46,7 +46,7 @@ class Home_model extends CI_Model {
 	}
 
 	function checkLogin($user){
-		$this->db->select('u.*, s.name as storeName, s.code as storeCode');
+		$this->db->select('u.*, s.name as storeName, s.code as storeCode, s.address');
 		$this->db->where('u.phone', $user);
 		$this->db->where('u.status', 1);
 		$this->db->where('u.delete', 0);
@@ -176,7 +176,7 @@ class Home_model extends CI_Model {
 		//Kiểm tra đã tồn tại chưa?
 		$info = $this->session->userdata('userLogin');
 		$num = 'A01';
-		$str = (string)($info->storeCode).(string)(date('Ymd',time()));
+		$str = (string)($info->storeCode).(string)(date('ymd',time()));
 		$findStr = $this->getLastOrderStore($str);
 		if($findStr) {
 			$lastNo = substr($findStr[0]->orderId, -3);
@@ -191,7 +191,7 @@ class Home_model extends CI_Model {
 			'region'		=> '',
 			'postcode'		=> '',
 			'phone'			=> $info->phone,
-			'message'		=> '',
+			'message'		=> $_POST["note"],
 			'subtotal'		=> $total,
 			'discountmember'=> '',
 			'discountcoupon'=> '',

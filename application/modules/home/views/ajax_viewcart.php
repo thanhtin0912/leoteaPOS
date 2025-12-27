@@ -23,7 +23,10 @@
 
                         <h4 class="mb-0"><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>
                         <?php if($v->priceTopping > 0) { ?>
-                        <h5 class="py-2"><?= $v->topping; ?></h5>
+                        <h5><?= $v->topping; ?></h5>
+                        <?php } ?>
+                        <?php if($v->note!='' || $v->note!= NULL) { ?>
+                        <h5 class="py-2" style="font-style: italic">*Note: <?= $v->note; ?></h5>
                         <?php } ?>
                         <h6><?php echo number_format($v->totalPrice); ?></h6>
                         <div class="addit-box d-flex justify-content-between">

@@ -4,18 +4,11 @@ require_once APPPATH . 'third_party/escpos-php/vendor/autoload.php';
 
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\EscposImage;
 
-class TemPrinter {
+class TestPrinter {
 
     private $printer;
     private $connector;
-    private $width = 460; // pixel width of printable area
-    private $fontFile   = APPPATH . 'fonts/NotoSans-Regular.ttf';
-    private $fontBold   = APPPATH . 'fonts/NotoSans-BlackItalic.ttf';
-    private $fontSize   = 16;
-    private $padding    = 15;
-    private $lineHeight = 28; // khoảng cách dòng
 
     public function __construct($params = array()) 
     {
@@ -24,18 +17,17 @@ class TemPrinter {
         $this->printer = new Printer($this->connector);
     }
 
-
-    public function print($text)
+    public function print_text($text)
     {
         try {
             $text_ascii = vn_to_ascii($text); // bỏ dấu
             $this->printer->text($text_ascii);
             $this->printer->cut();
-
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];
         }
     }
+
 
     public function close()
     {

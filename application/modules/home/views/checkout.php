@@ -30,6 +30,9 @@
                                 <?php if($v->priceTopping > 0) { ?>
                                 <h5><?= $v->topping; ?></h5>
                                 <?php } ?>
+                                <?php if($v->note!='' || $v->note!= NULL) { ?>
+                                <h5 style="font-style: italic">*Note: <?= $v->note; ?></h5>
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="col-1 order_detail">
@@ -60,40 +63,47 @@
             </div>
             <div class="col-lg-6">
                 <div class="row order-success-sec">
+
                     <div class="col-sm-12">
                         <h4>Loại đơn hàng</h4>
                         <form class="size-new py-3">
                             <div class="card-product-option-item custom-radio mb-0">
-                                <input type="radio" value="1" checked name="orderType" id="orderType1" class="size-radio-input" data-size="0">
+                                <input type="radio" value="Eatin" checked name="orderType" id="orderType1" class="size-radio-input" data-size="0">
                                 <label for="orderType1" class="size-radio-label p-1">
                                     <div class="size-radio-content">
-                                        <p class="size-name">Tại quán</p>
+                                        <p class="size-name">Eatin</p>
                                     </div>
                                 </label>
                             </div>
                             <div class="card-product-option-item custom-radio mb-0">
-                                <input type="radio" value="2" name="orderType" id="orderType2" class="size-radio-input" data-size="0">
+                                <input type="radio" value="Takeaway" name="orderType" id="orderType2" class="size-radio-input" data-size="0">
                                 <label for="orderType2" class="size-radio-label p-1">
                                     <div class="size-radio-content">
-                                        <p class="size-name">Mang về</p>
+                                        <p class="size-name">Takeaway</p>
                                     </div>
                                 </label>
                             </div>
                             <div class="card-product-option-item custom-radio mb-0">
-                                <input type="radio" value="3" name="orderType" id="orderType3" class="size-radio-input" data-size="0">
+                                <input type="radio" value="Delivery" name="orderType" id="orderType3" class="size-radio-input" data-size="0">
                                 <label for="orderType3" class="size-radio-label p-1">
                                     <div class="size-radio-content">
-                                        <p class="size-name">Giao hàng</p>
+                                        <p class="size-name">Delivery</p>
                                     </div>
                                 </label>
                             </div>
+
                         </form>
+                    </div>
+                    <div class="col-sm-12">
+                        <h4>ghi chú</h4>
+                        <textarea rows="3" id="note" class="form-control"></textarea>
                     </div>
                     <div class="col-sm-12 payment-mode">
 
                         <div class="delivery-sec">
                             <h2><?= date("Y-m-d H:m",time());?></h2></div>
                     </div>
+                    
                     <div class="col-12 pt-5 text-center">
                         <button class="btn btn-normal btn-sm" onclick="checkout();" id="btnCheckout">Xác nhận đơn hàng</button>
                     </div>
