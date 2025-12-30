@@ -59,10 +59,10 @@
 <div class="page-header navbar navbar-fixed-top">
     <!-- BEGIN HEADER INNER -->
     <div class="page-header-inner">
-        <!-- BEGIN LOGO -->
+        <!-- BEGIN LOGO -->s
         <div class="page-logo">
-            <a href="<?= PATH_URL_ADMIN ?>"><img src="https://preview.keenthemes.com/metronic-v4/theme/assets/layouts/layout/img/logo.png" alt="logo"
-                                                 class="logo-default"/></a>
+            <a href="<?= PATH_URL_ADMIN ?>"><img src="<?= PATH_URL?>assets/images/logo.png" alt="logo"
+                                                 class="logo-default" style="width:50px; margin: 0"/></a>
         </div>
         <!-- END LOGO -->
 
@@ -104,7 +104,7 @@
     <div class="page-sidebar-wrapper">
         <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
         <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
-        <div class="page-sidebar navbar-collapse collapse">
+        <div class="page-sidebar navbar-collapse">
             <!-- BEGIN SIDEBAR MENU -->
             <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
             <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
