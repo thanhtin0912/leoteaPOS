@@ -65,6 +65,21 @@ class Home_model extends CI_Model {
 	}
 	
 
+	function checkCookie($token){
+		$this->db->select('u.*, s.name as storeName, s.code as storeCode, s.address');
+		$this->db->where('u.session', $token);
+		$this->db->where('u.status', 1);
+		$this->db->where('u.delete', 0);
+		$this->db->from(PREFIX.$this->tbl_users." u");
+		$this->db->join(PREFIX.$this->tbl_stores." s", 'u.storeId = s.id', "left");
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+
 	function getCategories($type){ 
 		$this->db->select('id, image, name, slug');
 		$this->db->where('status',1);

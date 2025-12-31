@@ -59,7 +59,7 @@
 <div class="page-header navbar navbar-fixed-top">
     <!-- BEGIN HEADER INNER -->
     <div class="page-header-inner">
-        <!-- BEGIN LOGO -->s
+        <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="<?= PATH_URL_ADMIN ?>"><img src="<?= PATH_URL?>assets/images/logo.png" alt="logo"
                                                  class="logo-default" style="width:50px; margin: 0"/></a>

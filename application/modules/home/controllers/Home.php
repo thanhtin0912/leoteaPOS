@@ -8,6 +8,21 @@ class Home extends MX_Controller {
 		$this->lang->load('general');
 		$this->load->model('home/Home_model','home');
 		$this->load->library('session');
+		$this->load->helper('cookie');
+		if(!$this->session->userdata('userLogin')) {
+			$token = get_cookie('remember_token');
+			if ($token) {
+				$user = $this->home->checkCookie($token);
+				if (!empty($user)) {
+					// Tái tạo session
+					$this->session->set_userdata('userLogin', $user[0]);
+				} else {
+					// Token sai hoặc đã bị xóa ở phía Server, xóa luôn ở trình duyệt
+					delete_cookie('remember_token');
+				}
+			}
+		}
+
 	}
 	
 	/*------------------------------------ API ------------------------------------*/
@@ -68,6 +83,23 @@ class Home extends MX_Controller {
 			$user = $this->home->checkLogin($this->input->post('user'));
 			if($user && md5($this->input->post('pass')) == $user[0]->password){
 				$this->session->set_userdata('userLogin', $user[0]);
+				// Tạo một token ngẫu nhiên và bảo mật
+                $token = bin2hex(random_bytes(32));
+				$dataToken = array(
+					'session' => $token
+				);
+				$this->db->where('id',$user[0]->id);
+				if($this->db->update('users', $dataToken)){
+					// 2. Tạo mảng dữ liệu cookie
+					$cookie = array(
+						'name'   => 'remember_token',
+						'value'  => $token,                   // Biến token bạn đã tạo
+						'expire' => 31536000,                // 1 năm (tính bằng giây)
+					);
+					// 3. Gọi hàm set_cookie
+					set_cookie($cookie);					
+				}
+
 				$data = array(
 					'status'=>true,
 					'key' => $this->security->get_csrf_hash(),
@@ -91,6 +123,7 @@ class Home extends MX_Controller {
 	public function logout(){
 		$this->session->unset_userdata('userLogin');
 		$this->session->unset_userdata('cart_products');
+		delete_cookie('remember_token');
 		header('Location: '.PATH_URL);
 	}
 
