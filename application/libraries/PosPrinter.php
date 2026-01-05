@@ -37,7 +37,7 @@ class PosPrinter {
             $this->printer->bitImage($img);
             $this->printer->feed(3);
             $this->printer->cut();
-            // unlink($result['path']);
+            unlink($result['path']);
 
         } catch (Exception $e) {
             return ["status" => false, "message" => $e->getMessage()];
