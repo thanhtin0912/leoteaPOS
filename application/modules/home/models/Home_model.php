@@ -215,7 +215,7 @@ class Home_model extends CI_Model {
 			'detailcart'	=> serialize($cart),
 			'grandtotal'	=> $total,
 			'shipping'		=> $_POST["delivery"],
-			'fulfillment'	=> 2,
+			'fulfillment'	=> ($_POST["delivery"] ?? '') === "Delivery" ? 2 : 1,
 			'status'		=> 1,
 			'delete'		=> 0,
 			'created'		=> date('Y-m-d H:i:s',time()),

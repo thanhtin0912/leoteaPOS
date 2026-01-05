@@ -37,9 +37,9 @@
             <div class="row">
                 <div class="col-md-5 p-0 card-left">
                     <div class="card bg-primary">
-                        <div class="svg-icon">
+                        <!-- <div class="svg-icon">
                             <img class="center-block" src="<?= PATH_URL?>assets/images/logo.png">
-                        </div>
+                        </div> -->
 
                         <div class="single-item">
                             <div>
