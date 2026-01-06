@@ -94,9 +94,10 @@
                                                         <th> Tên sản phẩm </th>
                                                         <th> Size </th>
                                                         <th> Topping </th>
-                                                        <th> Sổng tiền topping </th>
+                                                        <th> Tiền topping </th>
                                                         <th> SL </th>
                                                         <th> Thành tiền </th>
+                                                        <th> Ghi chú</th>
                                                     </tr>
                                                 </thead>
 												<?php $products = unserialize($result->detailcart);?>
@@ -117,6 +118,7 @@
                                                         <td> <?=($c->priceTopping >0) ? number_format($c->priceTopping) :'';?></td>
                                                         <td> <?= $c->amount?> </td>
                                                         <td> <?= number_format($c->totalPrice)?></td>
+                                                        <td> <?= $c->note?> </td>
                                                     </tr>
 													<?php endforeach ?>
                                                 </tbody>

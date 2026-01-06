@@ -16502,9 +16502,9 @@ table.invoice-table {
 .pixelstrap a .sub-arrow {
   position: absolute;
   top: 50%;
-  margin-top: -17px;
+  margin-top: -20px;
   left: auto;
-  right: 14px;
+  right: 10px;
   width: 34px;
   height: 34px;
   overflow: hidden;

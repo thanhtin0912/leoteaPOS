@@ -201,7 +201,7 @@ function checkout(){
         if(res.status) {
             notify('Đơn hàng đã được đặt hàng thành công.', 'primary', true);
             setTimeout(() => {
-                window.location.href = root + 'trang-thai-don-hang';
+                window.location.href = root;
             }, 500);
         } else {
             notify('Không thể xác nhận đơn hàng <br>vui lòng kiểm tra lại .', 'danger', true); 

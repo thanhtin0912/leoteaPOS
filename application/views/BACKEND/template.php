@@ -226,7 +226,9 @@
                         </li>
                     </ul>
                 </li>
-
+                <li class="start">
+                    <a href="<?= PATH_URL_ADMIN . 'shift' ?>"><i class="icon-settings"></i><span class="title">Quản lý ca làm việc</span></a>
+                </li>
                 <li class="nav-item">
                     <a href="javascript:;" class="nav-link nav-toggle">
                         <i class="icon-settings"></i>

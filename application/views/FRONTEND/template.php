@@ -117,10 +117,21 @@
                                         </li>
                                         <!--SHOP-END-->
                                         <!--SHOP-->
-                                        <li>
+                                        <!-- <li>
                                             <a class="dark-menu-item" href="<?= PATH_URL; ?>lich-su-don-hang">Lịch sử</a>
-                                        </li>
+                                        </li> -->
                                         <!--SHOP-END-->
+                                        <!--Shift-->
+                                        <?php if ($this->session->userdata('userLogin')) {?>
+                                        <li>
+                                            <a class="dark-menu-item" href="javascript:void(0)">Chấm công</a>
+                                            <ul>
+                                                <li><a href="<?= PATH_URL; ?>vao-ca">Vào ca</a></li>
+                                                <li><a href="<?= PATH_URL; ?>ket-ca">Kết ca</a></li>
+                                            </ul>
+                                        </li>
+                                        <?php } ?>
+                                        <!--Shift-END-->
                                     </ul>
                                 </nav>
                             </div>

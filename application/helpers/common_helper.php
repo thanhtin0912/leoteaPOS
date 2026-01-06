@@ -794,4 +794,32 @@ function utf8_to_tcvn3($str) {
 
     return str_replace($unicode, $tcvn3, $str);
 }
+
+function short_encode($data, $key = 'abcd1234efgh5678ijkl9012mnop3456') {
+    $out = '';
+    // Bước 1: Phép tính XOR
+    for($i=0; $i<strlen($data); ) {
+        for($j=0; $j<strlen($key) && $i<strlen($data); $j++, $i++) {
+            $out .= $data[$i] ^ $key[$j];
+        }
+    }
+    // Bước 2: Chuyển sang Base64 an toàn cho URL
+    return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($out));
+}
+
+function short_decode($encoded_data, $key = 'abcd1234efgh5678ijkl9012mnop3456') {
+    // Bước 1: Khôi phục Base64 (thêm lại các ký tự đã thay thế)
+    $data = str_replace(['-', '_'], ['+', '/'], $encoded_data);
+    $data = base64_decode($data);
+    
+    $out = '';
+    // Bước 2: Phép tính XOR ngược lại (XOR 2 lần sẽ ra giá trị gốc)
+    for($i=0; $i<strlen($data); ) {
+        for($j=0; $j<strlen($key) && $i<strlen($data); $j++, $i++) {
+            $out .= $data[$i] ^ $key[$j];
+        }
+    }
+    return $out;
+}
+
 ?>

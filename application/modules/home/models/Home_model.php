@@ -11,7 +11,7 @@ class Home_model extends CI_Model {
 	private $tbl_infor				= 'infos';
 	private $tbl_users				= 'users';
 	private $tbl_printer				= 'printer';
-	
+	private $tbl_shift				= 'shift';
 
 	function getInfoSite(){
 		$this->db->select('*');
@@ -277,6 +277,7 @@ class Home_model extends CI_Model {
 		$this->db->where('phone',$info->phone);
 		$this->db->where('status',1);
 		$this->db->where('delete',0);
+		$date = date("Y-m-d H:i:s",time());
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
 		$this->db->order_by('orderId','ABS');
@@ -288,8 +289,79 @@ class Home_model extends CI_Model {
 			return false;
 		}
 	}
+	function checkinShiftDay() {
+		$info = $this->session->userdata('userLogin');
+		$data=array(
+			"from" => date('Y-m-d H:i:s',time()),
+			"store"=> $info->storeId,
+			"user"=> $info->phone,
+			"name"=> $_POST["user"],
+			"created" => date('Y-m-d H:i:s',time())
+		);
+		if($this->db->insert(PREFIX.$this->tbl_shift,$data)){
+			return true;
+		}
+		return false;
+	}
 
+	function updateShiftDay($id, $data){ 
+		$this->db->where('id',$id);
+		$this->db->update(PREFIX.$this->tbl_shift,$data);  
+		return true;
+	}
+
+	function checkExsitShiftofDay() {
+		$today = date('Y-m-d');
+		$info = $this->session->userdata('userLogin');
+		$this->db->select('*');
+		$this->db->where('store',$info->storeId);
+		$this->db->where('user',$info->phone);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->where('`from` <=', date('Y-m-d H:i:s'));
+		$this->db->where('created >=', $today . ' 00:00:00');
+		$this->db->where('created <=', $today . ' 23:59:59');
+		$this->db->where('to IS NULL');
+		$this->db->order_by('id','ABS');
+		$this->db->from(PREFIX.$this->tbl_shift);
+		$this->db->limit(1);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
 	
+	}
 
+	function getShiftofDay($key){
+		$this->db->select('*');
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->where('completed',0);
+		$this->db->like('id',$key);
+		$this->db->from(PREFIX.$this->tbl_shift);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+
+	function getTotalRevenueShift($from, $to, $user) {
+		$this->db->select_sum('grandtotal');
+		$this->db->where('phone',$user);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		// Đảm bảo so sánh chính xác thời gian
+		$this->db->where('created >=', $from);
+		$this->db->where('created <=', $to);
+		$this->db->from(PREFIX . $this->tbl_order);
+		$query = $this->db->get();
+		$result = $query->row(); // Chỉ lấy 1 hàng vì SUM luôn ra 1 kết quả
+		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
+	}
+	
 }
 ?>

@@ -78,6 +78,98 @@ class Home extends MX_Controller {
 		//
 	}
 
+	public function shiftIn()
+	{
+		$data['info'] = $this->home->getInfoSite();
+		$data['cart'] =$this->getListCart();
+		$data['countCart'] = $this->countSessionCart();
+		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$this->template->write_view('content', 'shift_in', $data);
+		$this->template->render();
+		//
+	}
+	
+	function checkIn(){
+    	$req = $this->home->checkinShiftDay();
+		$data = array(
+			'status'=>false,
+			'key' => $this->security->get_csrf_hash(),
+		);
+		if($req) {
+			$data = array(
+				'status'=>true,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+		return_json($data);
+	}
+	public function shiftOut()
+	{
+		$data['info'] = $this->home->getInfoSite();
+		$data['cart'] =$this->getListCart();
+		$data['countCart'] = $this->countSessionCart();
+		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$this->template->write_view('content', 'shift_out', $data);
+		$this->template->render();
+		//
+	}
+	function checkOutShift(){
+		$data=array(
+			"to"=> date('Y-m-d H:i:s',time()),
+			"updated"=> date('Y-m-d H:i:s',time())
+		);
+    	$req = $this->home->updateShiftDay($_POST["id"], $data);
+		$data = array(
+			'status'=>false,
+			'key' => $this->security->get_csrf_hash(),
+		);
+		$encoded = short_encode($_POST["id"]);
+		if($req) {
+			$data = array(
+				'status'=>true,
+				'id'=> $encoded,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+		return_json($data);
+	}
+
+
+
+	public function reportShift()
+	{
+		$key = short_decode($_GET["id"]); // Giải mã bằng chính hàm đó
+		$shift = $this->home->getShiftofDay($key);
+		$data['res'] = false;
+		if($_GET["id"] && $shift){
+			$data['salesShift']= $this->home->getTotalRevenueShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
+			$data['res'] = $shift;
+		}
+		$this->load->view('report-shift', $data);
+		//
+	}
+	function updateCheckoutShift(){
+		$data=array(
+			"report"=> serialize($_POST['money_data']),
+			"actual"=> $_POST['actual'],
+			"sales"=> $_POST['sales'],
+			"completed" => 1,
+			"updated"=> date('Y-m-d H:i:s',time())
+		);
+    	$req = $this->home->updateShiftDay($_POST["id"], $data);
+		$data = array(
+			'status'=>false,
+			'key' => $this->security->get_csrf_hash(),
+		);
+		if($req) {
+			$data = array(
+				'status'=>true,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+		return_json($data);
+	}
+
 	public function login(){
 		if(!empty($_POST)){
 			$user = $this->home->checkLogin($this->input->post('user'));
@@ -376,19 +468,18 @@ class Home extends MX_Controller {
 				$note = $_POST["note"];
 				$invoiceCode = $this->home->addOrder($cart, $total);
 				// sử lý in dóa đơn
-				//$pushTimeHash =  $this->encodeDateTimeShort(date('m-d H:i',time()));
 				$pushTimeHash = $this->generateRandomCode(4);
 				$code = $invoiceCode.$pushTimeHash;
 				if ($invoiceCode) {
-					// $info = $this->session->userdata('userLogin');
-					// $printBill = $this->home->getPrinter($info->storeId,'BILL');
-					// if($printBill) {
-					// 	$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
-					// }
-					// $printTem = $this->home->getPrinter($info->storeId,'TEM');
-					// if($printTem) {
-					// 	$this->printTem($printTem [0]->ip,$code,$cart, $note);
-					// }
+					$info = $this->session->userdata('userLogin');
+					$printBill = $this->home->getPrinter($info->storeId,'BILL');
+					if($printBill) {
+						$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
+					}
+					$printTem = $this->home->getPrinter($info->storeId,'TEM');
+					if($printTem) {
+						$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					}
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -646,7 +737,6 @@ class Home extends MX_Controller {
 		return_json($req);
 	}
 
-
 	/*------------------------------------ End API --------------------------------*/
 
     public function sendMessage() {
@@ -678,34 +768,6 @@ class Home extends MX_Controller {
             echo "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response";
         }
     }
-	function encodeDateTimeShort($timestamp = null) {
-		// Nếu không truyền hoặc truyền bậy, lấy thời gian hiện tại
-		if (!$timestamp || !is_numeric($timestamp)) {
-			$timestamp = time();
-		} else {
-			$timestamp = (int)$timestamp; // Ép kiểu về số nguyên
-		}
-
-		$monthMap = "ABCDEFGHIJKL";
-		$dayMap   = "0123456789ABCDEFGHIJKLMNOPQRSTU";
-		$houMap   = "0123456789ABCDEFGHIJKLMN";
-		$minMap   = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx";
-		// Ép kiểu (int) cho kết quả của date() trước khi trừ 1
-		$m_index = (int)date('n', $timestamp) - 1;
-		$d_index = (int)date('j', $timestamp) - 1;
-
-		$m = $monthMap[$m_index];
-		$d = $dayMap[$d_index];
-		
-
-		$h_index = (int)date('H', $timestamp);
-		$i_index = (int)date('i', $timestamp);
-
-		$h = $houMap[$h_index];
-		$i = $minMap[$i_index];
-
-		return $m . $d . $h . $i;
-	}
 	function generateRandomCode($length = 6) {
 		$characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$shuffled = str_shuffle($characters);

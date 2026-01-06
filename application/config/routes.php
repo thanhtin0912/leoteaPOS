@@ -56,7 +56,15 @@ $route['translate_uri_dashes'] = FALSE;
 $route['xac-nhan-don-hang'] = "home/checkout";
 $route['trang-thai-don-hang'] = "home/delivery";
 $route['lich-su-don-hang'] = "home/history";
+//
+$route['vao-ca'] = "home/shiftIn";
+$route['ket-ca'] = "home/shiftOut";
+$route['bao-cao-ca-lam-viec'] = "home/reportShift";
+$route['checkIn'] = "home/checkIn";
+$route['checkOutShift'] = "home/checkOutShift";
+$route['updateCheckoutShift'] = "home/updateCheckoutShift";
 
+//
 $route['login'] = "home/login";
 $route['logout'] = "home/logout";
 $route['addcart'] = "home/addcart";
