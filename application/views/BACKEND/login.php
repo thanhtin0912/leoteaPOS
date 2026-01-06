@@ -78,7 +78,8 @@
                                         <div class="form-button">
                                             <button class="btn btn-primary" onclick="login()">Login</button>
                                         </div>
-
+                                        <span id="divError"></span>
+                                        
                                     </div>
                                 </div>
                             </div>

@@ -43,26 +43,3 @@ function login(){
 		);
 	}
 }
-
-function reset(){
-	$('#loginUser').val('');
-	$('#loginPass').val('');
-}
-
-$(document).ready(function(){
-	$('#loginUser').focus();
-	_resize();
-});
-
-$( window ).resize(function() {
-	_resize();
-});
-
-function _resize(){
-	var h = $(document).height();
-	var top_form = ((h-$('.bg_login').height())/2)-$('.logo').height();
-	var top_logo = top_form/2;
-	top_form = top_form - top_logo;
-	$('.logo').css('margin-top',top_logo);
-	$('.bg_login').css('margin-top',top_form);
-}
