@@ -90,7 +90,7 @@ function checkOut() {
                     <ul class="cart_total">
                         <li>
                             <div class="total">
-                                Tên nhân viên:<span><?= $checkShift[0]->user; ?></span>
+                                Tên nhân viên:<span><?= $checkShift[0]->name; ?></span>
                             </div>
                             <div class="total">
                                 Giờ vào ca:<span><?= $checkShift[0]->from; ?></span>
