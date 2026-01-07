@@ -175,7 +175,7 @@ class Home_model extends CI_Model {
 		}
 	}
 
-	function generateInvoiceCode($currentCode, $limit = 10) {
+	function generateInvoiceCode($currentCode, $limit = 25) {
 		$letter = substr($currentCode, 0, 1);      // Ký tự A, B, C
 		$number = intval(substr($currentCode, 1)); // Số phía sau
 		$number++;
