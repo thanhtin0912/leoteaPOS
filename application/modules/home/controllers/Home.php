@@ -139,7 +139,7 @@ class Home extends MX_Controller {
 	public function reportShift()
 	{
 		$key = short_decode($_GET["id"]); // Giải mã bằng chính hàm đó
-		$shift = $this->home->getShiftofDay($key);
+		$shift = $this->home->getShiftofDay($key, 0);
 		$data['res'] = false;
 		if($_GET["id"] && $shift){
 			$data['salesShift']= $this->home->getTotalRevenueShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
@@ -150,7 +150,7 @@ class Home extends MX_Controller {
 	}
 	function updateCheckoutShift(){
 		$data=array(
-			"report"=> serialize($_POST['money_data']),
+			"report"=> serialize($_POST['money_data']) || [],
 			"actual"=> $_POST['actual'],
 			"sales"=> $_POST['sales'],
 			"completed" => 1,
@@ -162,6 +162,30 @@ class Home extends MX_Controller {
 			'key' => $this->security->get_csrf_hash(),
 		);
 		if($req) {
+			$this->load->library('Discord');
+			$s = $this->home->getShiftofDay($_POST["id"], 1);
+			if ($s) {
+				$now = date('Y-m-d H:i:s');
+				$diff = number_format($s[0]->actual - $s[0]->sales);
+				$sales = number_format($s[0]->sales);
+				$actual = number_format($s[0]->actual);
+				$gio_vao = date('H:i:s', strtotime($s[0]->from));
+				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
+
+				// Viết sao hiển thị vậy, rất dễ quản lý
+				$tr = <<<EOT
+					**Báo cáo kết ca - $now!**
+					-----------------------------
+					Nhân viên: {$s[0]->name} - Cửa hàng: {$s[0]->storeName}
+					Thời gian: {$gio_vao} - {$gio_ra}
+					-----------------------------
+					Doanh thu: $sales - Tiền nộp: $actual
+					Chêch lệch: $diff
+					-----------------------------
+					EOT;
+			
+				$dis = $this->discord->sendsms($tr);
+			}
 			$data = array(
 				'status'=>true,
 				'key' => $this->security->get_csrf_hash(),
@@ -471,15 +495,15 @@ class Home extends MX_Controller {
 				$pushTimeHash = $this->generateRandomCode(4);
 				$code = $invoiceCode.$pushTimeHash;
 				if ($invoiceCode) {
-					$info = $this->session->userdata('userLogin');
-					$printBill = $this->home->getPrinter($info->storeId,'BILL');
-					if($printBill) {
-						$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
-					}
-					$printTem = $this->home->getPrinter($info->storeId,'TEM');
-					if($printTem) {
-						$this->printTem($printTem [0]->ip,$code,$cart, $note);
-					}
+					// $info = $this->session->userdata('userLogin');
+					// $printBill = $this->home->getPrinter($info->storeId,'BILL');
+					// if($printBill) {
+					// 	$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
+					// }
+					// $printTem = $this->home->getPrinter($info->storeId,'TEM');
+					// if($printTem) {
+					// 	$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					// }
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -599,12 +623,7 @@ class Home extends MX_Controller {
 		$int= 1;
 		foreach ($cart as $key => $item) {
 			for ($i=0; $i < $item->amount; $i++) { 
-				$tr = '';
 				$name = $item->name . ($item->size ? " ({$item->size})" : "");
-				$tr .= $this->formatItem($name, '', ($item->totalPrice)/$item->amount, 36). "\n";
-				if (!empty($item->topping)) {
-					$tr .= "   + " . $item->topping . "\n";
-				}
 				$perItem = $int.'/'.$totalAmount;
 				$price = number_format($item->totalPrice/$item->amount);
 				$noteLine = 0;
@@ -643,35 +662,6 @@ class Home extends MX_Controller {
 		}
 		$this->temprinter->close();
     }
-
-	private function formatItem($textLeft, $qty = '', $textRight, $totalWidth = 48) {
-		if($qty != '') {
-			$qty = "x".$qty;
-		}
-		$price = $textRight;
-		if (is_numeric($textRight)) {
-			$price = number_format($textRight, 0, ',', '.');
-		}
-		
-	
-		// tạo text số lượng + giá
-		$rightCol = $qty . "  " . $price;
-		$rightLen = mb_strlen($rightCol, "UTF-8");
-	
-		// chiều dài tên tối đa
-		$maxNameLen = $totalWidth - $rightLen - 1;
-	
-		if (mb_strlen($textLeft, "UTF-8") > $maxNameLen) {
-			// nếu tên dài → xuống dòng
-			$firstLine = mb_substr($textLeft, 0, $maxNameLen);
-			$nextLine = mb_substr($textLeft, $maxNameLen);
-			return $firstLine . " " . $rightCol . "\n" . $nextLine . "\n";
-		}
-	
-		// nếu tên ngắn → căn khoảng cách
-		$space = str_repeat(" ", $maxNameLen - mb_strlen($textLeft, "UTF-8"));
-		return $textLeft . $space . $rightCol;
-	}
 
 	
 	public function updateFulfillmentOrder(){
@@ -737,40 +727,13 @@ class Home extends MX_Controller {
 		return_json($req);
 	}
 
-	/*------------------------------------ End API --------------------------------*/
-
-    public function sendMessage() {
-        $webhook_url = "https://discord.com/api/webhooks/1381455257866997870/JoXcEl9wgdIcmK5zqTBM39HDZqH5iBHuzGSKUc3ZsZjC9W8dXa6Nx3IhOxtpgpvy1v9p";
-
-        $data = [
-            "username" => "CI3 Bot",
-            "content"  => "**Đây là một tin nhắn từ CodeIgniter 3!**\nĐây là một tin nhắn từ CodeIgniter 3! "
-        ];
-
-        $json_data = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-
-        // Khởi tạo cURL
-        $ch = curl_init($webhook_url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-
-        $response = curl_exec($ch);
-        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curl_error = curl_error($ch);
-        curl_close($ch);
-
-        // Kiểm tra kết quả
-        if ($http_status == 204) {
-            echo "✅ Gửi webhook thành công!";
-        } else {
-            echo "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response";
-        }
-    }
 	function generateRandomCode($length = 6) {
 		$characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$shuffled = str_shuffle($characters);
 		return substr($shuffled, 0, $length);
 	}
+
+	/*------------------------------------ End API --------------------------------*/
+
+
 }

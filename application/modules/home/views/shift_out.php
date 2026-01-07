@@ -34,7 +34,7 @@ function checkOut() {
                     value: root+'bao-cao-ca-lam-viec?id='+res.id,
                     size: 250
                 });
-                //$('#myLink').text(root+'bao-cao-ca-lam-viec?id='+res.id).attr('href', root+'bao-cao-ca-lam-viec?id='+res.id);
+                $('#myLink').text(root+'bao-cao-ca-lam-viec?id='+res.id).attr('href', root+'bao-cao-ca-lam-viec?id='+res.id);
             } else {
                 notify('Hệ thống không thể ghi nhận thông tin vào ca của bạn.', 'danger', true); 
             }

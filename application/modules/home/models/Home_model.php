@@ -334,13 +334,14 @@ class Home_model extends CI_Model {
 	
 	}
 
-	function getShiftofDay($key){
-		$this->db->select('*');
-		$this->db->where('status',1);
-		$this->db->where('delete',0);
-		$this->db->where('completed',0);
-		$this->db->like('id',$key);
-		$this->db->from(PREFIX.$this->tbl_shift);
+	function getShiftofDay($key, $completed){
+		$this->db->select('t.*, s.name as storeName');
+		$this->db->where('t.status',1);
+		$this->db->where('t.delete',0);
+		$this->db->where('t.completed', $completed);
+		$this->db->like('t.id',$key);
+		$this->db->from(PREFIX.$this->tbl_shift." t");
+		$this->db->join(PREFIX.$this->tbl_stores." s", 't.store = s.id', "left");
 		$query = $this->db->get();
 		if($query->result()){
 			return $query->result();
