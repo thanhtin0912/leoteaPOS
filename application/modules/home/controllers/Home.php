@@ -495,15 +495,15 @@ class Home extends MX_Controller {
 				$pushTimeHash = $this->generateRandomCode(4);
 				$code = $invoiceCode.$pushTimeHash;
 				if ($invoiceCode) {
-					// $info = $this->session->userdata('userLogin');
-					// $printBill = $this->home->getPrinter($info->storeId,'BILL');
-					// if($printBill) {
-					// 	$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
-					// }
-					// $printTem = $this->home->getPrinter($info->storeId,'TEM');
-					// if($printTem) {
-					// 	$this->printTem($printTem [0]->ip,$code,$cart, $note);
-					// }
+					$info = $this->session->userdata('userLogin');
+					$printBill = $this->home->getPrinter($info->storeId,'BILL');
+					if($printBill) {
+						$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
+					}
+					$printTem = $this->home->getPrinter($info->storeId,'TEM');
+					if($printTem) {
+						$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					}
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
