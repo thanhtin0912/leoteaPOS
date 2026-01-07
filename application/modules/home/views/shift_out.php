@@ -34,7 +34,7 @@ function checkOut() {
                     value: root+'bao-cao-ca-lam-viec?id='+res.id,
                     size: 250
                 });
-                $('#myLink').text(root+'bao-cao-ca-lam-viec?id='+res.id).attr('href', root+'bao-cao-ca-lam-viec?id='+res.id);
+                //$('#myLink').text(root+'bao-cao-ca-lam-viec?id='+res.id).attr('href', root+'bao-cao-ca-lam-viec?id='+res.id);
             } else {
                 notify('Hệ thống không thể ghi nhận thông tin vào ca của bạn.', 'danger', true); 
             }
@@ -107,7 +107,7 @@ function checkOut() {
                         <div class="qr-wrapper">
                             <canvas id="qr-code"></canvas>
                         </div>
-                        <a id="myLink" href="#">Click vào đây</a>
+                        <!-- <a id="myLink" href="#">Click vào đây</a> -->
                     </ul>
                     <?php } else { ?>
                         <h4>Bạn chưa có thông tin VÀO CA.</h4>
