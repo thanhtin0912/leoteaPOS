@@ -17,7 +17,6 @@ class Home extends MX_Controller {
 					// Tái tạo session
 					$this->session->set_userdata('userLogin', $user[0]);
 				} else {
-					// Token sai hoặc đã bị xóa ở phía Server, xóa luôn ở trình duyệt
 					delete_cookie('remember_token');
 				}
 			}
