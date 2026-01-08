@@ -497,17 +497,27 @@ class Home extends MX_Controller {
 					$info = $this->session->userdata('userLogin');
 					
 					// In hóa đơn
-					$printBill = $this->home->getPrinter($info->storeId,'BILL');
-					if($printBill) {
-						$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
+					try {
+						$printBill = $this->home->getPrinter($info->storeId,'BILL');
+						if($printBill) {
+							@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
+						}
+					} catch (Exception $e) {
+						// Ghi log lỗi in nhưng không làm dừng chương trình
+						log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
 					}
-					
+										
 					// in tem
-					$printTem = $this->home->getPrinter($info->storeId,'TEM');
-					if($printTem) {
-						$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					try {
+						$printTem = $this->home->getPrinter($info->storeId,'TEM');
+						if($printTem) {
+							@$this->printTem($printTem [0]->ip,$code,$cart, $note);
+						}
+					} catch (Exception $e) {
+						// Ghi log lỗi in nhưng không làm dừng chương trình
+						log_message('error', 'Lỗi in Tem: ' . $e->getMessage());
 					}
-
+	
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -523,8 +533,6 @@ class Home extends MX_Controller {
 		}
 	}
 	public function printBill($ip,$code,$cart,$total,$shipping, $note) {
-		$fp = @fsockopen($ip, 9100, $errno, $errstr, 1);
-		if(!$fp) return false;
 		$this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
@@ -580,8 +588,6 @@ class Home extends MX_Controller {
 
 
 	public function printTem($ip,$code,$cart,$note) {
-		$fp = @fsockopen($ip, 9100, $errno, $errstr, 1);
-		if(!$fp) return false;
         $this->load->library('TemPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
