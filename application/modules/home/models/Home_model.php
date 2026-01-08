@@ -363,6 +363,5 @@ class Home_model extends CI_Model {
 		$result = $query->row();
 		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
 	}
-	
 }
 ?>
