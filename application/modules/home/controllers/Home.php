@@ -190,16 +190,14 @@ class Home extends MX_Controller {
 				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
 
 				// Viết sao hiển thị vậy, rất dễ quản lý
-				$tr = <<<EOT
-					**Báo cáo kết ca - $now!**
-					-----------------------------
-					Nhân viên: {$s[0]->name} - Cửa hàng: {$s[0]->storeName}
-					Thời gian: {$gio_vao} - {$gio_ra}
-					-----------------------------
-					Doanh thu: $sales - Tiền nộp: $actual
-					Chêch lệch: $diff
-					-----------------------------
-					EOT;
+                $tr = "**Báo cáo kết ca - " . $now . "!**\n"
+                    . "-----------------------------\n"
+                    . "NV: " . $s[0]->name . " - CH: " . $s[0]->storeName . "\n"
+                    . "CA: " . $gio_vao . " - " . $gio_ra . "\n"
+                    . "-----------------------------\n"
+                    . "DT: " . $sales . " - TN: " . $actual . "\n"
+                    . "CL: " . $diff . "\n"
+                    . "-----------------------------";
 			
 				$dis = $this->discord->sendsms($tr);
 			}

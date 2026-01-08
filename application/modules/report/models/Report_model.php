@@ -86,7 +86,6 @@ class Report_model extends CI_Model {
 		if($this->input->post('showData') != 2) {
 			$this->db->where('n.delete', $this->input->post('showData'));
 		}
-		$this->db->group_by('n.id');
 		$this->db->from(PREFIX.$this->table." n");
 		$this->db->join(PREFIX.$this->table_user." u", 'n.phone = u.phone', "left");
 		$this->db->join(PREFIX.$this->table_store." s", 'u.storeId = s.id', "left");
@@ -130,7 +129,6 @@ class Report_model extends CI_Model {
 		if($this->input->post('showData') != 2) {
 			$this->db->where('n.delete', $this->input->post('showData'));
 		}
-		$this->db->group_by('n.id');
 		$this->db->from(PREFIX.$this->table." n");
 		$this->db->join(PREFIX.$this->table_user." u", 'n.phone = u.phone', "left");
 		$this->db->join(PREFIX.$this->table_store." s", 'u.storeId = s.id', "left");
