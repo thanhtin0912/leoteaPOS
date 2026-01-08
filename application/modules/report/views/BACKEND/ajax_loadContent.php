@@ -44,6 +44,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <th class="sorting" onclick="sort('phone')" id="phone">Tài khoản</th>
                     <th class="sorting" onclick="sort('grandtotal')" id="grandtotal">Tổng tiền</th>
                     <th class="sorting" onclick="sort('shipping')" id="shipping">Vận chuyển</th>
+                    <th class="sorting" width="150" onclick="sort('orderId')" id="fullname">Tên NV</th>
                     <th class="center sorting" width="80" onclick="sort('created')" id="created">Created</th>
                 </tr>
             </thead>
@@ -61,19 +62,8 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->storeName); ?></a></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->phone); ?></a></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= number_format($v->grandtotal); ?></a></td>
-                    <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>">
-                            <?php
-					if($v->shipping == 1) {
-						echo 'Tại quán.';
-					}
-					if($v->shipping == 2) {
-						echo 'Mang về.';
-					}
-					if($v->shipping == 3) {
-						echo 'Giao hàng.';
-					}
-					?></a>
-                    </td>
+                    <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->shipping); ?></td>
+                    <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->fullname); ?></a></td>
                     <td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
                 </tr>
                 <?php $i++;}
@@ -85,17 +75,8 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <td><?= ($v->storeName); ?></td>
                     <td><?= ($v->phone); ?></td>
                     <td><?= number_format($v->grandtotal); ?></td>
-                    <td><?php
-						if($v->shipping == 1) {
-							echo 'Tại quán.';
-						}
-						if($v->shipping == 2) {
-							echo 'Mang về.';
-						}
-						if($v->shipping == 3) {
-							echo 'Giao hàng.';
-						}
-						?></td>
+                    <td><?= ($v->shipping); ?></td>
+                    <td><?= ($v->fullname); ?></td>
                     <td class="center" id="loadStatusID_<?=$v->id?>"><span
                             class="label label-sm label-default status-deleted">Deleted</span></td>
                     <td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>

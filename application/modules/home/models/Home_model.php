@@ -201,7 +201,7 @@ class Home_model extends CI_Model {
 		$data = array(
 			'orderId'		=> $orderId,
 			'mail'			=> '',
-			'fullname'		=> $info->phone,
+			'fullname'		=> isset($info->staffName) ? $info->staffName : '',
 			'address'		=> '',
 			'region'		=> '',
 			'postcode'		=> '',

@@ -9,14 +9,24 @@ class Shift_model extends CI_Model {
 		$this->db->limit($limit,$page);
 		$this->db->order_by('s.delete','ASC');
 		$this->db->order_by($this->input->post('func_order_by'),$this->input->post('order_by'));
-		if($this->input->post('title')!=''){
-			$this->db->like('s.name', $this->input->post('title'));
+		if($this->input->post('username')!=''){
+			$this->db->like('s.name', $this->input->post('username'));
 		}
 		if($this->input->post('status')!= 2){
 			$this->db->where('s.status', $this->input->post('status'));
 		}
 		if($this->input->post('showData') != 2) {
 			$this->db->where('s.delete', $this->input->post('showData'));
+		}
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
+			$this->db->where('s.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+		}
+		if($this->input->post('dateFrom')=='' && $this->input->post('dateTo')!=''){
+			$this->db->where('s.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
+		}
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')!=''){
+			$this->db->where('s.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+			$this->db->where('s.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
 		}
 		$this->db->from(PREFIX.$this->table." s");
 		$this->db->join(PREFIX.$this->table_store." c", 'c.id = s.store', "left");
@@ -30,18 +40,28 @@ class Shift_model extends CI_Model {
 	}
 	
 	function getTotalsearchContent(){
-		$this->db->select('*');
-		if($this->input->post('title')!=''){
-			$this->db->like('name', $this->input->post('title'));
+		$this->db->select('s.*');
+		if($this->input->post('username')!=''){
+			$this->db->like('s.name', $this->input->post('username'));
 		}
 		if($this->input->post('status')!= 2){
-			$this->db->where('status', $this->input->post('status'));
+			$this->db->where('s.status', $this->input->post('status'));
 		}
 		if($this->input->post('showData') != 2) {
-			$this->db->where('delete', $this->input->post('showData'));
+			$this->db->where('s.delete', $this->input->post('showData'));
 		}
-		
-		$this->db->from(PREFIX.$this->table);
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
+			$this->db->where('s.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+		}
+		if($this->input->post('dateFrom')=='' && $this->input->post('dateTo')!=''){
+			$this->db->where('s.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
+		}
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')!=''){
+			$this->db->where('s.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+			$this->db->where('s.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
+		}
+		$this->db->from(PREFIX.$this->table." s");
+		$this->db->join(PREFIX.$this->table_store." c", 'c.id = s.store', "left");
 		$query = $this->db->count_all_results();
 
 		if($query > 0){

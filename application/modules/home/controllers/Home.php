@@ -90,6 +90,11 @@ class Home extends MX_Controller {
 	
 	function checkIn(){
     	$req = $this->home->checkinShiftDay();
+		// 1. Lấy data từ session ra
+		$user = $this->session->userdata('userLogin'); // 'user_data' là key bạn đặt khi login
+		// 2. Thêm field mới
+		$user->staffName = $_POST["user"];
+		$this->session->set_userdata('userLogin', $user);
 		$data = array(
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
@@ -113,8 +118,11 @@ class Home extends MX_Controller {
 		//
 	}
 	function checkOutShift(){
+		$shift = $this->home->getShiftofDay($_POST["id"], 0);
+		$salesShift = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
 		$data=array(
 			"to"=> date('Y-m-d H:i:s',time()),
+			"sales"=> $salesShift,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -123,6 +131,13 @@ class Home extends MX_Controller {
 			'key' => $this->security->get_csrf_hash(),
 		);
 		$encoded = short_encode($_POST["id"]);
+		//
+		$user = $this->session->userdata('userLogin'); 
+		if (isset($user->staffName)) {
+			unset($user->staffName);
+		}
+		$this->session->set_userdata('userLogin', $user);
+		//
 		if($req) {
 			$data = array(
 				'status'=>true,
@@ -141,17 +156,20 @@ class Home extends MX_Controller {
 		$shift = $this->home->getShiftofDay($key, 0);
 		$data['res'] = false;
 		if($_GET["id"] && $shift){
-			$data['salesShift']= $this->home->getTotalRevenueShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
+			$data['salesShift']= $shift[0]->sales;
 			$data['res'] = $shift;
 		}
 		$this->load->view('report-shift', $data);
 		//
 	}
 	function updateCheckoutShift(){
+		$money_data = $this->input->post('money_data');
+		if (!is_array($money_data)) {
+			$money_data = []; // Đảm bảo luôn là mảng trước khi serialize
+		}
 		$data=array(
-			"report"=> serialize($_POST['money_data']) || [],
+			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
-			"sales"=> $_POST['sales'],
 			"completed" => 1,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
@@ -498,21 +516,21 @@ class Home extends MX_Controller {
 					
 					// In hóa đơn
 					try {
-						$printBill = $this->home->getPrinter($info->storeId,'BILL');
-						if($printBill) {
-							@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
-						}
+					$printBill = $this->home->getPrinter($info->storeId,'BILL');
+					if($printBill) {
+					@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
+					}
 					} catch (Exception $e) {
-						// Ghi log lỗi in nhưng không làm dừng chương trình
+					// Ghi log lỗi in nhưng không làm dừng chương trình
 						log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
 					}
 										
 					// in tem
 					try {
-						$printTem = $this->home->getPrinter($info->storeId,'TEM');
-						if($printTem) {
-							@$this->printTem($printTem [0]->ip,$code,$cart, $note);
-						}
+					$printTem = $this->home->getPrinter($info->storeId,'TEM');
+					if($printTem) {
+					@$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					}
 					} catch (Exception $e) {
 						// Ghi log lỗi in nhưng không làm dừng chương trình
 						log_message('error', 'Lỗi in Tem: ' . $e->getMessage());

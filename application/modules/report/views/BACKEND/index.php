@@ -64,11 +64,20 @@
 									<label class="col-sm-2 control-label">Mã hóa đơn:</label>
 									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_title"></div>
 									<label for="inputPassword" class="col-sm-2 control-label">Mã cửa hàng:</label>
-									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_url"></div>
+									<div class="col-sm-4">
+										<select class="select form-control" data-live-search="true" data-size="8" name="search_url" id="search_cate_name">
+											<option value="">None</option>
+											<?php foreach ($stores as $key => $s): ?>
+												<option value="<?= $s->id; ?>"><?= $s->name; ?></option>
+											<?php endforeach; ?>
+										</select>
+									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label">Nhân viên:</label>
-									<div class="col-sm-10"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_description"></div>
+									<label class="col-sm-2 control-label">Tài khoản:</label>
+									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_username"></div>
+									<label class="col-sm-2 control-label">Tên Nhân viên:</label>
+									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_name"></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Create Date:</label>
