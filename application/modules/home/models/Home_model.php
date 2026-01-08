@@ -360,7 +360,7 @@ class Home_model extends CI_Model {
 		$this->db->where('created <=', $to);
 		$this->db->from(PREFIX . $this->tbl_order);
 		$query = $this->db->get();
-		$result = $query->row(); // Chỉ lấy 1 hàng vì SUM luôn ra 1 kết quả
+		$result = $query->row();
 		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
 	}
 	
