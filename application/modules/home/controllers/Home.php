@@ -495,14 +495,19 @@ class Home extends MX_Controller {
 				$code = $invoiceCode.$pushTimeHash;
 				if ($invoiceCode) {
 					$info = $this->session->userdata('userLogin');
+					
+					// In hóa đơn
 					$printBill = $this->home->getPrinter($info->storeId,'BILL');
 					if($printBill) {
-						$this->printBill($printBill[0]->ip,$code,$cart,$total, $shipping, $note);
+						$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
 					}
+					
+					// in tem
 					$printTem = $this->home->getPrinter($info->storeId,'TEM');
 					if($printTem) {
 						$this->printTem($printTem [0]->ip,$code,$cart, $note);
 					}
+
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -518,6 +523,8 @@ class Home extends MX_Controller {
 		}
 	}
 	public function printBill($ip,$code,$cart,$total,$shipping, $note) {
+		$fp = @fsockopen($ip, 9100, $errno, $errstr, 1);
+		if(!$fp) return false;
 		$this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
@@ -571,50 +578,10 @@ class Home extends MX_Controller {
 		$this->posprinter->close();
     }
 
-	// dugf chung máy in bill
-	public function printTem_Img($ip,$res,$cart) {
-        $this->load->library('TemPrinter');
-		$totalAmount = array_sum(array_map(function($item){
-			return $item->amount;
-		}, $cart));
-		$int= 1;
-		foreach ($cart as $key => $item) {
-			for ($i=0; $i < $item->amount; $i++) { 
-				$name = $item->name . ($item->size ? " ({$item->size})" : "");
-				$perItem = $int.'/'.$totalAmount;
-				// in tem cho từng ly
-				$receipt = [];
-				$receipt[] = ['type' => 'center', 'text' => $perItem, 'size' => 24];
-				$receipt[] = ['type' => '2col', 'a' => $res, 'b' => date('Y-m-d H:i:s')];
-				$receipt[] = ['type' => 'line'];
-				$name = $item->name . ($item->size ? " ({$item->size})" : "");
-				$receipt[] = [
-					'type' => '2col', 
-					'a' => $name , 
-					'b' => number_format($item->totalPrice/$item->amount, 0)
-				];
-				if (!empty($item->toppings)) {
-					foreach ($item->toppings as $t) {
-						$receipt[] = [
-							'type' => '2col', 
-							'a' => '+ ' . $t->name.' x'.$t->qty , 
-							'b' => '',
-						];
-					}
-				}
-				
-				try {
-					$this->temprinter->print($receipt);
-				} catch (Exception $e) {
-					echo "Lỗi khi in: ".$e->getMessage();
-				}
-				$int++;
-			}
-		}
-		$this->temprinter->close();
-    }	
 
 	public function printTem($ip,$code,$cart,$note) {
+		$fp = @fsockopen($ip, 9100, $errno, $errstr, 1);
+		if(!$fp) return false;
         $this->load->library('TemPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;

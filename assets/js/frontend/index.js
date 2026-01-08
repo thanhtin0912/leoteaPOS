@@ -188,6 +188,7 @@ function updateItemCart(id, index){
 }
 
 function checkout(){
+    $('.loader-wrapper').addClass('active');
     $('#btnCheckout').prop('disabled', true);
     let delivery = $('input[name="orderType"]:checked').val();
     let note =    $('#note').val()

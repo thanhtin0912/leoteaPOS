@@ -14711,7 +14711,9 @@ ul.sosiyal {
   left: 0; }
   .loader-wrapper img {
     max-height: 130px; }
-
+.loader-wrapper.active {
+      display: flex !important; /* Hiện lên và đè mọi cấu hình ẩn khác */
+  }
 /*=====================
  31. masonory-banner css start
 ==========================*/

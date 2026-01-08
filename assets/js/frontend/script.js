@@ -2690,7 +2690,7 @@ $('.tap-top').on('click', function() {
      ==========================*/
 
   $('.loader-wrapper').fadeOut('slow', function() {
-    $(this).remove();
+    $(this).hide();
   });
 
 
