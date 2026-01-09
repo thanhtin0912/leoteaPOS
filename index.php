@@ -315,6 +315,7 @@ define('DIR_UPLOAD_CATE', '/assets/uploads/cate/');
 define('DIR_UPLOAD_STORES', '/assets/uploads/store/');
 define('DIR_UPLOAD_BANNER', '/assets/uploads/banner/');
 define('DIR_UPLOAD_NEWS', '/assets/uploads/news/');
+define('GLOBAL_URL', 'https://61579.net/assets/uploads/product/');
 //Config delivery
 define('USE_TAIQUAN', 1);
 define('USE_MANGDI', 2);

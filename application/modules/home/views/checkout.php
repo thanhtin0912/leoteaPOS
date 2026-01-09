@@ -23,7 +23,7 @@
                     <?php $total = 0; ?>
                     <?php foreach ($cart as $key => $v): ?>
                     <div class="row product-order-detail py-2">
-                        <div class="col-3"><img src="<?=PATH_URL.DIR_UPLOAD_PRODUCT.$v->image ?>" alt="" class="img-fluid "></div>
+                        <div class="col-3"><img src="<?=GLOBAL_URL.$v->image ?>" alt="" class="img-fluid "></div>
                         <div class="col-4 order_detail">
                             <div>
                                 <h4><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>

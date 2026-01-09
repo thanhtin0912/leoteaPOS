@@ -45,6 +45,7 @@ function quickViewDetailProduct(id) {
     if (isLogin) {
         var products = <?php echo json_encode($products) ?>;
         $.each(products, function(i, p) {
+            let url_global = "<?=GLOBAL_URL;?>";
             if (id == p.id) {
                 let str = ''
                 let price = p['price']
@@ -53,7 +54,7 @@ function quickViewDetailProduct(id) {
                 str += '<div class="media-banner plrb-0 b-g-white1 border-0">'
                 str += '<div class="media-banner-box">'
                 str += '<div class="media">'
-                str += '<img src="' + root + p['image'] + '" class="img-fluid  w-25" alt="product">'
+                str += '<img src="' + url_global + p['image'] + '" class="img-fluid  w-25" alt="product">'
                 str += '<div class="media-body">'
                 str += '<div class="media-contant">'
                 str += '<div>'
@@ -294,7 +295,7 @@ function selectSizeProduct() {
                                 <div class="product-imgbox">
                                     <div class="product-front">
                                         <a href="javascript:void(0)" onclick="quickViewDetailProduct(<?=$v->id?>)">
-                                            <img src="<?=PATH_URL.DIR_UPLOAD_PRODUCT.$v->image?>" class="img-fluid"
+                                            <img src="<?=GLOBAL_URL.$v->image?>" class="img-fluid"
                                                 alt="product">
                                         </a>
                                     </div>
@@ -356,7 +357,7 @@ function selectSizeProduct() {
                                                     <div class="product-front">
                                                         <a href="javascript:void(0)"
                                                             onclick="quickViewDetailProduct(<?=$p->id?>)"> <img
-                                                                src="<?=PATH_URL.$p->image ?>" class="img-fluid  "
+                                                                src="<?=GLOBAL_URL.$p->image ?>" class="img-fluid  "
                                                                 alt="product"> </a>
                                                     </div>
                                                 </div>
@@ -389,7 +390,7 @@ function selectSizeProduct() {
                                                     <div class="product-front">
                                                         <a href="javascript:void(0)"
                                                             onclick="quickViewDetailProduct(<?=$p->id?>)"> <img
-                                                                src="<?=PATH_URL.$p->image ?>" class="img-fluid  "
+                                                                src="<?=GLOBAL_URL.$p->image ?>" class="img-fluid  "
                                                                 alt="product"> </a>
                                                     </div>
                                                 </div>

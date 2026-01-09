@@ -197,7 +197,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 						<div class="form-group">
 							<label class="control-label col-md-2">Số lượng tối đa: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-1">
-								<input value="<?php if(isset($result->limit_order)) { print $result->limit_order; }else{ print '';} ?>" type="text" name="limitAdmincp" id="limitAdmincp" class="form-control"/>
+								<input value="<?php if(isset($result->limit_order)) { print $result->limit_order; }else{ print 99;} ?>" type="text" name="limitAdmincp" id="limitAdmincp" class="form-control"/>
 							</div>
 							<label class="control-label col-md-2">Tối đa số topping: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-1">

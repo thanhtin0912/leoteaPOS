@@ -281,7 +281,7 @@ class Home extends MX_Controller {
 			if ($formatSize && count($formatSize) > 0) { 
 				$req[$key]->price_size = $formatSize;
 			}
-			$req[$key]->image = DIR_UPLOAD_PRODUCT.$item->image;
+			$req[$key]->image = $item->image;
 		}
 		return $req;
 	}

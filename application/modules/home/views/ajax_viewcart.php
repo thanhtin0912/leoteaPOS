@@ -17,7 +17,7 @@
             <li>
                 <div class="media">
                     <a href="javascript:void(0)">
-                        <img alt="megastore1" class="me-3" src="<?=PATH_URL.DIR_UPLOAD_PRODUCT.$v->image ?>">
+                        <img alt="megastore1" class="me-3" src="<?=GLOBAL_URL.$v->image ?>">
                     </a>
                     <div class="media-body">
 
