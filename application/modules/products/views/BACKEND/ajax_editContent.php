@@ -178,7 +178,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 							<?php foreach ($productSize as $key => $p): ?>
 							<label class="control-label col-md-2">Giá bán <?= $p->name?> (+ thêm): <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-1">
-								<input value="<?= $priceSize[$p->name] ?? ''; ?>" type="text" name="priceSizeAdmincp[<?= $p->name?>]" class="form-control"/>
+								<input value="<?= $priceSize[$p->name] ? $priceSize[$p->name] : ''; ?>" type="text" name="priceSizeAdmincp[<?= $p->name?>]" class="form-control"/>
 							</div>
 							<?php endforeach; ?>
 						</div>

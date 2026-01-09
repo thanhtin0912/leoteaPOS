@@ -152,8 +152,8 @@
                                 <i class="fa fa-arrow-right"></i><span class="title">Danh mục</span>
                             </a>
                         </li>
-                        <li class="nav-item  last<?php if ($this->uri->segment(2) == 'productSize') { print 'active open';} ?>">
-                            <a href="<?= PATH_URL_ADMIN . 'productSize' ?>" class="nav-link ">
+                        <li class="nav-item  last<?php if ($this->uri->segment(2) == 'productsize') { print 'active open';} ?>">
+                            <a href="<?= PATH_URL_ADMIN . 'productsize' ?>" class="nav-link ">
                                 <i class="fa fa-arrow-right"></i><span class="title">Size</span>
                             </a>
                         </li>

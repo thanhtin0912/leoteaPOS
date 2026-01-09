@@ -58,7 +58,7 @@ class PosPrinter {
         foreach ($receipt as $row) {
             switch ($row['type']) {
                 case 'center':
-                    $y = $this->drawCenter($im, $y, $row['text'], $row['size'] ?? 18);
+                    $y = $this->drawCenter($im, $y, $row['text'], $row['size'] ? $row['size']:18);
                     break;
                 case 'line':
                     $y = $this->drawLine($im, $y);

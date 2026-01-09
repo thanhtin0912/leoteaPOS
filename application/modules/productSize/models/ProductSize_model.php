@@ -1,6 +1,6 @@
 <?php
-class ProductSize_model extends CI_Model {
-	private $module = 'productSize';
+class Productsize_model extends CI_Model {
+	private $module = 'productsize';
 	private $table = 'categories';
 
 	function getsearchContent($limit,$page){

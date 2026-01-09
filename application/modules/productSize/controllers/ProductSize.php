@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class ProductSize extends MX_Controller {
+class Productsize extends MX_Controller {
 
-	private $module = 'productSize';
+	private $module = 'productsize';
 	private $table = 'categories';
 	function __construct(){
 		parent::__construct();
