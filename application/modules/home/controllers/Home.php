@@ -121,12 +121,19 @@ class Home extends MX_Controller {
 	function checkOutShift(){
 		$shift = $this->home->getShiftofDay($_POST["id"], 0);
 		$salesShift = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
-		$data=array(
+		$lastOrder = $this->home->getLastOrderShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
+ 		$data=array(
 			"to"=> date('Y-m-d H:i:s',time()),
 			"sales"=> $salesShift,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
+		if ($req) {
+			$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
+			if($printTem) {
+				@$this->printTemCheckout($printTem [0]->ip,$shift[0], $lastOrder[0]->orderId);
+			}
+		}
 		$data = array(
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
@@ -149,7 +156,32 @@ class Home extends MX_Controller {
 		return_json($data);
 	}
 
+	public function printTemCheckout($ip,$data, $code="") {
+		
+        $this->load->library('TemPrinter', ['ip' => $ip, 'port' => 9100]);
+		$now = date('Y-m-d H:i:s',time());
+		//code in máy in tem phải đúng cấu trúc
+		$commands = '';
+		$commands .= "SIZE 53 mm,33 mm\n";
+		$commands .= "GAP 2 mm,0 mm\n";
+		$commands .= "CLS\n";
+		//
+		//
+		$commands .= 'TEXT 15,40,"3",0,1,1,"CH:'.$data->storeName."\" \n";
+		$commands .= 'TEXT 15,80,"3",0,1,1,"NV: '.$data->name."\" \n";
+		//
+		$commands .= 'TEXT 15,120,"2",0,1,1,"'.$data->from."\" \n";
+		$commands .= 'TEXT 15,150,"2",0,1,1,"'.$now."\" \n";
+		$commands .= 'TEXT 15,180,"2",0,1,1,"'.$code."\" \n";
+		$commands .= "PRINT 1\n";
+		try {
+			$this->temprinter->print($commands);
+		} catch (Exception $e) {
+			echo "Lỗi khi in: ".$e->getMessage();
+		}
 
+		$this->temprinter->close();
+    }
 
 	public function reportShift()
 	{
@@ -319,10 +351,7 @@ class Home extends MX_Controller {
 		return_json($data);
 		//
 	}
-
 	
-	
-
 	public function login(){
 		if(!empty($_POST)){
 			$user = $this->home->checkLogin($this->input->post('user'));

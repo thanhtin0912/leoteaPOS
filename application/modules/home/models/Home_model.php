@@ -383,5 +383,23 @@ class Home_model extends CI_Model {
 		$result = $query->row();
 		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
 	}
+
+	function getLastOrderShift($from, $to, $user){
+		$this->db->select('orderId');
+		$this->db->where('phone',$user);
+		$this->db->where('delete',0);
+		$this->db->where('created >=', $from);
+		$this->db->where('created <=', $to);
+		$this->db->order_by('id','DESC');
+		$this->db->from(PREFIX.$this->tbl_order);
+		$this->db->limit(1);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	
+	}
 }
 ?>
