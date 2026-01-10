@@ -54,8 +54,7 @@
                         <div class="top-header-left">
                             <ul>
                                 <li>
-                                    <a href="javascript:void(0)"><i class="fa fa-phone"></i>Hotline:
-                                        <?=$info[0]->phone ?></a>
+                                    <a href="javascript:void(0)"><i class="fa fa-phone"></i>Hotline: <?=$info[0]->phone ? $info[0]->phone : '' ?></a>
                                 </li>
                                 <?php if ($this->session->userdata('userLogin')) {?>
                                 <li>
@@ -116,11 +115,6 @@
                                             <a class="dark-menu-item" href="<?= PATH_URL; ?>trang-thai-don-hang">Đơn hàng</a>
                                         </li>
                                         <!--SHOP-END-->
-                                        <!--SHOP-->
-                                        <!-- <li>
-                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>lich-su-don-hang">Lịch sử</a>
-                                        </li> -->
-                                        <!--SHOP-END-->
                                         <!--Shift-->
                                         <?php if ($this->session->userdata('userLogin')) {?>
                                         <li>
@@ -132,6 +126,11 @@
                                         </li>
                                         <?php } ?>
                                         <!--Shift-END-->
+                                        <!--cancel order-->
+                                        <li>
+                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-hoa-don">Hủy</a>
+                                        </li>
+                                        <!--cancel-order-END-->
                                     </ul>
                                 </nav>
                             </div>
@@ -217,7 +216,7 @@
                 <div class="row">
                     <div class="col-xl-6 col-md-8 col-sm-12">
                         <div class="footer-left">
-                            <p>2025 hệ thống trà sữa LEO TEA</p>
+                            <p>2025@copy right by Leotea</p>
                         </div>
                     </div>
                 </div>

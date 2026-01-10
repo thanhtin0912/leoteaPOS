@@ -7,6 +7,7 @@ class Home extends MX_Controller {
 		$this->load->helper('language');
 		$this->lang->load('general');
 		$this->load->model('home/Home_model','home');
+		$this->load->library('Discord');
 		$this->load->library('session');
 		$this->load->helper('cookie');
 		if(!$this->session->userdata('userLogin')) {
@@ -170,6 +171,8 @@ class Home extends MX_Controller {
 		$data=array(
 			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
+			"spent"=> $_POST['spent'],
+			"spentNote"=> $_POST['spentNote'],
 			"completed" => 1,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
@@ -179,15 +182,16 @@ class Home extends MX_Controller {
 			'key' => $this->security->get_csrf_hash(),
 		);
 		if($req) {
-			$this->load->library('Discord');
 			$s = $this->home->getShiftofDay($_POST["id"], 1);
 			if ($s) {
 				$now = date('Y-m-d H:i:s');
-				$diff = number_format($s[0]->actual - $s[0]->sales);
+				$diff = number_format(($s[0]->actual + $_POST['spent'])- $s[0]->sales);
 				$sales = number_format($s[0]->sales);
 				$actual = number_format($s[0]->actual);
 				$gio_vao = date('H:i:s', strtotime($s[0]->from));
 				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
+				$chi = number_format($_POST['spent']);
+				$note = $_POST['spentNote'];
 
 				// Viết sao hiển thị vậy, rất dễ quản lý
                 $tr = "**Báo cáo kết ca - " . $now . "!**\n"
@@ -196,6 +200,7 @@ class Home extends MX_Controller {
                     . "CA: " . $gio_vao . " - " . $gio_ra . "\n"
                     . "-----------------------------\n"
                     . "DT: " . $sales . " - TN: " . $actual . "\n"
+					. "Chi: " . $chi . " - Nội dung: " . $note . "\n"
                     . "CL: " . $diff . "\n"
                     . "-----------------------------";
 			
@@ -208,6 +213,115 @@ class Home extends MX_Controller {
 		}
 		return_json($data);
 	}
+
+	public function cancelOrder()
+	{
+		$data['info'] = $this->home->getInfoSite();
+		$data['cart'] =$this->getListCart();
+		$data['countCart'] = $this->countSessionCart();
+		$this->template->write_view('content', 'cancel_order', $data);
+		$this->template->render();
+		//
+	}
+
+	public function viewCancelOrder($link)
+	{
+		$parts = explode('-', $link);
+		// Mảng 1: Lấy phần trước dấu "-", bỏ 4 ký tự cuối và viết hoa
+		$orderCode = strtoupper(substr($parts[0], 0, -4)); 
+		// Mảng 2: Lấy phần sau dấu "-"
+		$id = $parts[1];
+		$data['res'] = false;
+		$order = $this->home->getOrder($id, $orderCode);
+		if($order){
+			$data['res'] = $order;
+		}
+		$this->load->view('report-verify-order', $data);
+		//
+	}
+
+	public function verifyCancelOrder() {
+		if ($_POST["id"]) {
+			$this->db->where('id',$_POST["id"]);
+			$dataUpdate = array(
+				'status' => 0,
+				"updated"=> date('Y-m-d H:i:s',time())
+			);
+			if($this->db->update('orders', $dataUpdate)){
+				$data = array(
+					'status'=>true,
+					'key' => $this->security->get_csrf_hash(),
+				);
+			} else {
+				$data = array(
+					'status'=>false,
+					'key' => $this->security->get_csrf_hash(),
+				);
+			}
+		} else {
+			$data = array(
+				'status'=>false,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+
+		return_json($data);
+	}
+	public function updateCancelOrder()
+	{
+		if ($this->input->post('orderCode')) {
+			$lastNo = strtoupper(substr($this->input->post('orderCode'), 0, -4));
+			$checkOrder = $this->home->getLastOrderStore($lastNo);
+			if($checkOrder) {
+				$this->db->where('id',$checkOrder[0]->id);
+				$note = $this->input->post('note');
+				$dataUpdate = array(
+					'note' => $note,
+					"updated"=> date('Y-m-d H:i:s',time())
+				);
+				if($this->db->update('orders', $dataUpdate)){
+					$total = $checkOrder[0]->grandtotal;
+					$nv = $checkOrder[0]->fullname;
+					$tk = $checkOrder[0]->phone;
+					$created = $checkOrder[0]->created;
+					$now = date('Y-m-d H:i:s');
+					$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $this->input->post('orderCode')."-".$checkOrder[0]->id;
+					// Viết sao hiển thị vậy, rất dễ quản lý
+					$tr = "**Yêu cầu hủy hóa đơn - " . $lastNo . " - " . $now . "!**\n"
+					. "+++++++++++++++++++++++++++++++++\n"
+					. "NV: " . $nv . " - TK: " . $tk . "\n"
+					. "Lý do: " . $note . "\n"
+					. "Tổng: " . $total . "\n"
+					. "Ngày in: " . $created . "\n"
+					. "+++++++++++++++++++++++++++++++++\n"
+					. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
+					. "+++++++++++++++++++++++++++++++++";
+					$this->discord->sendsms($tr);
+				}
+				$data = array(
+					'status'=>true,
+					'key' => $this->security->get_csrf_hash(),
+				);
+			} else {
+				$data = array(
+					'status'=>false,
+					'mes' => 'Order không tồn tại trong hệ thống. Vui lòng kiểm tra.',
+ 					'key' => $this->security->get_csrf_hash(),
+				);
+			}
+		} else {
+			$data = array(
+				'status'=>false,
+				'mes' => 'Hệ thống không thể xử lý thông tin. Vui lòng kiểm tra.',
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+		return_json($data);
+		//
+	}
+
+	
+	
 
 	public function login(){
 		if(!empty($_POST)){
@@ -514,21 +628,21 @@ class Home extends MX_Controller {
 					
 					// In hóa đơn
 					try {
-					$printBill = $this->home->getPrinter($info->storeId,'BILL');
-					if($printBill) {
-					@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
-					}
+						$printBill = $this->home->getPrinter($info->storeId,'BILL');
+						if($printBill) {
+							@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
+						}
 					} catch (Exception $e) {
-					// Ghi log lỗi in nhưng không làm dừng chương trình
+						// Ghi log lỗi in nhưng không làm dừng chương trình
 						log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
 					}
 										
 					// in tem
 					try {
-					$printTem = $this->home->getPrinter($info->storeId,'TEM');
-					if($printTem) {
-					@$this->printTem($printTem [0]->ip,$code,$cart, $note);
-					}
+						$printTem = $this->home->getPrinter($info->storeId,'TEM');
+						if($printTem) {
+							@$this->printTem($printTem [0]->ip,$code,$cart, $note);
+						}
 					} catch (Exception $e) {
 						// Ghi log lỗi in nhưng không làm dừng chương trình
 						log_message('error', 'Lỗi in Tem: ' . $e->getMessage());

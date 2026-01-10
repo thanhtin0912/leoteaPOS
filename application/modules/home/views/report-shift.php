@@ -36,6 +36,9 @@
     .coupan-block input {
         width: 100px !important; 
     }
+    .coupan-block h5 {
+        color: #777 !important;
+    }
 </style>
 <script>
 
@@ -50,7 +53,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         block.className = 'coupan-block';
         block.innerHTML = `
             <h5>${val.toLocaleString('vi-VN')}</h5>
-            <input class="form-control qty-input" type="number" value="0" data-unit="${val}" style="width: 200px; display: inline-block;">
+            <input class="form-control qty-input" type="number" value="0" data-unit="${val}" style="width: 100px; display: inline-block;">
             <h5><span class="row-total">0</span></h5>
         `;
         container.appendChild(block);
@@ -107,7 +110,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     text: 'Xác nhận nộp',
                     btnClass: 'btn-success',
                     action: function () {
-                        
+                        let spent = $('#spent').val();
+                        let spentNote = $('#spentNote').val();
                         var url = root + 'updateCheckoutShift';
                         $.ajax({
                             url: url,
@@ -116,7 +120,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 id: id,
                                 money_data: dataResult,
                                 actual: cashActual,
-                                sales: cashSales,
+                                spent: spent,
+                                spentNote: spentNote,
                                 csrf_token: $('#csrf_token').val()
                             },
                             success: function(res) {
@@ -185,9 +190,17 @@ function calculateGrandTotal() {
                                 <div class="total">
                                     Giờ kết ca:<span><?= $res[0]->to; ?></span>
                                 </div>
-                                <div class="total"></div>
+                                <div class="total pb-0"></div>
                             </li>
                         </ul>
+                        <div class="coupan-block">
+                            <h5>Chi phí khác</h5>
+                            <input class="form-control" value=0 style="width: 150px !important" id="spent">
+                        </div>
+                        <div class="coupan-block">
+                            <h5>Nội dung</h5>
+                            <input class="form-control" style="width: 150px !important" id="spentNote">
+                        </div>
                         <div id="coupan-container">
                             
                         </div>
@@ -223,7 +236,7 @@ function calculateGrandTotal() {
                 <div class="row">
                     <div class="col-xl-6 col-md-8 col-sm-12">
                         <div class="footer-left">
-                            <p>2025 hệ thống trà sữa LEO TEA</p>
+                            <p>2025@copy right by Leotea</p>
                         </div>
                     </div>
                 </div>

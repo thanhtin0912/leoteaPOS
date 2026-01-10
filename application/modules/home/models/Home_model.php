@@ -190,6 +190,7 @@ class Home_model extends CI_Model {
 	function addOrder($cart, $total){
 		//Kiểm tra đã tồn tại chưa?
 		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
 		$num = 'A01';
 		$str = (string)($info->storeCode).(string)(date('ymd',time()));
 		$findStr = $this->getLastOrderStore($str);
@@ -229,6 +230,7 @@ class Home_model extends CI_Model {
 
 	function getListfulfillmentOrderStore(){
 		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
 		$this->db->select('*');
 		$this->db->where('phone',$info->phone);
 		$this->db->where('delete',0);
@@ -260,6 +262,21 @@ class Home_model extends CI_Model {
 		}
 	}
 
+	function getOrder($id, $code) {
+		$this->db->select('*');
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->where('id',$id);
+		$this->db->where('orderId',$code);
+		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+
 	function updateFulfillmentOrder($id){ 
 		$this->db->where('id',$id);
 		$data=array(
@@ -273,6 +290,7 @@ class Home_model extends CI_Model {
 	function getListOrderToday(){
 		$date = date("Y-m-d H:i:s",time());
 		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
 		$this->db->select('*');
 		$this->db->where('phone',$info->phone);
 		$this->db->where('status',1);
@@ -291,6 +309,7 @@ class Home_model extends CI_Model {
 	}
 	function checkinShiftDay() {
 		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
 		$data=array(
 			"from" => date('Y-m-d H:i:s',time()),
 			"store"=> $info->storeId,
@@ -313,6 +332,7 @@ class Home_model extends CI_Model {
 	function checkExsitShiftofDay() {
 		$today = date('Y-m-d');
 		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
 		$this->db->select('*');
 		$this->db->where('store',$info->storeId);
 		$this->db->where('user',$info->phone);
