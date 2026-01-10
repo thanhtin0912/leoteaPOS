@@ -170,8 +170,8 @@ class Home extends MX_Controller {
 		$commands .= 'TEXT 15,40,"3",0,1,1,"CH:'.$data->storeName."\" \n";
 		$commands .= 'TEXT 15,80,"3",0,1,1,"NV: '.$data->name."\" \n";
 		//
-		$commands .= 'TEXT 15,120,"2",0,1,1,"'.$data->from."\" \n";
-		$commands .= 'TEXT 15,150,"2",0,1,1,"'.$now."\" \n";
+		$commands .= 'TEXT 15,120,"2",0,1,1,"Vao: '.$data->from."\" \n";
+		$commands .= 'TEXT 15,150,"2",0,1,1,"Ra:  '.$now."\" \n";
 		$commands .= 'TEXT 15,180,"2",0,1,1,"'.$code."\" \n";
 		$commands .= "PRINT 1\n";
 		try {
