@@ -788,7 +788,7 @@ class Home extends MX_Controller {
 					}
 					
 				}
-				$commands .=  'TEXT 15,'.(90+$heightLine).',"2",0,1,1,"NV: '.$info->staffName."\" \n";
+				$commands .=  'TEXT 15,'.(115+$heightLine).',"2",0,1,1,"NV: '.$info->staffName."\" \n";
 				$commands .= "PRINT 1\n";
 				try {
 					$this->temprinter->print($commands);
