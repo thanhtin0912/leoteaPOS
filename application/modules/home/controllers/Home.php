@@ -303,7 +303,7 @@ class Home extends MX_Controller {
 	{
 		if ($this->input->post('orderCode')) {
 			$lastNo = strtoupper(substr($this->input->post('orderCode'), 0, -4));
-			$checkOrder = $this->home->getLastOrderStore($lastNo);
+			$checkOrder = $this->home->getOrderCode($lastNo);
 			if($checkOrder) {
 				$this->db->where('id',$checkOrder[0]->id);
 				$note = $this->input->post('note');
