@@ -704,6 +704,7 @@ class Home extends MX_Controller {
 		$receipt[] = ['type' => '2col', 'a' => 'CH: '.$info->storeName, 'b' => $shipping];
 		$receipt[] = ['type' => '2col', 'a' => $code, 'b' => date('m-d H:i')];
 		$receipt[] = ['type' => '2col', 'a' => 'Thu ngân: '.$info->phone, 'b' => $info->address ];
+		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$info->fullname, 'b' => ''];
 		$receipt[] = ['type' => '2col', 'a' => 'Ghi chú: '.$note, 'b' => ''];
 		$receipt[] = ['type' => 'line'];
 		foreach ($cart as $item) {
@@ -758,6 +759,9 @@ class Home extends MX_Controller {
 				$perItem = $int.'/'.$totalAmount;
 				$price = number_format($item->totalPrice/$item->amount);
 				$noteLine = 0;
+				$heightLine =0;
+				$info = $this->session->userdata('userLogin');
+
 				//code in máy in tem phải đúng cấu trúc
 				$commands = '';
 				$commands .= "SIZE 53 mm,33 mm\n";
@@ -776,12 +780,15 @@ class Home extends MX_Controller {
 					$commands .= 'TEXT 12,115,"2",0,1,1,"'.$item->note."\" \n";
 					$noteLine = 25;
 				}
+				
 				if (!empty($item->toppings)) {
 					foreach ($item->toppings as $key => $v) {
-						$commands .=  'TEXT 15,'.(90+$noteLine+(25*($key+1))).',"2",0,1,1,"'.vn_to_ascii($v->name).' x'.$v->qty ."\" \n";
+						$heightLine = $noteLine+(25*($key+1));
+						$commands .=  'TEXT 15,'.(90+$heightLine).',"2",0,1,1,"'.vn_to_ascii($v->name).' x'.$v->qty ."\" \n";
 					}
 					
 				}
+				$commands .=  'TEXT 15,'.(90+$heightLine).',"2",0,1,1,"NV: '.$info->fullname."\" \n";
 				$commands .= "PRINT 1\n";
 				try {
 					$this->temprinter->print($commands);
