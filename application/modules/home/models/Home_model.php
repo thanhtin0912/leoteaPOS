@@ -262,6 +262,21 @@ class Home_model extends CI_Model {
 		}
 	}
 
+	function getOrderCode($key){
+		$this->db->select('*');
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->where('orderId',$key);
+		$this->db->limit(1);
+		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+
 	function getOrder($id, $code) {
 		$this->db->select('*');
 		$this->db->where('status',1);
