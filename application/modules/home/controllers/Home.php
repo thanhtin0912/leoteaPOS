@@ -761,7 +761,7 @@ class Home extends MX_Controller {
 				$noteLine = 0;
 				$heightLine =0;
 				$info = $this->session->userdata('userLogin');
-
+				$noteItem = "+ ({$item->note})";
 				//code in máy in tem phải đúng cấu trúc
 				$commands = '';
 				$commands .= "SIZE 53 mm,33 mm\n";
@@ -777,7 +777,7 @@ class Home extends MX_Controller {
 				//
 				$commands .= 'TEXT 15,90,"2",0,1,1,"'.vn_to_ascii($name)."\" \n";
 				if (($item->note != NULL)) {
-					$commands .= 'TEXT 35,115,"2",0,1,1,"+ '.$item->note."\" \n";
+					$commands .= 'TEXT 35,115,"2",0,1,1,"'.$noteItem."\" \n";
 					$noteLine = 25;
 				}
 				
