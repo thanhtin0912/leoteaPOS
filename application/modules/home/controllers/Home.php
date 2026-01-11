@@ -704,7 +704,7 @@ class Home extends MX_Controller {
 		$receipt[] = ['type' => '2col', 'a' => 'CH: '.$info->storeName, 'b' => $shipping];
 		$receipt[] = ['type' => '2col', 'a' => $code, 'b' => date('m-d H:i')];
 		$receipt[] = ['type' => '2col', 'a' => 'Thu ngân: '.$info->phone, 'b' => $info->address ];
-		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$info->fullname, 'b' => ''];
+		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$info->staffName, 'b' => ''];
 		$receipt[] = ['type' => '2col', 'a' => 'Ghi chú: '.$note, 'b' => ''];
 		$receipt[] = ['type' => 'line'];
 		foreach ($cart as $item) {
@@ -788,7 +788,7 @@ class Home extends MX_Controller {
 					}
 					
 				}
-				$commands .=  'TEXT 15,'.(90+$heightLine).',"2",0,1,1,"NV: '.$info->fullname."\" \n";
+				$commands .=  'TEXT 15,'.(90+$heightLine).',"2",0,1,1,"NV: '.$info->staffName."\" \n";
 				$commands .= "PRINT 1\n";
 				try {
 					$this->temprinter->print($commands);
