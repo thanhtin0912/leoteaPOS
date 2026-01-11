@@ -777,7 +777,7 @@ class Home extends MX_Controller {
 				//
 				$commands .= 'TEXT 15,90,"2",0,1,1,"'.vn_to_ascii($name)."\" \n";
 				if (($item->note != NULL)) {
-					$commands .= 'TEXT 12,115,"2",0,1,1,"'.$item->note."\" \n";
+					$commands .= 'TEXT 12,145,"2",0,1,1,"+ '.$item->note."\" \n";
 					$noteLine = 25;
 				}
 				
