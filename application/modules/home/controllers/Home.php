@@ -328,7 +328,7 @@ class Home extends MX_Controller {
 					. "+++++++++++++++++++++++++++++++++\n"
 					. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
 					. "+++++++++++++++++++++++++++++++++";
-					$this->discord->sendsms($tr);
+					$this->discord->sendsmsCancel($tr);
 				}
 				$data = array(
 					'status'=>true,

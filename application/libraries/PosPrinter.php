@@ -67,7 +67,7 @@ class PosPrinter {
                     $y = $this->drawTwoCols($im, $y, $row['a'], $row['b']);
                     break;
                 case '3col':
-                    $y = $this->drawThreeCols($im, $y, $row['a'], $row['b'], $row['c'], $row['indent'] ?? 0, $row['bold'] ?? false);
+                    $y = $this->drawThreeCols($im, $y, $row['a'], $row['b'], $row['c'], isset($row['indent']) ? $row['indent'] : 0, isset($row['bold']) ? $row['bold'] : false);
                     break;
             }
         }
