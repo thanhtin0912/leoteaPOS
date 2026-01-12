@@ -367,8 +367,12 @@ class Home extends MX_Controller {
 					// 2. Tạo mảng dữ liệu cookie
 					$cookie = array(
 						'name'   => 'remember_token',
-						'value'  => $token,                   // Biến token bạn đã tạo
-						'expire' => 31536000,                // 1 năm (tính bằng giây)
+						'value'  => $token,
+						'expire' => 31536000,
+						'path'   => '/',
+						'domain' => '',      // Quan trọng: Để trống khi dùng localhost
+						'secure' => FALSE,   // Vì bạn dùng localhost thường (http), phải để FALSE
+						'httponly' => TRUE   // Ngăn JavaScript can thiệp, giúp bảo mật hơn
 					);
 					// 3. Gọi hàm set_cookie
 					set_cookie($cookie);					
