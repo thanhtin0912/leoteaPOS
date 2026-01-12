@@ -797,23 +797,22 @@ function utf8_to_tcvn3($str) {
 
 function short_encode($data, $key = 'abcd1234efgh5678ijkl9012mnop3456') {
     $out = '';
-    // Bước 1: Phép tính XOR
+    // Bước 1: Phép tính XOR (giữ nguyên)
     for($i=0; $i<strlen($data); ) {
         for($j=0; $j<strlen($key) && $i<strlen($data); $j++, $i++) {
             $out .= $data[$i] ^ $key[$j];
         }
     }
-    // Bước 2: Chuyển sang Base64 an toàn cho URL
-    return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($out));
+    // Bước 2: Chuyển sang Hex (luôn là chữ thường và số)
+    return bin2hex($out);
 }
 
 function short_decode($encoded_data, $key = 'abcd1234efgh5678ijkl9012mnop3456') {
-    // Bước 1: Khôi phục Base64 (thêm lại các ký tự đã thay thế)
-    $data = str_replace(['-', '_'], ['+', '/'], $encoded_data);
-    $data = base64_decode($data);
+    // Bước 1: Chuyển từ Hex ngược lại thành binary
+    $data = hex2bin($encoded_data);
     
     $out = '';
-    // Bước 2: Phép tính XOR ngược lại (XOR 2 lần sẽ ra giá trị gốc)
+    // Bước 2: Phép tính XOR ngược lại
     for($i=0; $i<strlen($data); ) {
         for($j=0; $j<strlen($key) && $i<strlen($data); $j++, $i++) {
             $out .= $data[$i] ^ $key[$j];

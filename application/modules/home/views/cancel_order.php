@@ -16,7 +16,7 @@ function submit() {
         console.log(res);
         $('#csrf_token').val(res.key);
         if (res.status) {
-            notify('Yêu cầu hủy hóa đơn đã gửi thành công.', 'primary', true);
+            notify('Yêu cầu xử lý hóa đơn đã gửi thành công.', 'primary', true);
             // Vô hiệu hóa nút
             btn.disabled = true;
         } else {

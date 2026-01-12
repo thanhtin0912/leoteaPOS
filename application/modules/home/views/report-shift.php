@@ -100,6 +100,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
         } else if ( cashActual > cashSales ) {
             str = "Thừa";
         }
+        const btn = document.getElementById('save-data');
+        btn.style.display = 'none';
         $.confirm({
             title: 'Báo cáo kết ca!',
             content: `Tổng số tiền mặt bạn đã đếm là: <b>${cashActual.toLocaleString('vi-VN')} VNĐ</b> <b>(${str})</b>.<br>Bạn có chắc chắn muốn nộp báo cáo không?`,
@@ -128,11 +130,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 $('#csrf_token').val(res.key);
                                 if(res.status) {
                                     notify('Bạn đã nộp doanh thu thành công.', 'primary', true);
-                                    const btn = document.getElementById('save-data');
-                                    // Vô hiệu hóa nút
-                                    btn.disabled = true;
+
                                 } else {
                                     notify('Hệ thống không thể ghi nhận thông tin doanh thu của bạn.', 'danger', true); 
+                                    btn.style.display = 'inline-block';
                                 }
                             }
                         });
@@ -142,6 +143,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     text: 'Kiểm tra lại',
                     action: function () {
                         // Không làm gì cả, đóng popup
+                        btn.style.display = 'inline-block';
                     }
                 }
             }
