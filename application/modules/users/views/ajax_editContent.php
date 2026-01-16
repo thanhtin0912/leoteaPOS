@@ -125,22 +125,20 @@ function showResponse(responseText, statusText, xhr, $form) {
 								</select>
 							</div>
 						</div>
-						<!-- <div class="form-group">
-							<label class="control-label col-md-2">Chỉ đăng nhập Kiểm tra:</label>
-							<div class="col-md-3">
-								<label class="radio-inline"><input type="radio" name="isCheckAdmincp" value="0" <?= isset($result->isCheck) ? $result->isCheck == 0 ? 'checked' : '' : 'checked' ?> > Không</label>
-								<label class="radio-inline"><input type="radio" name="isCheckAdmincp" value="1" <?= isset($result->isCheck) ? $result->isCheck == 1 ? 'checked' : '' : '' ?> > Có</label>
-							</div>
-							<?php if ($id) { ?>
-							<label class="control-label col-md-2">Đăng xuất thiết bị:</label>
-							<div class="col-md-3">
-								<label class="radio-inline"><input type="radio" name="logoutAdmincp" value="0" checked> Không</label>
-								<label class="radio-inline"><input type="radio" name="logoutAdmincp" value="1"> Có</label>
-							</div>
-							<?php } ?>
-						</div> -->
 						<div class="form-group">
-							<label class="control-label col-md-2">Số điện thoại: <span class="required" aria-required="true">*</span></label>
+							<label class="control-label col-md-2">Được in BILL:</label>
+							<div class="col-md-4">
+								<label class="radio-inline"><input type="radio" name="billAdmincp" value="0" <?= isset($result->bill) ? $result->bill == 0 ? 'checked' : '' : 'checked' ?> > Không</label>
+								<label class="radio-inline"><input type="radio" name="billAdmincp" value="1" <?= isset($result->bill) ? $result->bill == 1 ? 'checked' : '' : '' ?> > Có</label>
+							</div>
+							<label class="control-label col-md-2">Được in TEM:</label>
+							<div class="col-md-4">
+								<label class="radio-inline"><input type="radio" name="temAdmincp" value="0" <?= isset($result->tem) ? $result->tem == 0 ? 'checked' : '' : 'checked' ?> > Không</label>
+								<label class="radio-inline"><input type="radio" name="temAdmincp" value="1" <?= isset($result->tem) ? $result->tem == 1 ? 'checked' : '' : '' ?> > Có</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-md-2">TK đăng nhập: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->phone)) { print $result->phone; }else{ print '';} ?>" type="text" name="phoneAdmincp" id="phoneAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group">
@@ -155,7 +153,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 							<label class="control-label col-md-2">Giờ vào ca: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-4">
 								<div class="input-group">
-									<input type="text" class="form-control timepicker timepicker-24" value="<?php if(isset($result->in)) { print $result->in; }else{ print '';} ?>" name="checkInAdmincp" id="checkInAdmincp">
+									<input type="text" class="form-control timepicker timepicker-24" value="<?php if(isset($result->in)) { print $result->in; }else{ print '6:00';} ?>" name="checkInAdmincp" id="checkInAdmincp">
 									<span class="input-group-btn">
 										<button class="btn default" type="button">
 											<i class="fa fa-clock-o"></i>
@@ -166,7 +164,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 							<label class="control-label col-md-2">Giờ ra ca: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-4">
 								<div class="input-group">
-									<input type="text" class="form-control timepicker timepicker-24" value="<?php if(isset($result->out)) { print $result->out; }else{ print '';} ?>" name="checkOutAdmincp" id="checkOutAdmincp">
+									<input type="text" class="form-control timepicker timepicker-24" value="<?php if(isset($result->out)) { print $result->out; }else{ print '22:00';} ?>" name="checkOutAdmincp" id="checkOutAdmincp">
 									<span class="input-group-btn">
 										<button class="btn default" type="button">
 											<i class="fa fa-clock-o"></i>
@@ -175,14 +173,14 @@ function showResponse(responseText, statusText, xhr, $form) {
 								</div>
 							</div>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<label class="control-label col-md-2">Email: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->email)) { print $result->email; }else{ print '';} ?>" type="text" name="emailAdmincp" id="emailAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Địa chỉ: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->address)) { print $result->address; }else{ print '';} ?>" type="text" name="addressAdmincp" id="addressAdmincp" class="form-control"/></div>
-						</div>
+						</div> -->
 
 					</div>
 					<div class="form-actions">

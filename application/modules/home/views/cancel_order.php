@@ -6,10 +6,12 @@ function submit() {
         notify('Vui lòng nhập thông tin.', 'danger', true);
         return false;
     }
+    let type = $('input[name="typeProcess"]:checked').val();
     const btn = document.getElementById('btnSubmit');
     var url = root + 'updateCancelOrder';
     $.post(url, {
         orderCode: orderCode,
+        type: type,
         note: note,
         csrf_token: $('#csrf_token').val()
     }, function(res) {
@@ -46,15 +48,34 @@ function submit() {
             <div class="col-12">
                 <div class="order-payment">
                     <div class="title6">
-                        <h4>Nhập mã hóa đơn hủy</h4>
+                        <h4>Nhập mã hóa đơn xử lý</h4>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 offset-lg-3">
                 <div class="row order-success-sec">
-
+                    <form class="size-new py-3">
+                        <div class="card-product-option-item custom-radio mb-0">
+                            <input type="radio" value="huy" checked name="typeProcess" id="type1"
+                                class="size-radio-input" data-size="0">
+                            <label for="type1" class="size-radio-label p-1">
+                                <div class="size-radio-content">
+                                    <p class="size-name">Hủy</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="card-product-option-item custom-radio mb-0">
+                            <input type="radio" value="in" name="typeProcess" id="type2"
+                                class="size-radio-input" data-size="0">
+                            <label for="type2" class="size-radio-label p-1">
+                                <div class="size-radio-content">
+                                    <p class="size-name">In</p>
+                                </div>
+                            </label>
+                        </div>
+                    </form>
                     <div class="input-block mb-2">
-                        <h4>Lý do hủy:</h4>
+                        <h4>Lý do:</h4>
                         <textarea rows="2" id="note" class="form-control"></textarea>
                     </div>
                     <div class="input-group mb-5">

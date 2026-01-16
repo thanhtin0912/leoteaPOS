@@ -10,19 +10,18 @@ class Home extends MX_Controller {
 		$this->load->library('Discord');
 		$this->load->library('session');
 		$this->load->helper('cookie');
-		if(!$this->session->userdata('userLogin')) {
-			$token = get_cookie('remember_token');
-			if ($token) {
-				$user = $this->home->checkCookie($token);
-				if (!empty($user)) {
-					// Tái tạo session
-					$this->session->set_userdata('userLogin', $user[0]);
-				} else {
-					delete_cookie('remember_token');
-				}
+		$token = get_cookie('remember_token');
+		$user = $this->home->checkCookie($token);
+		if (!empty($user)) {
+			if(!$this->session->userdata('userLogin')) {
+			// Tái tạo session
+				$this->session->set_userdata('userLogin', $user[0]);
 			}
+		} else {
+			$this->session->unset_userdata('userLogin');
+			$this->session->unset_userdata('cart_products');
+			delete_cookie('remember_token');
 		}
-
 	}
 	
 	/*------------------------------------ API ------------------------------------*/
@@ -129,10 +128,10 @@ class Home extends MX_Controller {
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
 		if ($req) {
-			$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
-			if($printTem) {
-				@$this->printTemCheckout($printTem [0]->ip,$shift[0], $lastOrder[0]->orderId);
-			}
+		$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
+		if($printTem) {
+		@$this->printTemCheckout($printTem [0]->ip,$shift[0], $lastOrder[0]->orderId);
+		}
 		}
 		$data = array(
 			'status'=>false,
@@ -304,36 +303,63 @@ class Home extends MX_Controller {
 		if ($this->input->post('orderCode')) {
 			$lastNo = strtoupper(substr($this->input->post('orderCode'), 0, -4));
 			$checkOrder = $this->home->getOrderCode($lastNo);
+			$type = $this->input->post('type');
 			if($checkOrder) {
-				$this->db->where('id',$checkOrder[0]->id);
-				$note = $this->input->post('note');
-				$dataUpdate = array(
-					'note' => $note,
-					"updated"=> date('Y-m-d H:i:s',time())
-				);
-				if($this->db->update('orders', $dataUpdate)){
-					$total = $checkOrder[0]->grandtotal;
-					$nv = $checkOrder[0]->fullname;
-					$tk = $checkOrder[0]->phone;
-					$created = $checkOrder[0]->created;
-					$now = date('Y-m-d H:i:s');
-					$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $this->input->post('orderCode')."-".$checkOrder[0]->id;
-					// Viết sao hiển thị vậy, rất dễ quản lý
-					$tr = "**Yêu cầu hủy hóa đơn - " . $lastNo . " - " . $now . "!**\n"
-					. "+++++++++++++++++++++++++++++++++\n"
-					. "NV: " . $nv . " - TK: " . $tk . "\n"
-					. "Lý do: " . $note . "\n"
-					. "Tổng: " . $total . "\n"
-					. "Ngày in: " . $created . "\n"
-					. "+++++++++++++++++++++++++++++++++\n"
-					. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
-					. "+++++++++++++++++++++++++++++++++";
-					$this->discord->sendsmsCancel($tr);
+				if ($type === 'in') {
+					$res = $checkOrder[0];
+					$pushTimeHash = $this->generateRandomCode(4);
+					$code = $res->orderId.$pushTimeHash;
+					$info = $this->session->userdata('userLogin');
+					try {
+						$printBill = $this->home->getPrinter($info->storeId,'BILL');
+						if($printBill) {
+							@$this->printBill($printBill[0]->ip, $code, $res);
+						}
+					} catch (Exception $e) {
+						// Ghi log lỗi in nhưng không làm dừng chương trình
+						log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
+						$data = array(
+							'status'=>false,
+							'key' => $this->security->get_csrf_hash(),
+						);
+					}
+					$data = array(
+						'status'=>true,
+						'key' => $this->security->get_csrf_hash(),
+					);
 				}
-				$data = array(
-					'status'=>true,
-					'key' => $this->security->get_csrf_hash(),
-				);
+
+				if ($type === 'huy') {
+					$this->db->where('id',$checkOrder[0]->id);
+					$note = $this->input->post('note');
+					$dataUpdate = array(
+						'note' => $note,
+						"updated"=> date('Y-m-d H:i:s',time())
+					);
+					if($this->db->update('orders', $dataUpdate)){
+						$total = $checkOrder[0]->grandtotal;
+						$nv = $checkOrder[0]->fullname;
+						$tk = $checkOrder[0]->phone;
+						$created = $checkOrder[0]->created;
+						$now = date('Y-m-d H:i:s');
+						$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $this->input->post('orderCode')."-".$checkOrder[0]->id;
+						// Viết sao hiển thị vậy, rất dễ quản lý
+						$tr = "**Yêu cầu hủy hóa đơn - " . $lastNo . " - " . $now . "!**\n"
+						. "+++++++++++++++++++++++++++++++++\n"
+						. "NV: " . $nv . " - TK: " . $tk . "\n"
+						. "Lý do: " . $note . "\n"
+						. "Tổng: " . $total . "\n"
+						. "Ngày in: " . $created . "\n"
+						. "+++++++++++++++++++++++++++++++++\n"
+						. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
+						. "+++++++++++++++++++++++++++++++++";
+						$this->discord->sendsmsCancel($tr);
+					}
+					$data = array(
+						'status'=>true,
+						'key' => $this->security->get_csrf_hash(),
+					);
+				}
 			} else {
 				$data = array(
 					'status'=>false,
@@ -358,7 +384,7 @@ class Home extends MX_Controller {
 			if($user && md5($this->input->post('pass')) == $user[0]->password){
 				$this->session->set_userdata('userLogin', $user[0]);
 				// Tạo một token ngẫu nhiên và bảo mật
-                $token = bin2hex(random_bytes(32));
+                $token = md5(uniqid(mt_rand(), true));
 				$dataToken = array(
 					'session' => $token
 				);
@@ -375,7 +401,7 @@ class Home extends MX_Controller {
 						'httponly' => TRUE   // Ngăn JavaScript can thiệp, giúp bảo mật hơn
 					);
 					// 3. Gọi hàm set_cookie
-					set_cookie($cookie);					
+					$this->input->set_cookie($cookie);				
 				}
 
 				$data = array(
@@ -652,35 +678,37 @@ class Home extends MX_Controller {
 				}, 0);
 				$shipping = $_POST["delivery"];
 				$note = $_POST["note"];
-				$invoiceCode = $this->home->addOrder($cart, $total);
+				$res = $this->home->addOrder($cart, $total);
 				// sử lý in dóa đơn
-				$pushTimeHash = $this->generateRandomCode(4);
-				$code = $invoiceCode.$pushTimeHash;
-				if ($invoiceCode) {
+				if ($res) {
+					$pushTimeHash = $this->generateRandomCode(4);
+					$code = $res->orderId.$pushTimeHash;
 					$info = $this->session->userdata('userLogin');
-					
 					// In hóa đơn
-					try {
-						$printBill = $this->home->getPrinter($info->storeId,'BILL');
-						if($printBill) {
-							@$this->printBill($printBill[0]->ip, $code, $cart, $total, $shipping, $note);
+					if(isset($info->bill) && $info->bill > 0){
+						try {
+							$printBill = $this->home->getPrinter($info->storeId,'BILL');
+							if($printBill) {
+								@$this->printBill($printBill[0]->ip, $code, $res);
+							}
+						} catch (Exception $e) {
+							// Ghi log lỗi in nhưng không làm dừng chương trình
+							log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
 						}
-					} catch (Exception $e) {
-						// Ghi log lỗi in nhưng không làm dừng chương trình
-						log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
+												
 					}
-										
-					// in tem
-					try {
-						$printTem = $this->home->getPrinter($info->storeId,'TEM');
-						if($printTem) {
-							@$this->printTem($printTem [0]->ip,$code,$cart, $note);
+					if(isset($info->tem) && $info->tem > 0){
+						// in tem
+						try {
+							$printTem = $this->home->getPrinter($info->storeId,'TEM');
+							if($printTem) {
+								@$this->printTem($printTem[0]->ip,$code, $res);
+							}
+						} catch (Exception $e) {
+							// Ghi log lỗi in nhưng không làm dừng chương trình
+							log_message('error', 'Lỗi in Tem: ' . $e->getMessage());
 						}
-					} catch (Exception $e) {
-						// Ghi log lỗi in nhưng không làm dừng chương trình
-						log_message('error', 'Lỗi in Tem: ' . $e->getMessage());
 					}
-	
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
@@ -695,8 +723,13 @@ class Home extends MX_Controller {
 			}
 		}
 	}
-	public function printBill($ip,$code,$cart,$total,$shipping, $note) {
-		$this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
+	public function printBill($ip,$code,$res) {
+		$cart = unserialize($res->detailcart);
+		$total = $res->grandtotal;
+		$shipping = $res->shipping;
+		$note = $res->message;
+		// $this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
+		
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
 		}, $cart));
@@ -751,7 +784,9 @@ class Home extends MX_Controller {
     }
 
 
-	public function printTem($ip,$code,$cart,$note) {
+	public function printTem($ip,$code,$res) {
+		$cart = unserialize($res->detailcart);
+		$note = $res->message;
         $this->load->library('TemPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;

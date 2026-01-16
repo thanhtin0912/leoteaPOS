@@ -128,7 +128,7 @@
                                         <!--Shift-END-->
                                         <!--cancel order-->
                                         <li>
-                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-hoa-don">Hủy</a>
+                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-hoa-don">Hóa đơn</a>
                                         </li>
                                         <!--cancel-order-END-->
                                     </ul>

@@ -222,7 +222,12 @@ class Home_model extends CI_Model {
 			'created'		=> date('Y-m-d H:i:s',time()),
 		);
 		if($this->db->insert(PREFIX.$this->tbl_order,$data)){
-			return $orderId;
+			// 1. Lấy ID vừa mới tạo
+			$insert_id = $this->db->insert_id();
+			// 2. Select lại dữ liệu từ ID này
+			$query = $this->db->get_where(PREFIX . $this->tbl_order, array('id' => $insert_id));
+			// Trả về dòng dữ liệu dưới dạng Object (hoặc xử lý tùy ý bạn)
+			return $query->row();
 		}
 		return false;
 	
