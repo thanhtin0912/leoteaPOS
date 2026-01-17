@@ -307,13 +307,11 @@ class Home extends MX_Controller {
 			if($checkOrder) {
 				if ($type === 'in') {
 					$res = $checkOrder[0];
-					$pushTimeHash = $this->generateRandomCode(4);
-					$code = $res->orderId.$pushTimeHash;
 					$info = $this->session->userdata('userLogin');
 					try {
 						$printBill = $this->home->getPrinter($info->storeId,'BILL');
 						if($printBill) {
-							@$this->printBill($printBill[0]->ip, $code, $res);
+							@$this->printBill($printBill[0]->ip, $this->input->post('orderCode'), $res);
 						}
 					} catch (Exception $e) {
 						// Ghi log lỗi in nhưng không làm dừng chương trình
