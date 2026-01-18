@@ -91,10 +91,7 @@ class Home extends MX_Controller {
 	function checkIn(){
     	$req = $this->home->checkinShiftDay();
 		// 1. Lấy data từ session ra
-		$user = $this->session->userdata('userLogin'); // 'user_data' là key bạn đặt khi login
-		// 2. Thêm field mới
-		$user->staffName = $_POST["user"];
-		$this->session->set_userdata('userLogin', $user);
+		$this->session->set_userdata('staffName', $_POST["user"]);
 		$data = array(
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
@@ -139,12 +136,7 @@ class Home extends MX_Controller {
 		);
 		$encoded = short_encode($_POST["id"]);
 		//
-		$user = $this->session->userdata('userLogin'); 
-		if (isset($user->staffName)) {
-			unset($user->staffName);
-		}
-		$this->session->set_userdata('userLogin', $user);
-		//
+		$this->session->unset_userdata('staffName');
 		if($req) {
 			$data = array(
 				'status'=>true,
@@ -733,12 +725,13 @@ class Home extends MX_Controller {
 		$tr = '';
 		
 		$info = $this->session->userdata('userLogin');
+		$staffName = $this->session->userdata('staffName');
 		$receipt = [];
 		$receipt[] = ['type' => 'center', 'text' => 'PHIẾU THANH TOÁN' , 'size' => 22];
 		$receipt[] = ['type' => '2col', 'a' => 'CH: '.$info->storeName, 'b' => $shipping];
 		$receipt[] = ['type' => '2col', 'a' => $code, 'b' => date('m-d H:i')];
 		$receipt[] = ['type' => '2col', 'a' => 'Thu ngân: '.$info->phone, 'b' => $info->address ];
-		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$info->staffName, 'b' => ''];
+		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$staffName, 'b' => ''];
 		$receipt[] = ['type' => '2col', 'a' => 'Ghi chú: '.$note, 'b' => ''];
 		$receipt[] = ['type' => 'line'];
 		foreach ($cart as $item) {
@@ -789,6 +782,7 @@ class Home extends MX_Controller {
 			return $item->amount;
 		}, $cart));
 		$int= 1;
+		$staffName = $this->session->userdata('staffName');
 		foreach ($cart as $key => $item) {
 			for ($i=0; $i < $item->amount; $i++) { 
 				$name = $item->name . ($item->size ? " ({$item->size})" : "");
@@ -824,7 +818,7 @@ class Home extends MX_Controller {
 					}
 					
 				}
-				$commands .=  'TEXT 15,'.(115+$heightLine).',"2",0,1,1,"NV: '.$info->staffName."\" \n";
+				$commands .=  'TEXT 15,'.(115+$heightLine).',"2",0,1,1,"NV: '.$staffName."\" \n";
 				$commands .= "PRINT 1\n";
 				try {
 					$this->temprinter->print($commands);

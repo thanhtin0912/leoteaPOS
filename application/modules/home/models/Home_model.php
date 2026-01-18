@@ -190,6 +190,7 @@ class Home_model extends CI_Model {
 	function addOrder($cart, $total){
 		//Kiểm tra đã tồn tại chưa?
 		$info = $this->session->userdata('userLogin');
+		$staffName = $this->session->userdata('staffName');
 		if(!$info) return false;
 		$num = 'A01';
 		$str = (string)($info->storeCode).(string)(date('ymd',time()));
@@ -202,7 +203,7 @@ class Home_model extends CI_Model {
 		$data = array(
 			'orderId'		=> $orderId,
 			'mail'			=> '',
-			'fullname'		=> isset($info->staffName) ? $info->staffName : '',
+			'fullname'		=> isset($staffName) ? $staffName : '',
 			'address'		=> '',
 			'region'		=> '',
 			'postcode'		=> '',
