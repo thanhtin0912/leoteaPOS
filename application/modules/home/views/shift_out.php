@@ -19,6 +19,8 @@ function updateClock() {
 function checkOut() {
         let id = $('#idShift').val();
         var url = root + 'checkOutShift';
+        $('.loader-wrapper').addClass('active');
+        $('#btnSubmit').prop('disabled', true);
         $.post(url, {
             id: id,
             csrf_token: $('#csrf_token').val()
@@ -26,14 +28,12 @@ function checkOut() {
             $('#csrf_token').val(res.key);
             if(res.status) {
                 notify('Bạn đã kết ca .Vui lòng quét mã QR để báo cáo.', 'primary', true);
-                const btn = document.getElementById('btnSubmit');
-                // Vô hiệu hóa nút
-                btn.disabled = true;
                 var qr = new QRious({
                     element: document.getElementById('qr-code'),
                     value: root+'bao-cao-ca-lam-viec?id='+res.id,
                     size: 250
                 });
+                $('.loader-wrapper').removeClass('active');
                 //$('#myLink').text(root+'bao-cao-ca-lam-viec?id='+res.id).attr('href', root+'bao-cao-ca-lam-viec?id='+res.id);
             } else {
                 notify('Hệ thống không thể ghi nhận thông tin vào ca của bạn.', 'danger', true); 
