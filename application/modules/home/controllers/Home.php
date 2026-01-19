@@ -125,10 +125,15 @@ class Home extends MX_Controller {
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
 		if ($req) {
-		$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
-		if($printTem) {
-		@$this->printTemCheckout($printTem [0]->ip,$shift[0], $lastOrder[0]->orderId);
-		}
+			$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
+			if($printTem) {
+				try {
+					@$this->printTemCheckout($printTem[0]->ip,$shift[0], $lastOrder[0]->orderId);
+				} catch (Exception $e) {
+					// Ghi log lỗi in nhưng không làm dừng chương trình
+					log_message('error', 'Lỗi in Tem: ' . $e->getMessage());
+				}
+			}
 		}
 		$data = array(
 			'status'=>false,

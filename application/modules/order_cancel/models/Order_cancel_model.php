@@ -171,6 +171,7 @@ class Order_cancel_model extends CI_Model {
 	}
 	function getDataAll(){
 		$this->db->select('1');
+		$this->db->where('isVerify', 1);
 		$query = $this->db->count_all_results(PREFIX.$this->table);
 
 		if($query>0){
@@ -183,6 +184,7 @@ class Order_cancel_model extends CI_Model {
 	function getDataPublish(){
 		$this->db->select('1');
 		$this->db->where('delete',0);
+		$this->db->where('isVerify', 1);
 		$query = $this->db->count_all_results(PREFIX.$this->table);
 
 		if($query>0){
