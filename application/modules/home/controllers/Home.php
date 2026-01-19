@@ -268,6 +268,7 @@ class Home extends MX_Controller {
 			$this->db->where('id',$_POST["id"]);
 			$dataUpdate = array(
 				'status' => 0,
+				'isVerify' => 0,
 				"updated"=> date('Y-m-d H:i:s',time())
 			);
 			if($this->db->update('orders', $dataUpdate)){
@@ -324,6 +325,7 @@ class Home extends MX_Controller {
 					$note = $this->input->post('note');
 					$dataUpdate = array(
 						'note' => $note,
+						'isVerify' => 1,
 						"updated"=> date('Y-m-d H:i:s',time())
 					);
 					if($this->db->update('orders', $dataUpdate)){

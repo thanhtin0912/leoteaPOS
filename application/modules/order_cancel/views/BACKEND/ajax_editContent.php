@@ -60,12 +60,10 @@
                                         </div>
                                         <div class="row static-info">
                                             <div class="col-xs-5 name"> Giao hàng: </div>
-                                            <div class="col-xs-7 value">
-                                                <span class="label label-success"><?= $result->shipping?></span>
-                                            </div>
+                                            <div class="col-xs-7 value"><span class="label label-success"><?= $result->shipping ?></span></div>
                                         </div>
                                         <div class="row static-info">
-                                            <div class="col-xs-5 name"> Note: </div>
+                                            <div class="col-xs-5 name"> Ghi chú: </div>
                                             <div class="col-xs-7 value"> <?=$result->note;?></div>
                                         </div>
                                         <div class="row static-info">

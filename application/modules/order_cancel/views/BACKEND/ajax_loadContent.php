@@ -1,15 +1,7 @@
 <script type="text/javascript">
 token_value = '<?=$this->security->get_csrf_hash()?>';
 </script>
-<?php if($price){ ?>
-<div class="portlet-title">
-	<div class="caption font-green-sharp">
-		<span class="caption-subject bold font-red-flamingo uppercase">Tổng tiền:
-			<span class="fa-2x"><?=number_format($price);?></span></span>
-	</div>
-</div>
-<hr>
-<?php } ?>
+
 <div class="dataTables_wrapper no-footer">
     <?php if($result){ ?>
     <div class="row">
@@ -67,7 +59,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->shipping); ?></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->fullname); ?></a></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->note); ?></a></td>
-                    <td class="center" ><?php ($v->status==0) ? print '<span class="label label-sm label-default status-blocked">Đã hủy</span>' : print '<span class="label label-sm label-success status-approved">Approved</span>' ?></td>
+                    <td class="center" id="loadStatusID_<?=$v->id?>"><a class="no_underline" href="javascript:void(0)" onclick="updateStatus(<?=$v->id?>,<?=$v->status?>,'<?=$module?>')"><?php ($v->status==0) ? print '<span class="label label-sm label-default status-blocked">Đã hủy</span>' : print '<span class="label label-sm label-success status-approved">Approved</span>' ?></a></td>
                     <td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
                 </tr>
                 <?php $i++;}

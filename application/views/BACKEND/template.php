@@ -189,15 +189,15 @@
                         <span class="title">Hóa đơn && báo cáo</span>
                         <span class="arrow"></span>
                     </a>
-                    <ul class="sub-menu" <?php if (($this->uri->segment(2) == 'reports' )) { print "style='display: block;' ";} ?>>
-                        <!-- <li class="nav-item  <?php if ($this->uri->segment(2) == 'orders') { print 'active open';} ?>">
-                            <a href="<?= PATH_URL_ADMIN . 'orders' ?>" class="nav-link ">
-                                <i class="icon-tag"></i><span class="title">Order</span>
-                            </a>
-                        </li> -->
+                    <ul class="sub-menu" <?php if (($this->uri->segment(2) == 'reports' ) || ($this->uri->segment(2) == 'order_cancel' )) { print "style='display: block;' ";} ?>>
                         <li class="nav-item  last<?php if ($this->uri->segment(2) == 'report') { print 'active open';} ?>">
                             <a href="<?= PATH_URL_ADMIN . 'report' ?>" class="nav-link ">
                                 <i class="icon-graph"></i><span class="title">Hóa đơn</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  last<?php if ($this->uri->segment(2) == 'order_cancel') { print 'active open';} ?>">
+                            <a href="<?= PATH_URL_ADMIN . 'order_cancel' ?>" class="nav-link ">
+                                <i class="icon-graph"></i><span class="title">Hủy hóa đơn</span>
                             </a>
                         </li>
                     </ul>
