@@ -192,9 +192,12 @@ function checkout(){
     $('#btnCheckout').prop('disabled', true);
     let delivery = $('input[name="orderType"]:checked').val();
     let note =    $('#note').val()
+    let rawValue = $('#shippingPrice').text(); 
+    let shippingFee = Number(rawValue.replace(/\D/g, ''));
     $.post(root+'home/checkoutCart',{
         delivery:      delivery,
         note: note,
+        shippingFee: shippingFee || 0,
         csrf_token:     $('#csrf_token').val()
     },function(res){
         // var res = JSON.parse(data);

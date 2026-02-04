@@ -29,6 +29,7 @@
 					<th class="sorting" onclick="sort('name')" id="name">Tên</th>
 					<th class="sorting" >Địa chỉ</th>
 					<th class="sorting" onclick="sort('order')" id="order">Sắp xếp</th>
+					<th class="sorting">Phí giao hàng</th>
 					<th class="center sorting" width="60" onclick="sort('status')" id="status">Status</th>
 					<th class="center sorting" width="80" onclick="sort('created')" id="created">Created</th>
 				</tr>
@@ -46,6 +47,7 @@
 					<td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= $v->name; ?></a></td>
 					<td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= $v->address; ?></a></td>
 					<td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= $v->order; ?></a></td>
+					<td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?php if($v->shippingfee > 0 && $v->condition > 0) { echo "Đơn hàng < <strong>".number_format($v->condition)."</strong> phí giao hàng <strong>".number_format($v->shippingfee)."</strong>";} ?></a></td>
 					<td class="center" id="loadStatusID_<?=$v->id?>"><a class="no_underline" href="javascript:void(0)" onclick="updateStatus(<?=$v->id?>,<?=$v->status?>,'<?=$module?>')"><?php ($v->status==0) ? print '<span class="label label-sm label-default status-blocked">Blocked</span>' : print '<span class="label label-sm label-success status-approved">Approved</span>' ?></a></td>
 					<td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
 				</tr>
@@ -58,6 +60,7 @@
 						<td><?php if($v->isMain) { echo "<strong>Kho tổng</strong>";} else { echo "Cửa hàng";}; ?></td>
 						<td><?= $v->address; ?></td>
 						<td><?= $v->order; ?></td>
+						<td><?php if($v->shippingfee > 0 && $v->condition > 0) { echo "Đơn hàng < <strong>".number_format($v->condition)."</strong> phí giao hàng <strong>".number_format($v->shippingfee)."</strong>";} ?></td>
 						<td class="center" id="loadStatusID_<?=$v->id?>"><span class="label label-sm label-default status-deleted">Deleted</span></td>
 						<td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
 					</tr>

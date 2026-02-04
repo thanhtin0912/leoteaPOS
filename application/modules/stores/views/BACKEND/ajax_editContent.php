@@ -129,16 +129,20 @@ function showResponse(responseText, statusText, xhr, $form) {
 						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Mã cửa hàng: <span class="required" aria-required="true">*</span></label>
-							<div class="col-md-10"><input value="<?php if(isset($result->code)) { print $result->code; }else{ print '';} ?>" type="text" name="codeAdmincp" id="codeAdmincp" class="form-control"/></div>
+							<div class="col-md-3"><input value="<?php if(isset($result->code)) { print $result->code; }else{ print '';} ?>" type="text" name="codeAdmincp" id="codeAdmincp" class="form-control"/></div>
+							<label class="control-label col-md-2">Sắp xếp: <span class="required" aria-required="true">*</span></label>
+							<div class="col-md-3"><input value="<?php if(isset($result->order)) { print $result->order; }else{ print '';} ?>" type="text" name="orderAdmincp" id="orderAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Địa chỉ: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->address)) { print $result->address; }else{ print '';} ?>" type="text" name="addressAdmincp" id="addressAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group">
-							<label class="control-label col-md-2">Sắp xếp: <span class="required" aria-required="true">*</span></label>
-							<div class="col-md-3"><input value="<?php if(isset($result->order)) { print $result->order; }else{ print '';} ?>" type="text" name="orderAdmincp" id="orderAdmincp" class="form-control"/></div>
-						
+							<label class="control-label col-md-2">Điều kiện lấy phí (<) <span class="required" aria-required="true">*</span></label>
+							<div class="col-md-3"><input value="<?php if(isset($result->condition)) { print $result->condition; }else{ print '';} ?>" type="text" name="conditionAdmincp" id="conditionAdmincp" class="form-control"/></div>
+
+							<label class="control-label col-md-2">Phí giao hàng <span class="required" aria-required="true">*</span></label>
+							<div class="col-md-3"><input value="<?php if(isset($result->shippingfee)) { print $result->shippingfee; }else{ print '';} ?>" type="text" name="shippingfeeAdmincp" id="shippingfeeAdmincp" class="form-control"/></div>					
 						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Mô tả:</label>

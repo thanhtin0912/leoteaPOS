@@ -22,6 +22,16 @@ class Home_model extends CI_Model {
 			return false;
 		}
 	}
+	function getInfoStore($id){
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$query = $this->db->get(PREFIX.$this->tbl_stores);
+		if ($query->num_rows() > 0) {
+			return $query->row(); 
+		} else {
+			return false;
+		}
+	}
 	function getPrinter($store,$type){
 		$this->db->select('*');
 		$this->db->where('storeId', $store);
@@ -187,7 +197,7 @@ class Home_model extends CI_Model {
 		return $letter . str_pad($number, 2, '0', STR_PAD_LEFT);
 	}
 
-	function addOrder($cart, $total){
+	function addOrder($cart, $total, $shippingTotal = 0){
 		//Kiểm tra đã tồn tại chưa?
 		$info = $this->session->userdata('userLogin');
 		$staffName = $this->session->userdata('staffName');
@@ -200,6 +210,7 @@ class Home_model extends CI_Model {
 			$num = $this->generateInvoiceCode($lastNo);
 		}
 		$orderId = $str.$num;
+		$grandtotal = (int)$total + (int)$shippingTotal;
 		$data = array(
 			'orderId'		=> $orderId,
 			'mail'			=> '',
@@ -215,7 +226,8 @@ class Home_model extends CI_Model {
 			'codecoupon'	=> '',
 			'tax'			=> '',
 			'detailcart'	=> serialize($cart),
-			'grandtotal'	=> $total,
+			'shippingtotal'	=> $shippingTotal,
+			'grandtotal'	=> $grandtotal,
 			'shipping'		=> $this->input->post('delivery'),
 			'fulfillment'	=> ($this->input->post('delivery')) === "Delivery" ? 2 : 1,
 			'status'		=> 1,

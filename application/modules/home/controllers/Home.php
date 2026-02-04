@@ -45,7 +45,9 @@ class Home extends MX_Controller {
 		if($cart_products == NULL){
 			header('Location: '.PATH_URL);
 		} else {
+			$info = $this->session->userdata('userLogin');
 			$data['info'] = $this->home->getInfoSite();
+			$data['store'] = $this->home->getInfoStore($info->storeId);
 			$data['cart'] =$this->getListCart();
 			$data['countCart'] = $this->countSessionCart();
 			$this->template->write_view('content', 'checkout', $data);
@@ -675,7 +677,8 @@ class Home extends MX_Controller {
 				}, 0);
 				$shipping = $_POST["delivery"];
 				$note = $_POST["note"];
-				$res = $this->home->addOrder($cart, $total);
+				$shippingTotal = $_POST["shippingFee"];
+				$res = $this->home->addOrder($cart, $total, $shippingTotal);
 				// sử lý in dóa đơn
 				if ($res) {
 					$pushTimeHash = $this->generateRandomCode(4);
@@ -722,7 +725,9 @@ class Home extends MX_Controller {
 	}
 	public function printBill($ip,$code,$res) {
 		$cart = unserialize($res->detailcart);
-		$total = $res->grandtotal;
+		$subtotal = (int)$res->subtotal;
+		$shippingtotal = (int)$res->shippingtotal;
+		$grandtotal = $res->grandtotal;
 		$shipping = $res->shipping;
 		$note = $res->message;
 		$this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
@@ -767,7 +772,11 @@ class Home extends MX_Controller {
 
 		}
 		$receipt[] = ['type' => 'line'];
-		$receipt[] = ['type' => '3col', 'a' => 'Tổng: ', 'b' => $totalAmount, 'c' => number_format($total,0) ];
+		if (($shippingtotal != 0 && $shippingtotal > 0)) {
+			$receipt[] = ['type' => '3col', 'a' => 'Tổng cộng: ', 'b' => $totalAmount, 'c' => number_format($subtotal,0) ];
+			$receipt[] = ['type' => '2col', 'a' => 'Phí giao hàng: ', 'b' => number_format($shippingtotal,0)];
+		}
+		$receipt[] = ['type' => '3col', 'a' => 'Thành tiền: ', 'b' => $totalAmount, 'c' => number_format($grandtotal,0) ];
 		
 		$receipt[] = ['type' => 'center', 'text' => 'Cảm ơn quý khách!'];
 	

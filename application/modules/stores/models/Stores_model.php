@@ -75,6 +75,8 @@ class Stores_model extends CI_Model {
 				'order'=> trim($this->input->post('orderAdmincp', true)),
 				'address'=> trim($this->input->post('addressAdmincp', true)),
 				'code'=> trim($this->input->post('codeAdmincp', true)),
+				'condition'=> trim($this->input->post('conditionAdmincp', true)),
+				'shippingfee'=> trim($this->input->post('shippingfeeAdmincp', true)),
 				'status'=> $this->input->post('statusAdmincp'),
 				'created'=> date('Y-m-d H:i:s',time()),
 			);
@@ -104,6 +106,8 @@ class Stores_model extends CI_Model {
 				'order'=> trim($this->input->post('orderAdmincp', true)),
 				'code'=> trim($this->input->post('codeAdmincp', true)),
 				'address'=> trim($this->input->post('addressAdmincp', true)),
+				'condition'=> trim($this->input->post('conditionAdmincp', true)),
+				'shippingfee'=> trim($this->input->post('shippingfeeAdmincp', true)),
 				'status'=> $this->input->post('statusAdmincp'),
 			);
 			modules::run('admincp/saveLog',$this->module,$this->input->post('hiddenIdAdmincp'),'','Update',$result,$data);

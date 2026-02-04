@@ -1,4 +1,25 @@
 <!-- thank-you section start -->
+<script>
+    $(document).on('change', 'input[name="orderType"]', function() {
+        let rawValue = $('#subTotalPrice').text(); 
+        let subTotal = Number(rawValue.replace(/\D/g, ''));
+        if ($(this).val() === 'Delivery') {
+            let store = <?php echo json_encode($store); ?>;
+            if(subTotal < store['condition']) {
+                let grandTotal = formatCurrency(subTotal + Number(store['shippingfee']));
+                $('#grandTotalPrice').html(grandTotal);  
+                $('#shippingPrice').html(formatCurrency(store['shippingfee'])); 
+            }
+        } else {
+            $('#shippingPrice').html(0);
+            $('#grandTotalPrice').html(rawValue);   
+        }
+    });
+    function formatCurrency(value) {
+        let amount = Number(value);
+        return new Intl.NumberFormat('en-US').format(amount);
+    }
+</script>
 <section class="section-big-py-space light-layout">
     <div class="container">
         <div class="row">
@@ -53,11 +74,16 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
                     <?php $total = $total + ($v->totalPrice); ?>
                     <?php endforeach ?>
+                    <div class="total-sec fw-bold">
+                        <ul>
+                            <li>Tổng tiền <span id="subTotalPrice"><?= number_format($total); ?></span></li>
+                            <li>Phí giao hàng <span id="shippingPrice">0</span></li>
+                        </ul>
+                    </div>
                     <div class="final-total pt-2">
-                        <h3>Tổng tiền <span><?= number_format($total); ?></span></h3>
+                        <h3>Thành tiền <span id="grandTotalPrice"><?= number_format($total); ?></span></h3>
                     </div>
                 </div>
             </div>
