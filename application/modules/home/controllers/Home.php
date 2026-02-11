@@ -500,7 +500,7 @@ class Home extends MX_Controller {
 			} else {
 				$check = true;
 				foreach ($cart_products as $item) {
-					if ($item->id == $_POST["id"] && $_POST["topping"] === '' && $item->topping == '' && $item->size == $_POST["size"]) {
+					if ($item->id == $_POST["id"] && $_POST["topping"] === '' && $item->topping == '' && $item->size == $_POST["size"] && $item->note == $_POST["note"]) {
 						$item->amount += $_POST["amount"];
 						$check = false;
 						break;
