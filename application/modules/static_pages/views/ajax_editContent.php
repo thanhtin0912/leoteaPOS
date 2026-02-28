@@ -111,7 +111,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 					<input type="hidden" value="<?=$id?>" name="hiddenIdAdmincp" />
 					<div class="form-body">
 						<div class="form-group">
-							<label class="control-label col-md-2">Title: <span class="required" aria-required="true">*</span></label>
+							<label class="control-label col-md-2">Tiêu đề: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->title)) { print $result->title; }else{ print '';} ?>" type="text" name="titleAdmincp" id="titleAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group">
@@ -119,7 +119,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 							<div class="col-md-10"><input value="<?php if(isset($result->slug)) { print $result->slug; }else{ print '';} ?>" type="text" name="slugAdmincp" id="slugAdmincp" class="form-control"/></div>
 						</div>
 						<div class="form-group last">
-							<label class="control-label col-md-2">Content: <span class="required" aria-required="true">*</span></label>
+							<label class="control-label col-md-2">Mô tả: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10">
 							<textarea name="contentAdmincp" id="contentAdmincp" cols="" rows="8"><?php if(isset($result->content)) { print $result->content; }else{ print '';} ?></textarea></div>
 						</div>

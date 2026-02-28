@@ -92,7 +92,7 @@
 						<option value="50">50 records</option>
 						<option value="100">100 records</option>
 					</select>
-	                <a href="javascript:;" onclick="searchContent(0)" class="btn btn-info btn-circle btn-sm"><i class="fa fa-spinner"></i> Reload</a>
+	                <a href="<?=PATH_URL_ADMIN.$module.'/update/'?>" class="btn btn-primary btn-circle btn-sm"><i class="fa fa-plus"></i> Add</a>
 	            	<a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;" data-original-title="" title=""></a>
 	            </div>
 			</div>
