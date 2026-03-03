@@ -202,6 +202,7 @@ class Home extends MX_Controller {
 			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
 			"spent"=> $_POST['spent'],
+			"tip"=> $_POST['tip'],
 			"spentNote"=> $_POST['spentNote'],
 			"completed" => 1,
 			"updated"=> date('Y-m-d H:i:s',time())
@@ -215,9 +216,10 @@ class Home extends MX_Controller {
 			$s = $this->home->getShiftofDay($_POST["id"], 1);
 			if ($s) {
 				$now = date('Y-m-d H:i:s');
-				$diff = number_format(($s[0]->actual + $_POST['spent'])- $s[0]->sales);
+				$diff = (($s[0]->actual + $_POST['spent'] - $_POST['tip']) - $s[0]->sales);
 				$sales = number_format($s[0]->sales);
 				$actual = number_format($s[0]->actual);
+				$tip = number_format($s[0]->tip);
 				$gio_vao = date('H:i:s', strtotime($s[0]->from));
 				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
 				$chi = number_format($_POST['spent']);
@@ -229,12 +231,18 @@ class Home extends MX_Controller {
                     . "NV: " . $s[0]->name . " - CH: " . $s[0]->storeName . "\n"
                     . "CA: " . $gio_vao . " - " . $gio_ra . "\n"
                     . "-----------------------------\n"
-                    . "DT: " . $sales . " - TN: " . $actual . "\n"
 					. "Chi: " . $chi . " - Nội dung: " . $note . "\n"
-                    . "CL: " . $diff . "\n"
+                    . "DT: " . $sales . " - TN: " . $actual . "\n"
+					. "Tip: " . $tip . "\n"
+                    . "CL: " . number_format($diff) . "\n"
                     . "-----------------------------";
 			
 				$dis = $this->discord->sendsms($tr);
+				$data=array(
+					"diff" => $diff,
+					"updated"=> date('Y-m-d H:i:s',time())
+				);
+				$this->home->updateShiftDay($_POST["id"], $data);
 			}
 			$data = array(
 				'status'=>true,
@@ -249,6 +257,7 @@ class Home extends MX_Controller {
 		$data['info'] = $this->home->getInfoSite();
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
+		$data['listCancel'] = $this->home->getListOrderCancel();
 		$this->template->write_view('content', 'cancel_order', $data);
 		$this->template->render();
 		//

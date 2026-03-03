@@ -91,10 +91,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 dataResult[unit] = quantity;
             }
         });
-        let cashActual = parseInt(grandTotalDisplay.innerText.replace(/\./g, ''));
+        let spent = $('#spent').val();
+        let tip = $('#tip').val();
+        let cash = parseInt(grandTotalDisplay.innerText.replace(/\./g, ''));
         let cashSales = <?= $salesShift ?>;
         let id = <?= $res[0]->id ?>;
         let str = "Thiếu";
+        let cashActual = cash - parseInt(tip) + parseInt(spent);
         if(cashActual === cashSales) {
             str = "Đủ";
         } else if ( cashActual > cashSales ) {
@@ -104,7 +107,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         btn.style.display = 'none';
         $.confirm({
             title: 'Báo cáo kết ca!',
-            content: `Tổng số tiền mặt bạn đã đếm là: <b>${cashActual.toLocaleString('vi-VN')} VNĐ</b> <b>(${str})</b>.<br>Bạn có chắc chắn muốn nộp báo cáo không?`,
+            content: `Tổng số tiền mặt bạn đã đếm là: <b>${cash.toLocaleString('vi-VN')} VNĐ</b> <b>(${str})</b>.<br>Bạn có chắc chắn muốn nộp báo cáo không?`,
             type: 'success',
             typeAnimated: true,
             buttons: {
@@ -112,7 +115,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     text: 'Xác nhận nộp',
                     btnClass: 'btn-success',
                     action: function () {
-                        let spent = $('#spent').val();
                         let spentNote = $('#spentNote').val();
                         var url = root + 'updateCheckoutShift';
                         $.ajax({
@@ -121,8 +123,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             data: { 
                                 id: id,
                                 money_data: dataResult,
-                                actual: cashActual,
+                                actual: cash,
                                 spent: spent,
+                                tip: tip,
                                 spentNote: spentNote,
                                 csrf_token: $('#csrf_token').val()
                             },
@@ -195,6 +198,10 @@ function calculateGrandTotal() {
                                 <div class="total pb-0"></div>
                             </li>
                         </ul>
+                        <div class="coupan-block">
+                            <h5>Tiền Tip</h5>
+                            <input class="form-control" value=0 style="width: 150px !important" id="tip">
+                        </div>
                         <div class="coupan-block">
                             <h5>Chi phí khác</h5>
                             <input class="form-control" value=0 style="width: 150px !important" id="spent">
