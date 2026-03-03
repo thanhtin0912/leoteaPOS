@@ -1,4 +1,34 @@
 <script type="text/javascript">token_value = '<?=$this->security->get_csrf_hash()?>';</script>
+<?php if($report && $report!=''){ ?>
+<div class="portlet-title">
+	<div class="caption font-green-sharp">
+		<div class="row">
+			<div class="col-md-2 col-sm-2 col-xs-6">
+				<span class="label label-sm label-success fw bold">Tổng DT:</span>
+				<span class="caption-subject bold uppercase fa-2x"><?=number_format($report[0]->sales);?></span>
+			</div>
+			<div class="col-md-2 col-sm-2 col-xs-6">
+				<span class="label label-sm label-info fw bold">Tổng Chi:</span>
+				<span class="caption-subject bold uppercase fa-2x"><?=number_format($report[0]->spent);?></span></span>
+			</div>
+			<div class="col-md-2 col-sm-2 col-xs-6">
+				<span class="label label-sm label-danger fw bold">Tổng típ:</span>
+				<span class="caption-subject bold uppercase fa-2x"><?=number_format($report[0]->tip);?></span></span>
+			</div>
+			<div class="col-md-2 col-sm-2 col-xs-6">
+				<span class="label label-sm label-warning fw bold">Tổng CL:</span>
+				<span class="caption-subject bold uppercase fa-2x"><?=number_format($report[0]->diff);?></span></span>
+			</div>
+			<div class="col-md-2 col-sm-2 col-xs-6">
+				<span class="label label-sm label-info fw bold">Số CL(-):</span>
+				<span class="caption-subject bold uppercase fa-2x"><?=number_format($report[0]->total_diff);?></span></span>
+			</div>
+		</div>
+
+	</div>
+</div>
+<hr>
+<?php } ?>
 <div class="dataTables_wrapper no-footer">
 	<?php if($result){ ?>
 	<div class="row">

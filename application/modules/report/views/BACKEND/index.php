@@ -51,7 +51,7 @@
                     <span class="caption-subject bold font-red-flamingo uppercase"> Search Form</span>
                 </div>
                 <div class="actions">
-	                <a href="javascript:;" onclick="searchContent(0)" class="btn btn-warning btn-circle btn-sm"><i class="fa fa-search"></i> Search</a>
+	                <a href="javascript:;" onclick="searchContent(0,20,1)" class="btn btn-warning btn-circle btn-sm"><i class="fa fa-search"></i> Search</a>
 	            </div>
 			</div>
 			

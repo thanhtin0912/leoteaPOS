@@ -159,7 +159,12 @@ class Report extends MX_Controller {
 	public function admincp_ajaxLoadContent(){
 		$this->load->library('AdminPagination');
 		$config['total_rows'] = $this->model->getTotalsearchContent();
-		$config['total_price'] = $this->model->getTotalsearchPrice();
+		$config['total_price'] = 0;
+		if($this->input->post('sum') != 0) {
+			$totalPrice = $this->model->getTotalsearchPrice();
+			$config['total_price'] = $totalPrice[0]->grandtotal;
+		}
+		
 		$config['per_page'] = $this->input->post('per_page');
 		$config['num_links'] = 3;
 		$config['func_ajax'] = 'searchContent';
@@ -173,7 +178,7 @@ class Report extends MX_Controller {
 			'start'=>$this->input->post('start'),
 			'module'=>$this->module,
 			'total'=>$config['total_rows'],
-			'price'=>$config['total_price'][0]->grandtotal,
+			'price'=>$config['total_price'],
 		);
 		$this->session->set_userdata('start',$this->input->post('start'));
 		$this->load->view('BACKEND/ajax_loadContent',$data);

@@ -16,7 +16,7 @@
 <!-- END PAGE HEADER-->
 <!-- BEGIN PAGE CONTENT-->
 <div class="row">
-    <div class="col-lg-6 col-xs-12 col-sm-12">
+    <div class="col-lg-12 col-xs-12 col-sm-12">
         <!-- BEGIN PORTLET-->
         <div class="portlet light bordered">
             <div class="portlet-title">
@@ -28,21 +28,37 @@
             <div class="portlet-body">
                 <div style="margin: 20px 0 10px 30px">
                     <div class="row">
-                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-success fw"> Cửa hàng: </span>
                             <h3 class="fw"><?= $result->storeName ?></h3>
                         </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-info fw"> Tài khoản: </span>
                             <h3 class="fw"><?= $result->user ?></h3>
                         </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-danger fw"> Tổng tiền bán: </span>
                             <h3 class="fw"><?= number_format($result->sales) ?></h3>
                         </div>
-                        <div class="col-md-3 col-sm-3 col-xs-6 text-stat">
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-warning fw"> Tổng tiền nộp: </span>
                             <h3 class="fw"><?= number_format($result->actual) ?></h3>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
+                            <span class="label label-sm label-info fw"> Chi phí: </span>
+                            <h3 class="fw"><?= number_format($result->spent) ?></h3>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
+                            <span class="label label-sm label-danger fw"> Tiền típ: </span>
+                            <h3 class="fw"><?= number_format($result->tip) ?></h3>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="portlet-title margin-top-20">
+                                <div class="caption font-green-sharp">
+                                    <span class="caption-subject bold font-red-flamingo uppercase">Tổng chênh lệch:
+                                        <span class="fa-2x"><?= number_format($result->diff) ?></span></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -27,7 +27,9 @@ class Shift extends MX_Controller {
 		modules::run('admincp/chk_perm',$this->session->userdata('ID_Module'),'r',0);
 		$default_func = 'created';
 		$default_sort = 'DESC';
+		$this->load->model('stores/stores_model');
 		$data = array(
+			'stores' => $this->stores_model->getData(),
 			'module'=>$this->module,
 			'module_name'=>$this->session->userdata('Name_Module'),
 			'default_func'=>$default_func,
@@ -64,43 +66,7 @@ class Shift extends MX_Controller {
 			exit;
 		}
 		if($_POST){
-			//Upload Image
-			$fileName = array('image'=>'');
-			if($_FILES){
-				foreach($fileName as $k=>$v){
-					if(isset($_FILES['fileAdmincp']['error'][$k]) && $_FILES['fileAdmincp']['error'][$k]!=4){
-						$typeFileImage = strtolower(substr($_FILES['fileAdmincp']['type'][$k],0,5));
-						if($typeFileImage == 'image'){
-							$tmp_name[$k] = $_FILES['fileAdmincp']["tmp_name"][$k];
-							$file_name[$k] = $_FILES['fileAdmincp']['name'][$k];
-							$ext = strtolower(substr($file_name[$k], -4, 4));
-							if($ext=='jpeg'){
-								$fileName[$k] = date('Y').'/'.date('m').'/'.md5(time().'_'.SEO(substr($file_name[$k],0,-5))).'.jpg';
-							}else{
-								$fileName[$k] = date('Y').'/'.date('m').'/'.md5(time().'_'.SEO(substr($file_name[$k],0,-4))).$ext;
-							}
-						}else{
-							print 'error-image-upload.'.$this->security->get_csrf_hash();
-							exit;
-						}
-					}
-				}
-			}
-			//End Upload Image
-
 			if($this->model->saveManagement($fileName)){
-				//Upload Image
-				if($_FILES){
-					if($_FILES){
-						$upload_path = BASEFOLDER.DIR_UPLOAD_CATE;
-						check_dir_upload($upload_path);
-						foreach($fileName as $k=>$v){
-							if(isset($_FILES['fileAdmincp']['error'][$k]) && $_FILES['fileAdmincp']['error'][$k]!=4){
-								move_uploaded_file($tmp_name[$k], $upload_path.$fileName[$k]);
-							}
-						}
-					}
-				}
 				//End Upload Image
 				if($this->input->post('hiddenIdAdmincp')==0){
 					print 'redirect.'.$this->security->get_csrf_hash();
@@ -201,13 +167,20 @@ class Shift extends MX_Controller {
 		$config['start'] = $this->input->post('start');
 		$this->adminpagination->initialize($config);
 
+		$totalSum = '';
+		if($this->input->post('sum') != 0) {
+			$totalSum = $this->model->getTotalsearchSum();
+		}
+		
 		$result = $this->model->getsearchContent($config['per_page'],$this->input->post('start'));
 		$data = array(
 			'result'=>$result,
 			'per_page'=>$this->input->post('per_page'),
 			'start'=>$this->input->post('start'),
 			'module'=>$this->module,
-			'total'=>$config['total_rows']
+			'total'=>$config['total_rows'],
+			'report'=>$totalSum,
+
 		);
 		// var_dump( $this->model->getsearchContent(10,0)); exit();
 		$this->session->set_userdata('start',$this->input->post('start'));

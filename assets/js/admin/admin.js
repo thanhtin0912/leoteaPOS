@@ -71,7 +71,7 @@ function showData(e) {
 	$("#hdshowData").val($(e).attr("value"));
 	searchContent(0);
 }
-function searchContent(start,per_page){
+function searchContent(start,per_page,sum=0){
 	var el = $('a.reload').closest(".portlet").children(".portlet-body");
 	Metronic.blockUI({
 		target: el,
@@ -89,6 +89,7 @@ function searchContent(start,per_page){
 	var type_sort = $('#type_sort').val();
 	$('#start').val(start);
 	$.post(root+module+'/ajaxLoadContent',{
+		sum : sum,		
 		func_order_by: func_sort,
 		order_by: type_sort,
 		start: start,
