@@ -110,6 +110,13 @@ function showResponse(responseText, statusText, xhr, $form) {
 					<input type="hidden" value="<?=$this->security->get_csrf_hash()?>" id="csrf_token" name="csrf_token" />
 					<input type="hidden" value="<?=$id?>" name="hiddenIdAdmincp" />
 					<div class="form-body">
+					<div class="form-group">
+						<label class="control-label col-md-2">Trạng thái:</label>
+							<div class="col-md-10">
+								<label class="radio-inline"><input type="radio" name="statusAdmincp" value="0" <?= isset($result->status) ? $result->status == 0 ? 'checked' : '' : '' ?> > Chưa</label>
+								<label class="radio-inline"><input type="radio" name="statusAdmincp" value="1" <?= isset($result->status) ? $result->status == 1 ? 'checked' : '' : 'checked' ?> > Đã Thực Hiện</label>
+							</div>
+						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Tiêu đề: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-10"><input value="<?php if(isset($result->title)) { print $result->title; }else{ print '';} ?>" type="text" name="titleAdmincp" id="titleAdmincp" class="form-control"/></div>

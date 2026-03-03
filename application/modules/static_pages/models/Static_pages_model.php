@@ -83,7 +83,7 @@ class Static_pages_model extends CI_Model {
 				'title'=> trim($this->input->post('titleAdmincp')),
 				'slug'=> trim($this->input->post('slugAdmincp')),
 				'content'=> trim($this->input->post('contentAdmincp')),
-				'status'=> ($this->input->post('statusAdmincp')=='on')?1:0,
+				'status'=> ($this->input->post('statusAdmincp')),
 				'created'=> date('Y-m-d H:i:s',time()),
 			);
 			if($this->db->insert(PREFIX.$this->table,$data)){
@@ -113,7 +113,7 @@ class Static_pages_model extends CI_Model {
 				'title'=> trim($this->input->post('titleAdmincp')),
 				'slug'=> trim($this->input->post('slugAdmincp')),
 				'content'=> trim($this->input->post('contentAdmincp')),
-				'status'=> 0,
+				'status'=> ($this->input->post('statusAdmincp')),
 				'created'=> date('Y-m-d H:i:s',time()),
 			);
 			modules::run('admincp/saveLog',$this->module,$this->input->post('hiddenIdAdmincp'),'','Update',$result,$data);

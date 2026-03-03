@@ -25,6 +25,7 @@
 				<tr role="row">
 					<th class="center sorting_disabled" width="35">No.</th>
 					<th class="sorting" onclick="sort('title')" id="title">Nội dung task</th>
+					<th class="center sorting" width="100">Trạng Thái</th>
 					<th class="center sorting" onclick="sort('created')" id="created" width="200">Created</th>
 				</tr>
 			</thead>
@@ -37,6 +38,7 @@
 				<tr class="item_row<?=$i?> gradeX <?php ($k%2==0) ? print 'odd' : print 'even' ?>" role="row">
 					<td class="center"><?=$k+1+$start?></td>
 					<td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><b><?= $v->title; ?></b></a></td>
+					<td class="center" ><?php ($v->status==0) ? print '<span class="label label-sm label-default status-blocked">Chưa</span>' : print '<span class="label label-sm label-success status-approved">Hoàn Thành</span>' ?></td>
 					<td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
 				</tr>
 				<?php $i++;}}else{ ?>
