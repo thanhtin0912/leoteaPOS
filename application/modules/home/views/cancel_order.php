@@ -86,7 +86,47 @@ function submit() {
 
 
             </div>
+
         </div>
+
     </div>
 </section>
 <!--order tracking end-->
+<?php if($listCancel) { ?>
+<section class="order-tracking my-2">
+    <div class="container order-tracking-box">
+        <div class="row">
+            <div class="col-12">
+                <table class="table cart-table table-responsive-xs">
+                    <thead>
+                        <tr class="table-head">
+                            <th scope="col">Mã Order</th>
+                            <th scope="col">Tổng tiền</th>
+                            <th scope="col">Ngày hủy</th>
+                            <th scope="col">Ngày tạo</th>
+                        </tr>
+                    </thead>
+                    <?php foreach ($listCancel as $key => $v): ;?>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h4><?=$v->orderId;?>****</h4>
+                            </td>
+                            <td>
+                                <h4><?=number_format($v->grandtotal);?></h4>
+                            </td>
+                            <td>
+                                <span><?=$v->updated;?></span>
+                            </td>
+                            <td>
+                                <span><?=$v->created;?></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <?php endforeach ?>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<?php } ?>

@@ -434,5 +434,27 @@ class Home_model extends CI_Model {
 		}
 	
 	}
+
+	function getListOrderCancel(){
+		$date = date("Y-m-d H:i:s",time());
+		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
+		$this->db->select('orderId, grandtotal, created, updated');
+		$this->db->where('phone',$info->phone);
+		$this->db->where('isVerify',1);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$date = date("Y-m-d H:i:s",time());
+		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
+		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
+		$this->db->order_by('orderId','ABS');
+		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
 }
 ?>
