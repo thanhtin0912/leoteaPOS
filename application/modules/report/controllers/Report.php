@@ -276,7 +276,8 @@ class Report extends MX_Controller {
 			$sheet->setCellValue('G' . $rowCount, $row->storeName);
 			$sheet->setCellValue('L' . $rowCount, $row->subtotal);
 			$sheet->setCellValue('M' . $rowCount, $row->shippingtotal);
-			$sheet->setCellValue('N' . $rowCount, $row->grandtotal);
+			$sheet->setCellValue('N' . $rowCount, $row->payment==1 ? $row->grandtotal : '');
+			$sheet->setCellValue('O' . $rowCount, $row->payment==2 ? $row->grandtotal : '');
 			$sheet->setCellValue('P' . $rowCount, $row->grandtotal);
 			$sheet->setCellValue('Q' . $rowCount, $row->grandtotal);
 			$sheet->getStyle('A'. $rowCount.':Q'. $rowCount)->applyFromArray(array(
