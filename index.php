@@ -288,7 +288,7 @@ switch (ENVIRONMENT)
  * -------------------------------------------------------------------
  */
 date_default_timezone_set('Asia/Ho_Chi_Minh');
-define('FOLDER', '/');
+define('FOLDER', '/pos/');
 define('ADMINCP', 'admincp');
 define('API', 'api');
 if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on'){
@@ -298,16 +298,16 @@ if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on'){
 	define('PATH_URL', 'http://'.$_SERVER['HTTP_HOST'].FOLDER);
 	define('PATH_URL_ADMIN', 'http://'.$_SERVER['HTTP_HOST'].FOLDER.ADMINCP.'/');
 }
-define('BASEFOLDER', substr(BASEPATH, 0, strlen(BASEPATH) - 8));
+define('BASEFOLDER', FCPATH);
 define('PREFIX', '');
-define('DB_HOST', '103.18.6.49');
-define('DB_USER', 'cy46zlubofns_admin');
-define('DB_PASS', 'Thanhtin@9797');
+// define('DB_HOST', '103.18.6.49');
+// define('DB_USER', 'cy46zlubofns_admin');
+// define('DB_PASS', 'Thanhtin@9797');
+// define('DB_NAME', 'cy46zlubofns_orderleotea');
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_NAME', 'cy46zlubofns_orderleotea');
-// define('DB_HOST', 'localhost');
-// define('DB_USER', 'root');
-// define('DB_PASS', '');
-// define('DB_NAME', 'db_leotea');
 
 //Config DIR Upload
 define('DIR_UPLOAD_PRODUCT', '/assets/uploads/product/');
@@ -316,6 +316,9 @@ define('DIR_UPLOAD_STORES', '/assets/uploads/store/');
 define('DIR_UPLOAD_BANNER', '/assets/uploads/banner/');
 define('DIR_UPLOAD_NEWS', '/assets/uploads/news/');
 define('GLOBAL_URL', 'https://61579.net/assets/uploads/product/');
+// Cách đúng cho CodeIgniter
+define('DIR_EXPORT_FILES', FCPATH . 'assets/uploads/export/');
+
 //Config delivery
 define('USE_TAIQUAN', 1);
 define('USE_MANGDI', 2);
