@@ -230,6 +230,7 @@ class Home_model extends CI_Model {
 			'grandtotal'	=> $grandtotal,
 			'shipping'		=> $this->input->post('delivery'),
 			'fulfillment'	=> ($this->input->post('delivery')) === "Delivery" ? 2 : 1,
+			'payment'		=> $this->input->post('payment'),
 			'status'		=> 1,
 			'delete'		=> 0,
 			'created'		=> date('Y-m-d H:i:s',time()),

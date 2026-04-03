@@ -121,6 +121,28 @@
                         </form>
                     </div>
                     <div class="col-sm-12">
+                        <h4>Hình thức thanh toán</h4>
+                        <form class="size-new py-3">
+                            <div class="card-product-option-item custom-radio mb-0">
+                                <input type="radio" value="1" checked name="orderPayment" id="orderPayment1" class="size-radio-input" data-size="0">
+                                <label for="orderPayment1" class="size-radio-label p-1">
+                                    <div class="size-radio-content">
+                                        <p class="size-name">Tiền mặt</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="card-product-option-item custom-radio mb-0">
+                                <input type="radio" value="2" name="orderPayment" id="orderPayment2" class="size-radio-input" data-size="0">
+                                <label for="orderPayment2" class="size-radio-label p-1">
+                                    <div class="size-radio-content">
+                                        <p class="size-name">Chuyển khoản</p>
+                                    </div>
+                                </label>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="col-sm-12">
                         <h4>ghi chú</h4>
                         <textarea rows="3" id="note" class="form-control"></textarea>
                     </div>
@@ -129,7 +151,6 @@
                         <div class="delivery-sec">
                             <h2><?= date("Y-m-d H:m",time());?></h2></div>
                     </div>
-                    
                     <div class="col-12 pt-5 text-center">
                         <button class="btn btn-normal btn-sm" onclick="checkout();" id="btnCheckout">Xác nhận đơn hàng</button>
                     </div>

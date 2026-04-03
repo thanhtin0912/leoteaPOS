@@ -191,11 +191,13 @@ function checkout(){
     $('.loader-wrapper').addClass('active');
     $('#btnCheckout').prop('disabled', true);
     let delivery = $('input[name="orderType"]:checked').val();
+    let payment = $('input[name="orderPayment"]:checked').val();
     let note =    $('#note').val()
     let rawValue = $('#shippingPrice').text(); 
     let shippingFee = Number(rawValue.replace(/\D/g, ''));
     $.post(root+'home/checkoutCart',{
         delivery:      delivery,
+        payment: payment,
         note: note,
         shippingFee: shippingFee || 0,
         csrf_token:     $('#csrf_token').val()
