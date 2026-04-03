@@ -155,16 +155,18 @@ class Report extends MX_Controller {
 			}
 		}
 	}
+
 	
 	public function admincp_ajaxLoadContent(){
+		$downloadUrl = "";
+		if($this->input->post('export') != 0) {
+			$dataExport = $this->model->getDataExport();
+			$downloadUrl = $this->export($dataExport);
+		}
 		$this->load->library('AdminPagination');
 		$config['total_rows'] = $this->model->getTotalsearchContent();
 		$config['total_price'] = 0;
-		if($this->input->post('sum') != 0) {
-			$totalPrice = $this->model->getTotalsearchPrice();
-			$config['total_price'] = $totalPrice[0]->grandtotal;
-		}
-		
+
 		$config['per_page'] = $this->input->post('per_page');
 		$config['num_links'] = 3;
 		$config['func_ajax'] = 'searchContent';
@@ -178,7 +180,7 @@ class Report extends MX_Controller {
 			'start'=>$this->input->post('start'),
 			'module'=>$this->module,
 			'total'=>$config['total_rows'],
-			'price'=>$config['total_price'],
+			'downloadUrl' => $downloadUrl // Truyền URL vào view
 		);
 		$this->session->set_userdata('start',$this->input->post('start'));
 		$this->load->view('BACKEND/ajax_loadContent',$data);
@@ -214,6 +216,144 @@ class Report extends MX_Controller {
 		$this->load->view('BACKEND/ajax_updateStatus',$update);
 	}
 	/*------------------------------------ End Admin Control Panel --------------------------------*/
+
+	public function export($dataList) {
+		$this->load->helper('url');
+		// 2. Load thư viện PHPExcel
+		require_once APPPATH . "/third_party/PHPExcel.php";
+		$objPHPExcel = new PHPExcel();
+	
+		// 3. Cấu hình các thông tin cơ bản
+		$objPHPExcel->getProperties()->setCreator("System")
+									 ->setLastModifiedBy("System")
+									 ->setTitle("Export Data")
+									 ->setSubject("Export Data");
+	
+		$sheet = $objPHPExcel->setActiveSheetIndex(0);
+	
+		// 4. Tạo tiêu đề cột (Header) - Dòng 1
+		$sheet->setCellValue('A1', 'STT');
+		$sheet->setCellValue('B1', 'Mã Hóa Đơn');
+		$sheet->setCellValue('C1', 'Ngày Bán');
+		$sheet->setCellValue('D1', 'Loại');
+		$sheet->setCellValue('E1', 'Khách Hàng');
+		$sheet->setCellValue('F1', 'Nhân Viên');
+		$sheet->setCellValue('G1', 'Cửa Hàng');
+		$sheet->setCellValue('H1', 'Món');
+		$sheet->setCellValue('I1', 'Size');
+		$sheet->setCellValue('J1', 'Số Lượng');
+		$sheet->setCellValue('K1', 'Đơn Giá');
+		$sheet->setCellValue('L1', 'Thành Tiền');
+		$sheet->setCellValue('M1', 'Phụ Thu');
+		$sheet->setCellValue('N1', 'Tiền Mặt');
+		$sheet->setCellValue('O1', 'Chuyển Khoản');
+		$sheet->setCellValue('P1', 'Doanh Thu');
+		$sheet->setCellValue('Q1', 'Doanh Thu Thực');
+		// Format cho Header (In đậm)
+		$sheet->getStyle('A1:Q1')->applyFromArray(array(
+			'font' => array(
+				'bold'  => true,
+				'color' => array('rgb' => '121212'), // Chữ màu trắng cho nổi trên nền tối
+			),
+			'fill' => array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array(
+					'rgb' => '95B3D7'
+				)
+			)
+		));
+		// 5. Đổ dữ liệu vào các dòng tiếp theo
+		$rowCount = 2; // Bắt đầu từ dòng 2
+		$stt = 1;
+		foreach ($dataList as $row) {
+			$startDate = date('d/m/Y', strtotime($row->created));
+			$sheet->setCellValue('A' . $rowCount, $stt);
+			$sheet->setCellValue('B' . $rowCount, $row->orderId);
+			$sheet->setCellValue('C' . $rowCount, date('d/m/Y', strtotime($row->created)));
+			$sheet->setCellValue('D' . $rowCount, $row->shipping);
+			$sheet->setCellValue('E' . $rowCount, "Khách lẻ");
+			$sheet->setCellValue('F' . $rowCount, $row->fullname);
+			$sheet->setCellValue('G' . $rowCount, $row->storeName);
+			$sheet->setCellValue('L' . $rowCount, $row->subtotal);
+			$sheet->setCellValue('M' . $rowCount, $row->shippingtotal);
+			$sheet->setCellValue('N' . $rowCount, $row->grandtotal);
+			$sheet->setCellValue('P' . $rowCount, $row->grandtotal);
+			$sheet->setCellValue('Q' . $rowCount, $row->grandtotal);
+			$sheet->getStyle('A'. $rowCount.':Q'. $rowCount)->applyFromArray(array(
+				'font' => array(
+					'bold'  => true,
+					'color' => array('rgb' => 'FFFFFF'), // Chữ màu trắng cho nổi trên nền tối
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'startcolor' => array(
+						'rgb' => '4CAF50' // Màu xanh lá (mã HEX)
+					)
+				)
+			));
+			$rowCount++;
+			$cartDetails = unserialize($row->detailcart);
+			if (is_array($cartDetails)) {
+				foreach ($cartDetails as $item) {
+					// Các thông tin chung của hóa đơn
+					$sheet->setCellValue('B' . $rowCount, $row->orderId);
+					$sheet->setCellValue('C' . $rowCount, date('d/m/Y', strtotime($row->created)));
+					$sheet->setCellValue('D' . $rowCount, $row->shipping);
+					$sheet->setCellValue('E' . $rowCount, "Khách lẻ");
+					$sheet->setCellValue('F' . $rowCount, $row->fullname);
+					$sheet->setCellValue('G' . $rowCount, $row->storeName);
+	
+					// --- Thông tin CHI TIẾT từng món ---
+					$sheet->setCellValue('H' . $rowCount, $item->name);
+					$sheet->setCellValue('I' . $rowCount, $item->size);
+					$sheet->setCellValue('J' . $rowCount, $item->amount);       
+					$sheet->setCellValue('K' . $rowCount, ($item->totalPrice - $item->priceTopping)/$item->amount);  
+					// --- Thông tin Tài chính ---
+					$sheet->setCellValue('L' . $rowCount, ($item->totalPrice - $item->priceTopping)); // Thành tiền món này (đã gồm topping)
+					if ($item->toppings != '' || $item->toppings != NULL) {
+						// Tách chuỗi dựa trên dấu phẩy và khoảng trắng
+						$items = $item->toppings;
+						if (count($items) > 0) {
+							$totalItems = count($items);
+							$i = 1;
+							foreach ($items as $top) {
+								$rowCount++;
+								$sheet->setCellValue('H' . $rowCount, ' - '.$top->name);
+								$sheet->setCellValue('J' . $rowCount, $top->qty * $item->amount);
+								$sheet->setCellValue('K' . $rowCount, $top->price);
+								$sheet->setCellValue('L' . $rowCount, $top->price * ( $top->qty * $item->amount));
+							}							
+						} 
+					}
+					$rowCount++;
+				}
+			}
+			$stt++;
+		}
+
+		
+		// Auto size cột
+		foreach(range('A','Q') as $columnID) {
+			$sheet->getColumnDimension($columnID)->setAutoSize(true);
+		}
+
+		// Lưu file
+		$fileName = 'Export_order_' . date('Ymd_His') . '.xlsx';
+		$export_path = DIR_EXPORT_FILES . $fileName;
+
+		try {
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+			$objWriter->save($export_path);
+			
+			if (file_exists($export_path)) {
+				// Bây giờ bạn có thể dùng base_url() mà không bị lỗi
+				return base_url('assets/uploads/export/' . $fileName);
+			} 
+		} catch (Exception $e) {
+			return false;
+		}
+		return false;
+	}
 
 	public function showBanner(){
 		$this->load->model('banners/banners_model');

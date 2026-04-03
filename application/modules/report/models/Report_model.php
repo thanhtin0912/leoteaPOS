@@ -136,6 +136,49 @@ class Report_model extends CI_Model {
 		}
 	}
 
+	function getDataExport(){
+		$this->db->select('n.*, s.name as storeName');
+		$this->db->order_by('n.created','ASC');
+		if($this->input->post('title')!=''){
+			$this->db->like('n.orderId', $this->input->post('title'));
+		}
+		if($this->input->post('cate_name')!=''){
+			$this->db->like('s.id', $this->input->post('cate_name'));
+		}
+		if($this->input->post('username')!=''){
+			$this->db->where('n.phone', $this->input->post('username'));
+		}
+		if($this->input->post('name')!=''){
+			$this->db->like('n.fullname', $this->input->post('name'));
+		}
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
+			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+		}
+		if($this->input->post('dateFrom')=='' && $this->input->post('dateTo')!=''){
+			$this->db->where('n.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
+		}
+		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')!=''){
+			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
+			$this->db->where('n.created <= "'.date('Y-m-d 23:59:59',strtotime($this->input->post('dateTo'))).'"');
+		}
+		if($this->input->post('status')!= 2){
+			$this->db->where('n.status', $this->input->post('status'));
+		}
+		if($this->input->post('showData') != 2) {
+			$this->db->where('n.delete', $this->input->post('showData'));
+		}
+		$this->db->group_by('n.id');
+		$this->db->from(PREFIX.$this->table." n");
+		$this->db->join(PREFIX.$this->table_user." u", 'n.phone = u.phone', "left");
+		$this->db->join(PREFIX.$this->table_store." s", 'u.storeId = s.id', "left");
+		$query = $this->db->get();
+
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
 	
 	function getDetailManagement($id){
 		$this->db->select('o.*, s.name as storeName');

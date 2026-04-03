@@ -1,15 +1,12 @@
 <script type="text/javascript">
 token_value = '<?=$this->security->get_csrf_hash()?>';
 </script>
-<?php if($price){ ?>
-<div class="portlet-title">
-	<div class="caption font-green-sharp">
-		<span class="caption-subject bold font-red-flamingo uppercase">Tổng tiền:
-			<span class="fa-2x"><?=number_format($price);?></span></span>
-	</div>
-</div>
-<hr>
-<?php } ?>
+<?php if (!empty($downloadUrl)): ?>
+    <script type="text/javascript">
+        // Mở URL download trong một iframe ẩn hoặc window mới để không làm reload trang
+        window.location.href = "<?php echo $downloadUrl; ?>";
+    </script>
+<?php endif; ?>
 <div class="dataTables_wrapper no-footer">
     <?php if($result){ ?>
     <div class="row">

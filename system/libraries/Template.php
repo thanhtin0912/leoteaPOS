@@ -31,7 +31,7 @@
  * 
  */
 class CI_Template {
-   
+
    var $CI;
    var $config;
    var $template;

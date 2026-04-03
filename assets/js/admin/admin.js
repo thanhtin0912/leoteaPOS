@@ -71,7 +71,7 @@ function showData(e) {
 	$("#hdshowData").val($(e).attr("value"));
 	searchContent(0);
 }
-function searchContent(start,per_page,sum=0){
+function searchContent(start,per_page,sum=0,exp=0){
 	var el = $('a.reload').closest(".portlet").children(".portlet-body");
 	Metronic.blockUI({
 		target: el,
@@ -94,6 +94,7 @@ function searchContent(start,per_page,sum=0){
 		order_by: type_sort,
 		start: start,
 		per_page: per_page,
+		export: exp,
 		dateFrom: $('#caledar_from').val(),
 		dateTo: $('#caledar_to').val(),
 		content: $('#search_content').val(),
