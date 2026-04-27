@@ -404,11 +404,14 @@ class Home_model extends CI_Model {
 		}
 	}
 
-	function getTotalRevenueShift($from, $to, $user) {
+	function getTotalRevenueShift($from, $to, $user, $payment_type= null) {
 		$this->db->select_sum('grandtotal');
 		$this->db->where('phone',$user);
 		$this->db->where('status',1);
 		$this->db->where('delete',0);
+		if ($payment_type !== null) {
+			$this->db->where('payment', $payment_type);
+		}
 		// Đảm bảo so sánh chính xác thời gian
 		$this->db->where('created >=', $from);
 		$this->db->where('created <=', $to);

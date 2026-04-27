@@ -118,11 +118,14 @@ class Home extends MX_Controller {
 	}
 	function checkOutShift(){
 		$shift = $this->home->getShiftofDay($_POST["id"], 0);
-		$salesShift = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
+		$salesShiftCash = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user, 1);
+		$salesShiftBanking = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user, 2);
 		$lastOrder = $this->home->getLastOrderShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
  		$data=array(
 			"to"=> date('Y-m-d H:i:s',time()),
-			"sales"=> $salesShift,
+			"sales"=> $salesShiftCash + $salesShiftBanking,
+			"cash"=> $salesShiftCash,
+			"banking"=> $salesShiftBanking,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -187,7 +190,7 @@ class Home extends MX_Controller {
 		$shift = $this->home->getShiftofDay($key, 0);
 		$data['res'] = false;
 		if($_GET["id"] && $shift){
-			$data['salesShift']= $shift[0]->sales;
+			$data['salesShift']= $shift[0]->cash; // tổng tiền mặt thu đc
 			$data['res'] = $shift;
 		}
 		$this->load->view('report-shift', $data);
@@ -216,9 +219,11 @@ class Home extends MX_Controller {
 			$s = $this->home->getShiftofDay($_POST["id"], 1);
 			if ($s) {
 				$now = date('Y-m-d H:i:s');
-				$diff = (($s[0]->actual + $_POST['spent'] - $_POST['tip']) - $s[0]->sales);
+				$diff = (($s[0]->actual + $_POST['spent'] - $_POST['tip']) - $s[0]->cash);
 				$sales = number_format($s[0]->sales);
 				$actual = number_format($s[0]->actual);
+				$cash = number_format($s[0]->cash);
+				$banking = number_format($s[0]->banking);
 				$tip = number_format($s[0]->tip);
 				$gio_vao = date('H:i:s', strtotime($s[0]->from));
 				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
@@ -232,6 +237,7 @@ class Home extends MX_Controller {
                     . "CA: " . $gio_vao . " - " . $gio_ra . "\n"
                     . "-----------------------------\n"
 					. "Chi: " . $chi . " - Nội dung: " . $note . "\n"
+					. "TM: " . $cash . " - CK: " . $banking . "\n"
                     . "DT: " . $sales . " - TN: " . $actual . "\n"
 					. "Tip: " . $tip . "\n"
                     . "CL: " . number_format($diff) . "\n"
