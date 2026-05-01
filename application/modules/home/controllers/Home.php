@@ -700,7 +700,8 @@ class Home extends MX_Controller {
 					$code = $res->orderId.$pushTimeHash;
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
-					if(isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery"){
+					
+					if($_POST["payment"] === 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');
 							if($printBill) {
