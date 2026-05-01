@@ -238,9 +238,9 @@ class Home extends MX_Controller {
                     . "-----------------------------\n"
 					. "Chi: " . $chi . " - Nội dung: " . $note . "\n"
 					. "TM: " . $cash . " - CK: " . $banking . "\n"
-                    . "DT: " . $sales . " - TN: " . $actual . "\n"
+                    . "TN: " . $actual . " - DT: " . $sales . "\n"
 					. "Tip: " . $tip . "\n"
-                    . "CL: " . number_format($diff) . "\n"
+                    . "LTM: " . number_format($diff) . "\n"
                     . "-----------------------------";
 			
 				$dis = $this->discord->sendsms($tr);
