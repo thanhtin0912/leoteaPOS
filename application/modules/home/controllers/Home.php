@@ -12,7 +12,7 @@ class Home extends MX_Controller {
 		$this->load->helper('cookie');
 		$token = get_cookie('remember_token');
 		$user = $this->home->checkCookie($token);
-		if (!empty($user)) {
+		if (!empty($user) && $token!=NULL) {
 			if(!$this->session->userdata('userLogin')) {
 			// Tái tạo session
 				$this->session->set_userdata('userLogin', $user[0]);
@@ -441,8 +441,8 @@ class Home extends MX_Controller {
 	public function logout(){
 		$this->session->unset_userdata('userLogin');
 		$this->session->unset_userdata('cart_products');
-		delete_cookie('remember_token');
-		header('Location: '.PATH_URL);
+			delete_cookie('remember_token');
+			header('Location: '.PATH_URL);
 	}
 
 	public function getCatelogiesProduct(){
@@ -700,8 +700,8 @@ class Home extends MX_Controller {
 					$code = $res->orderId.$pushTimeHash;
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
-					
-					if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
+
+										if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');
 							if($printBill) {
