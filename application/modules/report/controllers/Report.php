@@ -268,7 +268,7 @@ class Report extends MX_Controller {
 		foreach ($dataList as $row) {
 			$startDate = date('d/m/Y', strtotime($row->created));
 			$sheet->setCellValue('A' . $rowCount, $stt);
-			$sheet->setCellValue('B' . $rowCount, $row->orderId);
+			$sheet->setCellValueExplicit('B' . $rowCount, $row->orderId, PHPExcel_Cell_DataType::TYPE_STRING);
 			$sheet->setCellValue('C' . $rowCount, date('d/m/Y', strtotime($row->created)));
 			$sheet->setCellValue('D' . $rowCount, $row->shipping);
 			$sheet->setCellValue('E' . $rowCount, "Khách lẻ");
@@ -297,7 +297,7 @@ class Report extends MX_Controller {
 			if (is_array($cartDetails)) {
 				foreach ($cartDetails as $item) {
 					// Các thông tin chung của hóa đơn
-					$sheet->setCellValue('B' . $rowCount, $row->orderId);
+					$sheet->setCellValueExplicit('B' . $rowCount, $row->orderId, PHPExcel_Cell_DataType::TYPE_STRING);
 					$sheet->setCellValue('C' . $rowCount, date('d/m/Y', strtotime($row->created)));
 					$sheet->setCellValue('D' . $rowCount, $row->shipping);
 					$sheet->setCellValue('E' . $rowCount, "Khách lẻ");
