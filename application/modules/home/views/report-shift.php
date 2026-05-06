@@ -141,13 +141,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             }
                         });
                     }
-                },
-                cancel: {
-                    text: 'Kiểm tra lại',
-                    action: function () {
-                        // Không làm gì cả, đóng popup
-                        btn.style.display = 'inline-block';
-                    }
                 }
             }
         }); 
