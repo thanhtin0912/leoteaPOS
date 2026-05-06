@@ -65,6 +65,10 @@
                                             </div>
                                         </div>
                                         <div class="row static-info">
+                                            <div class="col-xs-5 name"> Thanh toán: </div>
+                                            <div class="col-xs-7 value"> <?= ($result->payment == 1) ? "TM" : "CK"; ?></div>
+                                        </div>
+                                        <div class="row static-info">
                                             <div class="col-xs-5 name"> Note: </div>
                                             <div class="col-xs-7 value"> <?=$result->note;?></div>
                                         </div>

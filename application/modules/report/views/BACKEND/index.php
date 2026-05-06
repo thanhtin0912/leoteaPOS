@@ -81,6 +81,18 @@
 									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_name"></div>
 								</div>
 								<div class="form-group">
+									<label class="col-sm-2 control-label">Tên món:</label>
+									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_content"></div>
+									<label class="col-sm-2 control-label">Thanh toán:</label>
+									<div class="col-sm-4">
+										<select class="select form-control" data-live-search="true" data-size="8" name="search_url" id="search_description">
+											<option value="">None</option>
+											<option value="1">TM</option>
+											<option value="2">CK</option>
+										</select>
+									</div>
+								</div>	
+								<div class="form-group">
 									<label class="col-sm-2 control-label">Create Date:</label>
 									<div class="col-sm-4">
 										<div class="input-group date-picker input-daterange" data-date-format="yyyy/mm/dd" style="width: 100%;">

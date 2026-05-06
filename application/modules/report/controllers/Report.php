@@ -280,18 +280,18 @@ class Report extends MX_Controller {
 			$sheet->setCellValue('O' . $rowCount, $row->payment==2 ? $row->grandtotal : '');
 			$sheet->setCellValue('P' . $rowCount, $row->grandtotal);
 			$sheet->setCellValue('Q' . $rowCount, $row->grandtotal);
-			$sheet->getStyle('A'. $rowCount.':Q'. $rowCount)->applyFromArray(array(
-				'font' => array(
-					'bold'  => true,
-					'color' => array('rgb' => 'FFFFFF'), // Chữ màu trắng cho nổi trên nền tối
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'startcolor' => array(
-						'rgb' => '4CAF50' // Màu xanh lá (mã HEX)
-					)
-				)
-			));
+			// $sheet->getStyle('A'. $rowCount.':Q'. $rowCount)->applyFromArray(array(
+			// 	'font' => array(
+			// 		'bold'  => true,
+			// 		'color' => array('rgb' => 'FFFFFF'), // Chữ màu trắng cho nổi trên nền tối
+			// 	),
+			// 	'fill' => array(
+			// 		'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			// 		'startcolor' => array(
+			// 			'rgb' => '4CAF50' // Màu xanh lá (mã HEX)
+			// 		)
+			// 	)
+			// ));
 			$rowCount++;
 			$cartDetails = unserialize($row->detailcart);
 			if (is_array($cartDetails)) {
@@ -337,6 +337,22 @@ class Report extends MX_Controller {
 		foreach(range('A','Q') as $columnID) {
 			$sheet->getColumnDimension($columnID)->setAutoSize(true);
 		}
+
+		// --- THÊM KHUNG VIỀN CHO TOÀN BỘ VÙNG DỮ LIỆU ---
+		// Xác định vùng cần kẻ viền: từ ô A1 đến cột Q và dòng cuối cùng (rowCount - 1)
+		$lastRow = $rowCount - 1;
+		$styleArray = array(
+			'borders' => array(
+				'allborders' => array(
+					'style' => PHPExcel_Style_Border::BORDER_THIN, // Nét mảnh
+					'color' => array('rgb' => '000000'), // Màu đen
+				),
+			),
+		);
+
+		// Áp dụng style cho toàn bộ vùng bảng
+		$sheet->getStyle('A1:Q' . $lastRow)->applyFromArray($styleArray);
+		// ----------------------------------------------
 
 		// Lưu file
 		$fileName = 'Export_order_' . date('Ymd_His') . '.xlsx';

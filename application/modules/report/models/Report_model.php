@@ -25,6 +25,12 @@ class Report_model extends CI_Model {
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
 		}
+		if($this->input->post('description')!=''){
+			$this->db->where('n.payment', $this->input->post('description'));
+		}
+		if($this->input->post('content')!=''){
+			$this->db->like('n.detailcart', $this->input->post('content'));
+		}
 		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
 			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
 		}
@@ -70,6 +76,12 @@ class Report_model extends CI_Model {
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
 		}
+		if($this->input->post('description')!=''){
+			$this->db->where('n.payment', $this->input->post('description'));
+		}
+		if($this->input->post('content')!=''){
+			$this->db->like('n.detailcart', $this->input->post('content'));
+		}
 		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
 			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
 		}
@@ -113,6 +125,12 @@ class Report_model extends CI_Model {
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
 		}
+		if($this->input->post('description')!=''){
+			$this->db->where('n.payment', $this->input->post('description'));
+		}
+		if($this->input->post('content')!=''){
+			$this->db->like('n.detailcart', $this->input->post('content'));
+		}
 		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
 			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');
 		}
@@ -150,6 +168,12 @@ class Report_model extends CI_Model {
 		}
 		if($this->input->post('name')!=''){
 			$this->db->like('n.fullname', $this->input->post('name'));
+		}
+		if($this->input->post('description')!=''){
+			$this->db->where('n.payment', $this->input->post('description'));
+		}
+		if($this->input->post('content')!=''){
+			$this->db->like('n.detailcart', $this->input->post('content'));
 		}
 		if($this->input->post('dateFrom')!='' && $this->input->post('dateTo')==''){
 			$this->db->where('n.created >= "'.date('Y-m-d 00:00:01',strtotime($this->input->post('dateFrom'))).'"');

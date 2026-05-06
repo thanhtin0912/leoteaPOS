@@ -43,6 +43,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <th class="sorting" onclick="sort('shipping')" id="shipping">Vận chuyển</th>
                     <th class="sorting" width="150" onclick="sort('orderId')" id="fullname">Tên NV</th>
                     <th class="sorting" width="150">Ghi chú</th>
+                    <th class="sorting">PM_Type</th>
                     <th class="center sorting" width="60" onclick="sort('status')" id="status">Status</th>
                     <th class="center sorting" width="80" onclick="sort('created')" id="created">Created</th>
                 </tr>
@@ -64,6 +65,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->shipping); ?></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->fullname); ?></a></td>
                     <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->note); ?></a></td>
+                    <td><a href="<?=PATH_URL_ADMIN.$module.'/update/'.$v->id?>"><?= ($v->payment == 1) ? "TM" : "CK"; ?></a></td>
                     <td class="center" ><?php ($v->status==0) ? print '<span class="label label-sm label-default status-blocked">Đã hủy</span>' : print '<span class="label label-sm label-success status-approved">Approved</span>' ?></td>
                     <td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
                 </tr>
@@ -79,6 +81,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
                     <td><?= ($v->shipping); ?></td>
                     <td><?= ($v->fullname); ?></td>
                     <td><?= ($v->note); ?></td>
+                    <td><?= ($v->payment == 1) ? "TM" : "CK"; ?></td>
                     <td class="center" id="loadStatusID_<?=$v->id?>"><span
                             class="label label-sm label-default status-deleted">Deleted</span></td>
                     <td class="center"><?=date('Y-m-d H:i:s',strtotime($v->created))?></td>
