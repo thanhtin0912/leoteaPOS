@@ -241,7 +241,6 @@ class Home_model extends CI_Model {
 			// 2. Select lại dữ liệu từ ID này
 			$query = $this->db->get_where(PREFIX . $this->tbl_order, array('id' => $insert_id));
 			// Trả về dòng dữ liệu dưới dạng Object (hoặc xử lý tùy ý bạn)
-			
 			return $query->row();
 		}
 		return false;
@@ -459,75 +458,6 @@ class Home_model extends CI_Model {
 			return $query->result();
 		}else{
 			return false;
-		}
-	}
-	function sync_pending_orders() {
-		// 1. Lấy danh sách đơn hàng chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
-		$this->db->where('is_synced', 0);
-		$this->db->limit(20);
-		$query = $this->db->get('orders');
-		$pending_orders = $query->result_array();
-		if (empty($pending_orders)) {
-			return "No data to sync";
-		}
-	
-		// 2. Thử kết nối Database Online
-		// Dùng @ để ẩn các lỗi cảnh báo kết nối nếu mất mạng
-		$DB_online = @$this->load->database('online', TRUE);
-	
-		if ($DB_online && $DB_online->conn_id) {
-			$success_count = 0;
-			foreach ($pending_orders as $order) {
-				// Tách ID local ra để tránh xung đột với ID tự tăng trên Server Online
-				$local_id = $order['id'];
-				unset($order['id']); 
-				unset($order['is_synced']); 
-				$order['is_synced'] = 1;
-				// 3. Insert lên Server Online
-				if ($DB_online->insert('orders', $order)) {
-					// 4. Nếu thành công, cập nhật trạng thái tại Local ngay lập tức
-					$this->db->where('id', $local_id);
-					$this->db->update('orders', array('is_synced' => 1));
-					$success_count++;
-				}
-			}
-	
-			$DB_online->close();
-			return "Synced $success_count orders successfully.";
-		} else {
-			return "Server Online is unreachable.";
-		}
-	}
-	function sync_pending_shift() {
-		// 1. Lấy danh sách đơn hàng chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
-		$this->db->where('is_synced', 0);
-		$this->db->where('completed', 1);
-		$this->db->limit(20);
-		$query = $this->db->get('shift');
-		$pending_shift = $query->result_array();
-		if (empty($pending_shift)) {
-			return "No data to sync";
-		}
-		// 2. Thử kết nối Database Online
-		$DB_online = @$this->load->database('online', TRUE);
-		if ($DB_online && $DB_online->conn_id) {
-			$success_count = 0;
-			foreach ($pending_shift as $shift) {
-				$local_id = $shift['id'];
-				unset($shift['id']); 
-				$shift['is_synced'] = 1;
-				// 3. Insert lên Server Online
-				if ($DB_online->insert('shift', $shift)) {
-					// 4. Nếu thành công, cập nhật trạng thái tại Local ngay lập tức
-					$this->db->where('id', $local_id);
-					$this->db->update('shift', array('is_synced' => 1));
-					$success_count++;
-				}
-			}
-			$DB_online->close();
-			return "Synced $success_count orders successfully.";
-		} else {
-			return "Server Online is unreachable.";
 		}
 	}
 }
