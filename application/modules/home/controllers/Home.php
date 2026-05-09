@@ -374,6 +374,33 @@ class Home extends MX_Controller {
 						'key' => $this->security->get_csrf_hash(),
 					);
 				}
+				if ($type === 'ck') {
+					$this->db->where('id',$checkOrder[0]->id);
+					$note = $this->input->post('note');
+					$dataUpdate = array(
+						'payment' => 2,
+						"updated"=> date('Y-m-d H:i:s',time())
+					);
+					if($this->db->update('orders', $dataUpdate)){
+						$nv = $checkOrder[0]->fullname;
+						$tk = $checkOrder[0]->phone;
+						$created = $checkOrder[0]->created;
+						$now = date('Y-m-d H:i:s');
+						// Viết sao hiển thị vậy, rất dễ quản lý
+						$tr = "**Thay đổi Hóa đơn từ TM sang CK - " . $lastNo . " - " . $now . "!**\n"
+						. "+++++++++++++++++++++++++++++++++\n"
+						. "NV: " . $nv . " - TK: " . $tk . "\n"
+						. "Lý do: " . $note . "\n"
+						. "Ngày in: " . $created . "\n"
+						. "+++++++++++++++++++++++++++++++++\n";
+						$this->discord->sendsmsCancel($tr);
+					}
+					$data = array(
+						'status'=>true,
+						'mes' => 'Đã đổi thông tin thanh toán từ TM sang CK.',
+						'key' => $this->security->get_csrf_hash(),
+					);
+				}
 			} else {
 				$data = array(
 					'status'=>false,
@@ -416,6 +443,10 @@ class Home extends MX_Controller {
 					);
 					// 3. Gọi hàm set_cookie
 					$this->input->set_cookie($cookie);				
+				}
+				$checkShift = $this->home->checkExsitShiftofDay();
+				if($checkShift) {
+					$this->session->set_userdata('staffName', $checkShift[0]->name);
 				}
 
 				$data = array(
