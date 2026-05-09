@@ -28,7 +28,7 @@ class Discord {
         if ($http_status == 204) {
             return true;
         } else {
-            echo "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response";
+            log_message('error', "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response");
         }
     }
 
@@ -58,7 +58,7 @@ class Discord {
         if ($http_status == 204) {
             return true;
         } else {
-            echo "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response";
+            log_message('error', "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response");
         }
     }
 

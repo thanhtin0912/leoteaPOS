@@ -27,7 +27,10 @@ class Home extends MX_Controller {
 	/*------------------------------------ API ------------------------------------*/
 	public function index()
 	{
-
+		if ($this->check_online_connection()) {
+			$this->home->sync_pending_orders();
+			$this->home->sync_pending_shift();
+		}
 		$data['info'] = $this->home->getInfoSite();
 		$data['sales'] = $this->home->getProductsSales();
 		$data['cates'] = $this->home->getCategories('PRODUCT');
@@ -147,6 +150,12 @@ class Home extends MX_Controller {
 		$encoded = short_encode($_POST["id"]);
 		//
 		$this->session->unset_userdata('staffName');
+		
+		if ($this->check_online_connection()) {
+			$this->home->sync_pending_shift();
+		} else {
+			log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
+		}
 		if($req) {
 			$data = array(
 				'status'=>true,
@@ -154,6 +163,7 @@ class Home extends MX_Controller {
 				'key' => $this->security->get_csrf_hash(),
 			);
 		}
+
 		return_json($data);
 	}
 
@@ -243,12 +253,13 @@ class Home extends MX_Controller {
                     . "LTM: " . number_format($diff) . "\n"
                     . "-----------------------------";
 			
-				$dis = $this->discord->sendsms($tr);
+
 				$data=array(
 					"diff" => $diff,
 					"updated"=> date('Y-m-d H:i:s',time())
 				);
 				$this->home->updateShiftDay($_POST["id"], $data);
+				$this->discord->sendsms($tr);
 			}
 			$data = array(
 				'status'=>true,
@@ -417,6 +428,11 @@ class Home extends MX_Controller {
 					// 3. Gọi hàm set_cookie
 					$this->input->set_cookie($cookie);				
 				}
+				$checkShift = $this->home->checkExsitShiftofDay();
+				if($checkShift) {
+					$this->session->set_userdata('staffName', $checkShift[0]->name);
+				}
+				
 
 				$data = array(
 					'status'=>true,
@@ -701,7 +717,7 @@ class Home extends MX_Controller {
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
 
-										if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
+						if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');
 							if($printBill) {
@@ -728,13 +744,20 @@ class Home extends MX_Controller {
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
-					
+					if ($this->check_online_connection()) {
+						$this->home->sync_pending_orders();
+					} else {
+						log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
+					}
 					return_json($data);
+
 				} else {
 					$data['status'] = false;
 					$data['key'] = $this->security->get_csrf_hash();
 					return_json($data);
 				}
+				
+				
 				exit();
 			}
 		}
@@ -934,6 +957,20 @@ class Home extends MX_Controller {
 	}
 
 	/*------------------------------------ End API --------------------------------*/
-
+	public function check_online_connection() {
+		$host = DBOL_HOST; // IP Server của bạn
+		$port = 3306;      // Cổng MySQL
+		$timeout = 2;      // Chỉ chờ trong 2 giây
+	
+		// Thử mở một kết nối socket tới port 3306
+		$connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
+	
+		if ($connection) {
+			fclose($connection);
+			return TRUE; // Có mạng, Server đang mở
+		} else {
+			return FALSE; // Không có mạng hoặc Server chặn port
+		}
+	}
 
 }
