@@ -18,7 +18,11 @@ function submit() {
         console.log(res);
         $('#csrf_token').val(res.key);
         if (res.status) {
-            notify(res.mes, 'primary', true);
+            if (res.mes) {
+                notify(res.mes, 'primary', true);
+            } else {
+                notify('Yêu cầu xử lý hóa đơn đã gửi thành công.', 'primary', true);
+            }
             // Vô hiệu hóa nút
             btn.disabled = true;
         } else {
