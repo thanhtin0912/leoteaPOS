@@ -69,6 +69,9 @@
                     <div class="col-md-4 col-sm-12">
                         <div class="top-header-right">
                             <ul>
+                            <li>
+                                <a href="javascript:;" onclick="syncProduct()"><i class="fa fa-cloud"></i> Đồng bộ</a>
+                                </li>
                                 <?php if (!$this->session->userdata('userLogin')) {?>
                                 <li onclick="openAccount()">
                                     <a href="javascript:void(0)"><i class="fa fa-user"></i> Đăng nhập</a>
@@ -78,7 +81,7 @@
                                     <a href="<?= PATH_URL; ?>logout"><i class="fa fa-user"></i> Đăng xuất</a>
                                 </li>
                                 <?php } ?>
-                            </ul>
+                                                            </ul>
                         </div>
                     </div>
                 </div>
@@ -340,6 +343,29 @@
     <script type="text/javascript">
     var root = '<?=PATH_URL?>';
     var csrf_token;
+    function syncProduct(){
+        var userLogin = <?php echo json_encode($this->session->userdata('userLogin')); ?>;
+        if (userLogin) {
+            notify('Đăng xuất khỏi hệ thống trước khi đồng bộ', 'danger', true); 
+            return false;
+        }
+        setTimeout(() => {
+            $('.loader-wrapper').addClass('active');
+        }, 2);
+        
+        $.post(root+'home/syncProduct',{
+            csrf_token:     $('#csrf_token').val()
+        },function(res){
+            $('#csrf_token').val(res.key);
+            if(res.status) {
+                notify('Đồng bộ data với server thành công', 'success', true);
+            } else {
+                notify('Không thể dồng bộ data, vui lòng liên hệ quản lý.', 'danger', true); 
+            }
+            $('.loader-wrapper').removeClass('active');
+        }); 
+        
+    }
     </script>
 </body>
 

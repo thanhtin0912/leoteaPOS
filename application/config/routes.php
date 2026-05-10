@@ -68,6 +68,7 @@ $route['huy-hoa-don'] = "home/cancelOrder";
 $route['updateCancelOrder'] = "home/updateCancelOrder";
 $route['xac-nhan-huy-hoa-don/(:any)'] 	  = "home/viewCancelOrder/$1";
 $route['verifyCancelOrder'] 	  = "home/verifyCancelOrder";
+$route['syncProduct'] = "home/syncProduct";
 //
 $route['login'] = "home/login";
 $route['logout'] = "home/logout";

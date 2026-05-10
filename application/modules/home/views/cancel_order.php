@@ -18,7 +18,11 @@ function submit() {
         console.log(res);
         $('#csrf_token').val(res.key);
         if (res.status) {
-            notify('Yêu cầu xử lý hóa đơn đã gửi thành công.', 'primary', true);
+            if (res.mes) {
+                notify(res.mes, 'primary', true);
+            } else {
+                notify('Yêu cầu xử lý hóa đơn đã gửi thành công.', 'primary', true);
+            }
             // Vô hiệu hóa nút
             btn.disabled = true;
         } else {
@@ -70,6 +74,15 @@ function submit() {
                             <label for="type2" class="size-radio-label p-1">
                                 <div class="size-radio-content">
                                     <p class="size-name">In</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="card-product-option-item custom-radio mb-0">
+                            <input type="radio" value="ck" name="typeProcess" id="type3"
+                                class="size-radio-input" data-size="0">
+                            <label for="type3" class="size-radio-label p-1">
+                                <div class="size-radio-content">
+                                    <p class="size-name">TM->CK</p>
                                 </div>
                             </label>
                         </div>

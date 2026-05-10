@@ -27,7 +27,10 @@ class Home extends MX_Controller {
 	/*------------------------------------ API ------------------------------------*/
 	public function index()
 	{
-
+		if ($this->check_online_connection()) {
+			$this->home->sync_pending_orders();
+			$this->home->sync_pending_shift();
+		}
 		$data['info'] = $this->home->getInfoSite();
 		$data['sales'] = $this->home->getProductsSales();
 		$data['cates'] = $this->home->getCategories('PRODUCT');
@@ -57,14 +60,37 @@ class Home extends MX_Controller {
 		
 	}
 	
-	public function history()
+	public function syncProduct()
 	{
-		$data['info'] = $this->home->getInfoSite();
-		$data['cart'] =$this->getListCart();
-		$data['countCart'] = $this->countSessionCart();
-		$data['orderToday'] = $this->home->getListOrderToday();
-		$this->template->write_view('content', 'history', $data);
-		$this->template->render();
+		$tablesToSync = ['users','toppings','stores','products','printer','categories'];
+		$DB_online = @$this->load->database('online', TRUE);
+		$localDB = $this->db; // Kết nối local mặc định
+
+		foreach ($tablesToSync as $table) {
+			// 1. Lấy dữ liệu từ Live
+			$query = $DB_online->get($table);
+			$data = $query->result_array();
+
+			if (!empty($data)) {
+				// 2. Xóa dữ liệu cũ ở Local (để tránh trùng primary key)
+				$localDB->truncate($table);
+				
+				// 3. Insert dữ liệu mới vào Local theo lô (batch) để tối ưu hiệu suất
+				$localDB->insert_batch($table, $data);
+			}
+		}
+		$token = get_cookie('remember_token');
+		if($token) {
+			$info = $this->session->userdata('userLogin');
+			$this->db->where('phone',$info->phone);
+			$this->db->update('users', array('session' => $token));
+		}
+		$data = array(
+			'status'=>true,
+			'key' => $this->security->get_csrf_hash(),
+		);
+		
+		return_json($data);
 		//
 	}
 
@@ -147,6 +173,11 @@ class Home extends MX_Controller {
 		$encoded = short_encode($_POST["id"]);
 		//
 		$this->session->unset_userdata('staffName');
+		if ($this->check_online_connection()) {
+			$this->home->sync_pending_shift();
+		} else {
+			log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
+		}
 		if($req) {
 			$data = array(
 				'status'=>true,
@@ -243,12 +274,13 @@ class Home extends MX_Controller {
                     . "LTM: " . number_format($diff) . "\n"
                     . "-----------------------------";
 			
-				$dis = $this->discord->sendsms($tr);
+				$this->discord->sendsms($tr);
 				$data=array(
 					"diff" => $diff,
 					"updated"=> date('Y-m-d H:i:s',time())
 				);
 				$this->home->updateShiftDay($_POST["id"], $data);
+				
 			}
 			$data = array(
 				'status'=>true,
@@ -374,6 +406,44 @@ class Home extends MX_Controller {
 						'key' => $this->security->get_csrf_hash(),
 					);
 				}
+				if ($type === 'ck') {
+					$this->db->where('orderId',$lastNo);
+					$note = $this->input->post('note');
+					$dataUpdate = array(
+						'payment' => 2,
+						"updated"=> date('Y-m-d H:i:s',time())
+					);
+					if($this->db->update('orders', $dataUpdate)){
+						$nv = $checkOrder[0]->fullname;
+						$tk = $checkOrder[0]->phone;
+						$created = $checkOrder[0]->created;
+						$now = date('Y-m-d H:i:s');
+						// Viết sao hiển thị vậy, rất dễ quản lý
+						$tr = "**Thay đổi Hóa đơn từ TM sang CK - " . $lastNo . " - " . $now . "!**\n"
+						. "+++++++++++++++++++++++++++++++++\n"
+						. "NV: " . $nv . " - TK: " . $tk . "\n"
+						. "Lý do: " . $note . "\n"
+						. "Ngày in: " . $created . "\n"
+						. "+++++++++++++++++++++++++++++++++\n";
+						$this->discord->sendsmsCancel($tr);
+
+
+						$db_online = $this->load->database('online', TRUE);
+						// Kiểm tra xem record này có tồn tại trên server online không
+						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
+
+						if ($check_online) {
+							// Nếu có thì tiến hành update online
+							$db_online->where('orderId', $lastNo);
+							$db_online->update('orders', $dataUpdate);
+						}
+					}
+					$data = array(
+						'status'=>true,
+						'mes' => 'Đã đổi thông tin thanh toán từ TM sang CK.',
+						'key' => $this->security->get_csrf_hash(),
+					);
+				}
 			} else {
 				$data = array(
 					'status'=>false,
@@ -416,6 +486,10 @@ class Home extends MX_Controller {
 					);
 					// 3. Gọi hàm set_cookie
 					$this->input->set_cookie($cookie);				
+				}
+				$checkShift = $this->home->checkExsitShiftofDay();
+				if($checkShift) {
+					$this->session->set_userdata('staffName', $checkShift[0]->name);
 				}
 
 				$data = array(
@@ -728,7 +802,11 @@ class Home extends MX_Controller {
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
-					
+					if ($this->check_online_connection()) {
+						$this->home->sync_pending_orders();
+					} else {
+						log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
+					}
 					return_json($data);
 				} else {
 					$data['status'] = false;
@@ -934,6 +1012,20 @@ class Home extends MX_Controller {
 	}
 
 	/*------------------------------------ End API --------------------------------*/
-
+	public function check_online_connection() {
+		$host = DBOL_HOST; // IP Server của bạn
+		$port = 3306;      // Cổng MySQL
+		$timeout = 2;      // Chỉ chờ trong 2 giây
+	
+		// Thử mở một kết nối socket tới port 3306
+		$connection = @fsockopen($host, $port, $errno, $errstr, $timeout);
+	
+		if ($connection) {
+			fclose($connection);
+			return TRUE; // Có mạng, Server đang mở
+		} else {
+			return FALSE; // Không có mạng hoặc Server chặn port
+		}
+	}
 
 }
