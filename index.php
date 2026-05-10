@@ -288,7 +288,7 @@ switch (ENVIRONMENT)
  * -------------------------------------------------------------------
  */
 date_default_timezone_set('Asia/Ho_Chi_Minh');
-define('FOLDER', '/pos/');
+define('FOLDER', '/');
 define('ADMINCP', 'admincp');
 define('API', 'api');
 if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on'){
