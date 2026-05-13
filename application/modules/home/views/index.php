@@ -257,67 +257,6 @@ function selectSizeProduct() {
     $('#sizePriceNow').val(priceSize)
 }
 </script>
-<section class="section-big-pt-space">
-    <div class="collection-wrapper">
-        <div class="custom-container">
-            <div class="row">
-                <div class="collection-content col">
-                    <div class="page-main-content">
-                        <div class="top-banner-wrapper">
-                            <a href="javascript:void(0)">
-                                <img src="<?=PATH_URL.DIR_UPLOAD_BANNER.$banner[0]->image ?>" class="img-fluid"
-                                    alt="category"></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!--title start-->
-<div class="title8 section-big-pt-space">
-    <h4>Bán chạy nhất</h4>
-</div>
-<!--title end-->
-
-<section class=" ratio_asos product  section-big-pb-space">
-    <div class="custom-container  addtocart_count ">
-        <div class="row">
-            <div class="col pr-0">
-                <div class="theme-tab product ">
-                    <div class="product-slide-6 product-m no-arrow">
-                        <?php if($sales) { ?>
-                        <?php foreach ($sales as $key => $v): ;?>
-                        <div>
-                            <div class="product-box ">
-                                <div class="product-imgbox">
-                                    <div class="product-front">
-                                        <a href="javascript:void(0)" onclick="quickViewDetailProduct(<?=$v->id?>)">
-                                            <img src="<?=GLOBAL_URL.$v->image?>" class="img-fluid"
-                                                alt="product">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="product-detail detail-center1 pt-2">
-                                    <a href="javascript:void(0)" onclick="quickViewDetailProduct(<?=$v->id?>)">
-                                        <h6><?=$v->name ?></h6>
-                                    </a>
-                                    <span class="detail-price"><?=number_format($v->price) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach ?>
-                        <?php } ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!--product box end-->
-
 
 
 <!--tab product-->
