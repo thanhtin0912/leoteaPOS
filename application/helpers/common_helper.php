@@ -731,7 +731,9 @@ function getNotification(){
 function return_json($data) {
     header('Content-Type: application/json');
     echo json_encode($data);
-    exit;
+    if (function_exists('fastcgi_finish_request')) {
+		fastcgi_finish_request(); 
+	}
 }
 
 function vn_to_ascii($str) {

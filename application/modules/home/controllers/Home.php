@@ -347,6 +347,16 @@ class Home extends MX_Controller {
 	}
 	public function updateCancelOrder()
 	{
+		if (!$this->check_online_connection()) {
+			$data = array(
+				'status'=> false,
+				'mes' => 'Tính năng này chỉ áp dụng khi online.',
+				'key' => $this->security->get_csrf_hash(),
+			);
+			return_json($data);
+			exit();
+		}
+
 		if ($this->input->post('orderCode')) {
 			$lastNo = strtoupper(substr($this->input->post('orderCode'), 0, -4));
 			$checkOrder = $this->home->getOrderCode($lastNo);
@@ -373,7 +383,7 @@ class Home extends MX_Controller {
 						'key' => $this->security->get_csrf_hash(),
 					);
 				}
-
+				$db_online = $this->load->database('online', TRUE);
 				if ($type === 'huy') {
 					$this->db->where('id',$checkOrder[0]->id);
 					$note = $this->input->post('note');
@@ -400,11 +410,22 @@ class Home extends MX_Controller {
 						. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
 						. "+++++++++++++++++++++++++++++++++";
 						$this->discord->sendsmsCancel($tr);
+
+						$data = array(
+							'status'=>true,
+							'key' => $this->security->get_csrf_hash(),
+						);
+						return_json($data);
+						// Kiểm tra xem record này có tồn tại trên server online không
+						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
+						if ($check_online) {
+							// Nếu có thì tiến hành update online
+							$db_online->where('orderId', $lastNo);
+							$db_online->update('orders', $dataUpdate);
+						}
 					}
-					$data = array(
-						'status'=>true,
-						'key' => $this->security->get_csrf_hash(),
-					);
+
+
 				}
 				if ($type === 'ck') {
 					$this->db->where('orderId',$lastNo);
@@ -427,22 +448,22 @@ class Home extends MX_Controller {
 						. "+++++++++++++++++++++++++++++++++\n";
 						$this->discord->sendsmsCancel($tr);
 
+						$data = array(
+							'status'=>true,
+							'mes' => 'Đã đổi thông tin thanh toán từ TM sang CK.',
+							'key' => $this->security->get_csrf_hash(),
+						);
+						
+						return_json($data);
 
-						$db_online = $this->load->database('online', TRUE);
 						// Kiểm tra xem record này có tồn tại trên server online không
 						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
-
 						if ($check_online) {
 							// Nếu có thì tiến hành update online
 							$db_online->where('orderId', $lastNo);
 							$db_online->update('orders', $dataUpdate);
 						}
 					}
-					$data = array(
-						'status'=>true,
-						'mes' => 'Đã đổi thông tin thanh toán từ TM sang CK.',
-						'key' => $this->security->get_csrf_hash(),
-					);
 				}
 			} else {
 				$data = array(
@@ -775,7 +796,7 @@ class Home extends MX_Controller {
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
 
-										if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
+					if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');
 							if($printBill) {
@@ -802,12 +823,13 @@ class Home extends MX_Controller {
 					$this->session->unset_userdata('cart_products');
 					$data['status'] = true;
 					$data['key'] = $this->security->get_csrf_hash();
+	
+					return_json($data);
 					if ($this->check_online_connection()) {
 						$this->home->sync_pending_orders();
 					} else {
 						log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
 					}
-					return_json($data);
 				} else {
 					$data['status'] = false;
 					$data['key'] = $this->security->get_csrf_hash();
