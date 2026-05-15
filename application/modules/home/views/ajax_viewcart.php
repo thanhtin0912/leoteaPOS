@@ -12,7 +12,7 @@
     </div>
     <div class="cart_media">
         <ul class="cart_product">
-            <?php $total = 0; ?>
+            <?php $total = 0;$amount = 0; ?>
             <?php foreach ($cart as $key => $v): ?>
             <li>
                 <div class="media">
@@ -64,9 +64,13 @@
                 </div>
             </li>
             <?php $total = $total + ($v->totalPrice); ?>
+            <?php $amount = $amount + ($v->amount); ?>
             <?php endforeach ?>
         </ul>
         <ul class="cart_total">
+            <li>
+                SL<span><?= number_format($amount); ?></span>
+            </li>
             <li>
                 <div class="total">
                     Tổng cộng<span><?= number_format($total); ?></span>
