@@ -41,7 +41,7 @@
             <div class="col-lg-6">
                 <div class="product-order">
                     <h3>Chi tiết đơn hàng</h3>
-                    <?php $total = 0; ?>
+                    <?php $total = 0;$amount = 0;?>
                     <?php foreach ($cart as $key => $v): ?>
                     <div class="row product-order-detail py-2">
                         <div class="col-3"><img src="<?=GLOBAL_URL.$v->image ?>" alt="" class="img-fluid "></div>
@@ -74,6 +74,7 @@
                             </div>
                         </div>
                     </div>
+                    <?php $amount = $amount + ($v->amount); ?>
                     <?php $total = $total + ($v->totalPrice); ?>
                     <?php endforeach ?>
                     <div class="total-sec fw-bold">
@@ -81,6 +82,9 @@
                             <li>Tổng tiền <span id="subTotalPrice"><?= number_format($total); ?></span></li>
                             <li>Phí giao hàng <span id="shippingPrice">0</span></li>
                         </ul>
+                    </div>
+                    <div class="final-total pt-2">
+                        <h3>SL: <span id="grandTotalPrice"><?= number_format($amount); ?></span></h3>
                     </div>
                     <div class="final-total pt-2">
                         <h3>Thành tiền <span id="grandTotalPrice"><?= number_format($total); ?></span></h3>
