@@ -280,7 +280,9 @@ class Home extends MX_Controller {
 					"updated"=> date('Y-m-d H:i:s',time())
 				);
 				$this->home->updateShiftDay($_POST["id"], $data);
-				
+				if ($this->check_online_connection()) {
+					$this->home->sync_pending_shift();
+				}
 			}
 			$data = array(
 				'status'=>true,
@@ -389,7 +391,8 @@ class Home extends MX_Controller {
 					$note = $this->input->post('note');
 					$dataUpdate = array(
 						'note' => $note,
-						'isVerify' => 1,
+						'isVerify' => 0,
+						'status' => 0,
 						"updated"=> date('Y-m-d H:i:s',time())
 					);
 					if($this->db->update('orders', $dataUpdate)){
@@ -398,7 +401,7 @@ class Home extends MX_Controller {
 						$tk = $checkOrder[0]->phone;
 						$created = $checkOrder[0]->created;
 						$now = date('Y-m-d H:i:s');
-						$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $this->input->post('orderCode')."-".$checkOrder[0]->id;
+						$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $lastNo;
 						// Viết sao hiển thị vậy, rất dễ quản lý
 						$tr = "**Yêu cầu hủy hóa đơn - " . $lastNo . " - " . $now . "!**\n"
 						. "+++++++++++++++++++++++++++++++++\n"
@@ -423,6 +426,7 @@ class Home extends MX_Controller {
 							$db_online->where('orderId', $lastNo);
 							$db_online->update('orders', $dataUpdate);
 						}
+						exit();
 					}
 
 
@@ -463,6 +467,7 @@ class Home extends MX_Controller {
 							$db_online->where('orderId', $lastNo);
 							$db_online->update('orders', $dataUpdate);
 						}
+						exit();
 					}
 				}
 			} else {
