@@ -955,7 +955,7 @@ class Home extends MX_Controller {
 					}
 					
 				}
-				$commands .=  'TEXT 15,'.(115+$heightLine+$noteLine).',"2",0,1,1,"NV: '.$staffName."\" \n";
+				$commands .=  'TEXT 15,'.(115+$heightLine+$noteLine).',"2",0,1,1,"NV: '.$staffName.' - '.date('H:i')."\" \n";
 				$commands .= "PRINT 1\n";
 				try {
 					$this->temprinter->print($commands);
