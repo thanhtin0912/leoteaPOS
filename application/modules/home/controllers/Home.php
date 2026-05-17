@@ -936,10 +936,10 @@ class Home extends MX_Controller {
 				$commands .= "CLS\n";
 				//
 				$commands .= 'TEXT 15,30,"2",0,1,1,"'.$note."\" \n"; //cột 1
-				$commands .= 'TEXT 350,30,"2",0,1,1,"'.$perItem."\" \n"; //cột 2
+				$commands .= 'TEXT 330,30,"2",0,1,1,"'.$perItem."\" \n"; //cột 2
 				//
 				$commands .= 'TEXT 15,60,"1",0,1,1,"'.$code."\" \n";
-				$commands .= 'TEXT 350,60,"1",0,1,1,"'.$price."\" \n";
+				$commands .= 'TEXT 330,60,"1",0,1,1,"'.$price."\" \n";
 				$commands .= 'TEXT 15,70,"1",0,1,1,"'.'------------------------------------------------'."\" \n";
 				//
 				$commands .= 'TEXT 15,90,"2",0,1,1,"'.vn_to_ascii($name)."\" \n";
