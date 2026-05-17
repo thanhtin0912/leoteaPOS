@@ -1,6 +1,18 @@
 
 
 <script>
+    $(document).ready(function() {
+        $('#user-input').on('input', function() {
+            let value = $(this).val();
+            // 1. Sửa "NCD" thành "NFD" để tách dấu ra khỏi chữ cái
+            value = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            // Xử lý riêng cho chữ đ và Đ
+            value = value.replace(/đ/g, "d").replace(/Đ/g, "D");
+            // 2. Xóa các ký tự đặc biệt và khoảng trắng còn lại
+            let cleanValue = value.replace(/[^a-zA-Z0-9]/g, '');
+            $(this).val(cleanValue);
+        });
+    });
     function checkIn() {
         let user = $('#user-input').val();
         if (user == "") {
