@@ -2919,6 +2919,7 @@ function closeAccount() {
 }
 
 function openWishlist() {
+  showHold();
   document.getElementById("wishlist_side").classList.add('open-side');
 }
 function closeWishlist() {

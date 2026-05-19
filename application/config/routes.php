@@ -78,7 +78,9 @@ $route['checkoutCart'] = "home/checkoutCart";
 $route['updateFulfillmentOrder'] = "home/updateFulfillmentOrder";
 $route['removeAllCart'] = "home/removeAllCart";
 $route['updateItemCart'] = "home/updateItemCart";
-
+$route['addForWaiting'] = "home/addForWaiting";
+$route['getForWaiting'] = "home/getForWaiting";
+$route['viewHoldCart'] = "home/viewHoldCart";
 
 $route['send'] = "home/sendMessage";
 // $route['getCatelogiesProduct'] = "home/getCatelogiesProduct";

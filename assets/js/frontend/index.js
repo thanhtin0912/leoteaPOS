@@ -258,3 +258,39 @@ function removeAllCart(){
         }
     });
 }
+function saveForWaiting(){
+    $.post(root+'home/addForWaiting',{
+        csrf_token:     $('#csrf_token').val()
+    },function(res){
+        // var res = JSON.parse(data);
+        $('#csrf_token').val(res.key);
+        if(res.status) {
+            notify(res.msg, 'primary', true);
+            openCart()
+        } else {
+            notify('Không thể lưu giỏ hàng chờ, Vui lòng liên hệ quản lý.', 'danger', true); 
+        }
+    });
+}
+
+function showHold(){
+    $('#wishlist_side').load(root+'home/viewHoldCart', {
+        csrf_token                 : $("#csrf_token").val()
+    })
+}
+function getForWaiting(id){
+    $.post(root+'home/getForWaiting',{
+        hold_id: id,
+        csrf_token:     $('#csrf_token').val()
+    },function(res){
+        // var res = JSON.parse(data);
+        $('#csrf_token').val(res.key);
+        if(res.status) {
+            notify(res.msg, 'primary', true);
+            openCart();
+            closeWishlist()
+        } else {
+            notify('Không thể đưa đơn hàng vào giỏ hàng, Vui lòng liên hệ quản lý.', 'danger', true); 
+        }
+    });
+}

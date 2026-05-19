@@ -79,8 +79,8 @@
             <li>
                 <div class="buttons">
                     <a href="<?=PATH_URL?>xac-nhan-don-hang" class="btn btn-solid btn-sm w-50 mx-1">Tính Tiền</a>
-                    <a href="javascript:void(0)" onclick="removeAllCart()" class="btn btn-sm w-50 mx-1 btn-dark">Xóa
-                        hết</a>
+                    <a href="javascript:void(0)" onclick="saveForWaiting()" class="btn btn-sm w-25 mx-1 btn-danger"><i class="fa fa-save"></i></a>
+                    <a href="javascript:void(0)" onclick="removeAllCart()" class="btn btn-sm w-25 mx-1 btn-dark"><i class="fa fa-trash"></i></a>
                 </div>
             </li>
         </ul>

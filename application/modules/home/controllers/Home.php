@@ -649,7 +649,7 @@ class Home extends MX_Controller {
 
 	public function viewQuickCart(){
 		$cart_products = $this->session->userdata('cart_products');
-		
+
 		if ($cart_products == NULL) {
 			$data['count'] = 0;
 			$this->load->view("ajax_viewcart",$data);
@@ -1037,7 +1037,90 @@ class Home extends MX_Controller {
 		$shuffled = str_shuffle($characters);
 		return substr($shuffled, 0, $length);
 	}
+	function addForWaiting() {
+		// 1. Lấy giỏ hàng chính hiện tại
+		$currentCart = $this->session->userdata('cart_products');
+		
+		if (empty($currentCart)) {
+			return_json(['status' => false, 'key' => $this->security->get_csrf_hash(), 'msg' => 'Giỏ hàng trống']);
+				exit();
+		}
+		// 2. Lấy danh sách các đơn hàng đã chờ trước đó (nếu có)
+		$holdOrders = $this->session->userdata('hold_orders');
+		if (!$holdOrders) {
+			$holdOrders = [];
+		}
+		$cart =$this->getListCart();
+		// 3. Tạo một đơn chờ mới kèm theo định danh (ví dụ dùng timestamp để phân biệt)
+		$totalAmount = 0;
+		$totalprice = 0;
+		foreach ($cart as $item) {
+			$totalAmount += $item->amount;
+			$totalprice += $item->totalPrice;
+		}
+		$holdId = 'Hold_' . time(); 
+		$holdOrders[$holdId] = [
+			'hold_id'    => $holdId,
+			'hold_time'  => date('Y-m-m H:i:s'),
+			'products'   => $currentCart, // Lưu nguyên mảng sản phẩm vào đây
+			'totalAmount'       => $totalAmount, // Có thể lưu thêm ghi chú nếu FE gửi lên
+			'totalPrice' => $totalprice
+		];
 
+		// 4. Cập nhật lại vào Session hàng chờ
+		$this->session->set_userdata('hold_orders', $holdOrders);
+
+		// 5. Xóa giỏ hàng chính để thu ngân tạo đơn mới
+		$this->session->unset_userdata('cart_products');
+
+		return_json(['status' => true, 'key' => $this->security->get_csrf_hash(), 'msg' => 'Đã chuyển vào hàng chờ']);
+		exit();
+	}
+
+	public function viewHoldCart(){
+		$holdOrders = $this->session->userdata('hold_orders');
+		if ($holdOrders == NULL) {
+			$data['count'] = 0;
+			$this->load->view("ajax_viewhold",$data);
+		}else{
+			$data['count'] = count($holdOrders);
+			$data['orders'] = $holdOrders;
+			$this->load->view("ajax_viewhold",$data);
+		}
+	}
+	public function getForWaiting() {
+		$holdId = $this->input->post('hold_id'); // Nhận ID của đơn chờ từ FE gửi lên
+		
+		// 1. Lấy danh sách hàng chờ từ Session
+		$holdOrders = $this->session->userdata('hold_orders');
+		
+		if (empty($holdOrders) || !isset($holdOrders[$holdId])) {
+			return_json([
+				'status' => false, 
+				'msg' => 'Không tìm thấy đơn hàng chờ này hoặc đã bị xóa trước đó!'
+			]);
+			exit();
+		}
+		// Lấy ra danh sách sản phẩm trong đơn chờ này
+		$holdProducts = $holdOrders[$holdId]['products'];
+
+		// 2. Lấy giỏ hàng chính hiện tại ra để chuẩn bị gộp
+		$currentCart = $this->session->unset_userdata('cart_products');
+
+		// 4. Lưu lại giỏ hàng chính mới sau khi đã gộp/thêm
+		$this->session->set_userdata('cart_products', $holdProducts);
+
+		unset($holdOrders[$holdId]);
+		$this->session->set_userdata('hold_orders', $holdOrders);
+
+		// 6. Trả kết quả về cho FE load lại giao diện giỏ hàng
+		return_json([
+			'status' => true, 
+			'msg' => 'Đã khôi phục sản phẩm vào giỏ hàng thành công!',
+			'key' => $this->security->get_csrf_hash()
+		]);
+		exit();
+	}
 	/*------------------------------------ End API --------------------------------*/
 	public function check_online_connection() {
 		$host = DBOL_HOST; // IP Server của bạn
