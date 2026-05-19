@@ -158,7 +158,7 @@
                     <div class="col-12 pt-5 text-center">
                         <?php if($this->session->userdata('staffName')){ ?>
                             <button class="btn btn-normal btn-sm" onclick="checkout();" id="btnCheckout">Xác nhận đơn</button>
-                            <button class="btn btn-normal btn-sm btn-danger" onclick="saveForWaiting();">Lưu đơn</button>
+                            <button class="btn btn-sm btn-danger" onclick="saveForWaiting();">Lưu đơn</button>
                         <?php }else{ ?>
                             <div class="title6">
                                 <h4>Vui lòng vào ca để đc đặt hàng</h4>
