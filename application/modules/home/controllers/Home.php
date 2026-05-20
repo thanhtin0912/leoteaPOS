@@ -37,6 +37,7 @@ class Home extends MX_Controller {
 		$data['products'] = $this->getAllProduct();
 		$data['banner'] = $this->home->getBanner();
 		$data["countCart"]=$this->countSessionCart();
+		$data["countHold"] = $this->session->userdata('hold_orders') ? count($this->session->userdata('hold_orders')) : 0;
 		//
 		$this->template->write_view('content', 'index', $data);
 		$this->template->render();
@@ -1072,8 +1073,8 @@ class Home extends MX_Controller {
 
 		// 5. Xóa giỏ hàng chính để thu ngân tạo đơn mới
 		$this->session->unset_userdata('cart_products');
-
-		return_json(['status' => true, 'key' => $this->security->get_csrf_hash(), 'msg' => 'Đã chuyển vào hàng chờ']);
+		$countHold = count($holdOrders);
+		return_json(['status' => true, 'count' => $countHold, 'key' => $this->security->get_csrf_hash(), 'msg' => 'Đã chuyển vào hàng chờ']);
 		exit();
 	}
 
@@ -1117,6 +1118,16 @@ class Home extends MX_Controller {
 		return_json([
 			'status' => true, 
 			'msg' => 'Đã khôi phục sản phẩm vào giỏ hàng thành công!',
+			'key' => $this->security->get_csrf_hash()
+		]);
+		exit();
+	}
+
+	function removeAllHold() {
+		$this->session->unset_userdata('hold_orders');
+		return_json([
+			'status' => true, 
+			'msg' => 'Đã xóa toàn bộ đơn hàng chờ!',
 			'key' => $this->security->get_csrf_hash()
 		]);
 		exit();

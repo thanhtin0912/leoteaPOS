@@ -266,7 +266,8 @@ function saveForWaiting(){
         $('#csrf_token').val(res.key);
         if(res.status) {
             notify(res.msg, 'primary', true);
-            openCart()
+            $('#count-hold').html(parseInt(res.countHold));
+            window.location.href = root
         } else {
             notify('Không thể lưu giỏ hàng chờ, Vui lòng liên hệ quản lý.', 'danger', true); 
         }
@@ -291,6 +292,21 @@ function getForWaiting(id){
             closeWishlist()
         } else {
             notify('Không thể đưa đơn hàng vào giỏ hàng, Vui lòng liên hệ quản lý.', 'danger', true); 
+        }
+    });
+}
+
+function removeAllHold(){
+    $.post(root+'home/removeAllHold',{
+        csrf_token:     $('#csrf_token').val()
+    },function(res){
+        // var res = JSON.parse(data);
+        $('#csrf_token').val(res.key);
+        if(res.status) {
+            notify(res.msg, 'primary', true);
+            window.location.href = root
+        } else {
+            notify('Không thể xóa hết giỏ hàng chờ, Vui lòng liên hệ quản lý.', 'danger', true); 
         }
     });
 }

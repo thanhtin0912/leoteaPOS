@@ -27,6 +27,13 @@
             </li>
             <?php endforeach ?>
         </ul>
+        <ul class="cart_total">
+            <li>
+                <div class="buttons">
+                    <a href="javascript:void(0)" onclick="removeAllHold()" class="btn btn-sm w-100 mx-1 btn-dark"><i class="fa fa-trash"></i> Xóa hết</a>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
 <?php } else { ?>
