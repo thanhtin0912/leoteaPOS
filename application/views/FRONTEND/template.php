@@ -69,16 +69,15 @@
                     <div class="col-md-4 col-sm-12">
                         <div class="top-header-right">
                             <ul>
+                                
+                                <?php if ($this->session->userdata('userLogin')) {?>
                                 <li>
-                                    <a href="javascript:;" onclick="syncProduct()"><i class="fa fa-cloud"></i> Đồng bộ</a>
+                                    <a href="javascript:;"><i class="fa fa-shopping-cart"></i>TK: <?= $this->session->userdata('userLogin')->phone;?></a>
                                 </li>
-                                <?php if (!$this->session->userdata('userLogin')) {?>
-                                <li onclick="openAccount()">
-                                    <a href="javascript:void(0)"><i class="fa fa-user"></i> Đăng nhập</a>
-                                </li>
-                                <?php } else { ?>
-                                <li onclick="logOut()">
-                                    <a href="<?= PATH_URL; ?>logout"><i class="fa fa-user"></i> Đăng xuất</a>
+                                <?php } ?>
+                                <?php if ($this->session->userdata('staffName')) {?>
+                                <li>
+                                    <a href="javascript:void(0)"><i class="fa fa-sign-in"></i>TN: <?=($this->session->userdata('staffName')) ?></a>
                                 </li>
                                 <?php } ?>
                             </ul>
@@ -114,9 +113,9 @@
                                         </li>
                                         <!--HOME-END-->
                                         <!--SHOP-->
-                                        <li>
+                                        <!-- <li>
                                             <a class="dark-menu-item" href="<?= PATH_URL; ?>trang-thai-don-hang">Đơn hàng</a>
-                                        </li>
+                                        </li> -->
                                         <!--SHOP-END-->
                                         <!--Shift-->
                                         <?php if ($this->session->userdata('userLogin')) {?>
@@ -134,6 +133,18 @@
                                             <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-hoa-don">Hóa đơn</a>
                                         </li>
                                         <!--cancel-order-END-->
+                                        <li>
+                                            <a href="javascript:;" onclick="syncProduct()">Đồng bộ</a>
+                                        </li>
+                                        <?php if (!$this->session->userdata('userLogin')) {?>
+                                        <li onclick="openAccount()">
+                                            <a href="javascript:void(0)">Đăng nhập</a>
+                                        </li>
+                                        <?php } else { ?>
+                                        <li onclick="logOut()">
+                                            <a href="<?= PATH_URL; ?>logout">Đăng xuất</a>
+                                        </li>
+                                        <?php } ?>
                                     </ul>
                                 </nav>
                             </div>

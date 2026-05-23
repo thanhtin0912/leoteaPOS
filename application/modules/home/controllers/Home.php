@@ -541,6 +541,7 @@ class Home extends MX_Controller {
 
 	public function logout(){
 		$this->session->unset_userdata('userLogin');
+		$this->session->unset_userdata('staffName');
 		$this->session->unset_userdata('cart_products');
 			delete_cookie('remember_token');
 			header('Location: '.PATH_URL);
