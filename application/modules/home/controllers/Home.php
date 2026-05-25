@@ -926,6 +926,7 @@ class Home extends MX_Controller {
 			$receipt[] = ['type' => '2col', 'a' => $discountName, 'b' => '- '.number_format($discount,0)];
 		}
 		$receipt[] = ['type' => '3col', 'a' => 'Thành tiền: ', 'b' => $totalAmount, 'c' => number_format($grandtotal,0) ];
+		$receipt[] = ['type' => 'line'];
 		$receipt[] = ['type' => 'center', 'text' => 'Ghi Chú: Giá Khuyến Mãi (nếu có) đã được làm tròn.'];
 		$receipt[] = ['type' => 'center', 'text' => 'Cảm ơn quý khách!'];
         // Nối chuỗi
