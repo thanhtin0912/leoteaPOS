@@ -56,12 +56,17 @@ function selectCoupon(code, element) {
     if (selected) {
         if (selected.type == 2) {
             let subTotal = Number($('#subTotalPrice').text().replace(/\D/g, ''));
-            let discountAmount = Math.round(subTotal * (Number(selected.discount) / 100));
-            //giúp mình làm tròn số tiền giảm xuống hàng nghìn gần nhất, 15.900 hay 15.100sex thành 15000
-            discountAmount = Math.floor(discountAmount / 1000) * 1000;
-            $('#adddiscountPrice').val(discountAmount);
-            $('#discountName').html(selected.name);
-            couponSelect(element);
+            if(Number(selected.condition) < subTotal) {
+                let discountAmount = Math.round(subTotal * (Number(selected.discount) / 100));
+                discountAmount = Math.floor(discountAmount / 1000) * 1000;
+                $('#adddiscountPrice').val(discountAmount);
+                $('#discountName').html(selected.name);
+                couponSelect(element);
+            } else {
+                notify('Đơn hàng không đủ điều kiện sử dụng mã giảm giá.', 'danger', true);
+                return;
+            }
+            
         }
         if(selected.type == 1) {
             let subTotal = Number($('#subTotalPrice').text().replace(/\D/g, ''));
