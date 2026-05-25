@@ -204,13 +204,13 @@ function couponSelect(element) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    /* transition: all 0.2s ease; */
 }
 
 .offer-contain .coupon-item:hover {
     background-color: #e2f3e4;
     border-color: #388e3c;
-    transform: translateY(-2px);
+    /* transform: translateY(-2px); */
 }
 
 .offer-contain .code-lable {

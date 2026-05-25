@@ -11500,8 +11500,9 @@ ul.sosiyal {
     border-radius: 5px;
     margin-right: 10px;
     font-size: calc(12px + (14 - 12) * ((100vw - 320px) / (1920 - 320)));
-    -webkit-animation: headShake 2s ease-in-out infinite;
-            animation: headShake 2s ease-in-out infinite; }
+    /* -webkit-animation: headShake 2s ease-in-out infinite;
+            animation: headShake 2s ease-in-out infinite;  */
+          }
   .product-offer .offer-contain ul li h5 {
     font-weight: 600;
     font-size: 14px; }
