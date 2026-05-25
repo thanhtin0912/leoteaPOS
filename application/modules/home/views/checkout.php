@@ -187,7 +187,38 @@ function couponSelect(element) {
     background-color: rgba(0, 186, 242, 0.08) !important;
     border: 1px dashed #00baf2 !important;
 }
+.offer-contain ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
+.offer-contain .coupon-item {
+    background-color: #f1faf2;
+    border: 1px dashed #4caf50;
+    border-radius: 6px;
+    padding: 4px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.offer-contain .coupon-item:hover {
+    background-color: #e2f3e4;
+    border-color: #388e3c;
+    transform: translateY(-2px);
+}
+
+.offer-contain .code-lable {
+    color: #2e7d32;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
 </style>
 <section class="section-big-py-space light-layout">
     <div class="container">
