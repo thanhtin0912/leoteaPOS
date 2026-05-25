@@ -926,8 +926,8 @@ class Home extends MX_Controller {
 			$receipt[] = ['type' => '2col', 'a' => $discountName, 'b' => '- '.number_format($discount,0)];
 		}
 		$receipt[] = ['type' => '3col', 'a' => 'Thành tiền: ', 'b' => $totalAmount, 'c' => number_format($grandtotal,0) ];
+		$receipt[] = ['type' => 'center', 'text' => 'Ghi chú: Giá khuyến mãi (nếu có) đã được làm tròn!'];
 		$receipt[] = ['type' => 'center', 'text' => 'Cảm ơn quý khách!'];
-	
         // Nối chuỗi
         try {
 			$this->posprinter->print($receipt);
