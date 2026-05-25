@@ -232,6 +232,9 @@
                 <li class="start">
                     <a href="<?= PATH_URL_ADMIN . 'static_pages' ?>"><i class="fa fa-code-fork"></i><span class="title">Quản lý TASK</span></a>
                 </li>
+                <li class="start">
+                    <a href="<?= PATH_URL_ADMIN . 'discount' ?>"><i class="fa fa-tag"></i><span class="title">Quản lý Khuyến mãi</span></a>
+                </li>
                 <li class="nav-item">
                     <a href="javascript:;" class="nav-link nav-toggle">
                         <i class="icon-settings"></i>

@@ -210,7 +210,8 @@ class Home_model extends CI_Model {
 			$num = $this->generateInvoiceCode($lastNo);
 		}
 		$orderId = $str.$num;
-		$grandtotal = (int)$total + (int)$shippingTotal;
+		$discount = $this->input->post('discount') ? $this->input->post('discount') : 0;
+		$grandtotal = (int)$total - (int)$discount + (int)$shippingTotal;
 		$data = array(
 			'orderId'		=> $orderId,
 			'mail'			=> '',
@@ -222,8 +223,8 @@ class Home_model extends CI_Model {
 			'message'		=> $_POST["note"],
 			'subtotal'		=> $total,
 			'discountmember'=> '',
-			'discountcoupon'=> '',
-			'codecoupon'	=> '',
+			'discountcoupon'=> $this->input->post('discount'),
+			'codecoupon'	=> $this->input->post('discountCode') ? $this->input->post('discountCode') : 'TN nhập KM',
 			'tax'			=> '',
 			'detailcart'	=> serialize($cart),
 			'shippingtotal'	=> $shippingTotal,
@@ -453,6 +454,19 @@ class Home_model extends CI_Model {
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
 		$this->db->order_by('orderId','ABS');
 		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+	function getCoupons(){
+		$this->db->select('*');
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->order_by('id','DESC');
+		$this->db->from('coupons');
 		$query = $this->db->get();
 		if($query->result()){
 			return $query->result();

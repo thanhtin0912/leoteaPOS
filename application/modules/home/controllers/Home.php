@@ -54,6 +54,27 @@ class Home extends MX_Controller {
 			$data['store'] = $this->home->getInfoStore($info->storeId);
 			$data['cart'] =$this->getListCart();
 			$data['countCart'] = $this->countSessionCart();
+			$data['coupons'] = $this->home->getCoupons();
+			if($data['coupons']) {
+				foreach ($data['coupons'] as $key => $v) {
+					if (mb_substr($v->code, 0, 1, 'UTF-8') === 'T') {
+						$suffix = mb_substr($v->code, 0, 2);
+						$cac_thu_trong_tuan = [
+							1 => 'T2',
+							2 => 'T3',
+							3 => 'T4',
+							4 => 'T5',
+							5 => 'T6',
+							6 => 'T7',
+							7 => 'CN'
+						];
+						$thu_hien_tai = $cac_thu_trong_tuan[date('N')];
+						if ($suffix != $thu_hien_tai) {
+							unset($data['coupons'][$key]);
+						}
+					}
+				}
+			}
 			$this->template->write_view('content', 'checkout', $data);
 			$this->template->render();
 		}
@@ -63,7 +84,7 @@ class Home extends MX_Controller {
 	
 	public function syncProduct()
 	{
-		$tablesToSync = ['users','toppings','stores','products','printer','categories'];
+		$tablesToSync = ['users','toppings','stores','products','printer','categories', 'coupons'];
 		$DB_online = @$this->load->database('online', TRUE);
 		$localDB = $this->db; // Kết nối local mặc định
 
@@ -75,8 +96,6 @@ class Home extends MX_Controller {
 			if (!empty($data)) {
 				// 2. Xóa dữ liệu cũ ở Local (để tránh trùng primary key)
 				$localDB->truncate($table);
-				
-				// 3. Insert dữ liệu mới vào Local theo lô (batch) để tối ưu hiệu suất
 				$localDB->insert_batch($table, $data);
 			}
 		}
@@ -795,6 +814,7 @@ class Home extends MX_Controller {
 				$shipping = $_POST["delivery"];
 				$note = $_POST["note"];
 				$shippingTotal = $_POST["shippingFee"];
+				$discountName = $_POST["discountName"];
 				$res = $this->home->addOrder($cart, $total, $shippingTotal);
 				// sử lý in dóa đơn
 				if ($res) {
@@ -803,11 +823,12 @@ class Home extends MX_Controller {
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
 
-					if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery")){
+					if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery") || $this->input->post('discount') > 0) {
+						 // Nếu là thanh toán chuyển khoản hoặc có giảm giá thì in bill
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');
 							if($printBill) {
-								@$this->printBill($printBill[0]->ip, $code, $res);
+								@$this->printBill($printBill[0]->ip, $code, $res, $discountName);
 							}
 						} catch (Exception $e) {
 							// Ghi log lỗi in nhưng không làm dừng chương trình
@@ -846,13 +867,15 @@ class Home extends MX_Controller {
 			}
 		}
 	}
-	public function printBill($ip,$code,$res) {
+	public function printBill($ip,$code,$res, $discountName = '') {
 		$cart = unserialize($res->detailcart);
 		$subtotal = (int)$res->subtotal;
 		$shippingtotal = (int)$res->shippingtotal;
 		$grandtotal = $res->grandtotal;
 		$shipping = $res->shipping;
 		$note = $res->message;
+		$discount = $res->discountcoupon;
+		$payment = $res->payment == 1 ? 'TM' : 'CK';
 		$this->load->library('PosPrinter', ['ip' => $ip, 'port' => 9100]);
 		$totalAmount = array_sum(array_map(function($item){
 			return $item->amount;
@@ -864,7 +887,7 @@ class Home extends MX_Controller {
 		$receipt = [];
 		$receipt[] = ['type' => 'center', 'text' => 'PHIẾU THANH TOÁN' , 'size' => 22];
 		$receipt[] = ['type' => '2col', 'a' => 'CH: '.$info->storeName, 'b' => $shipping];
-		$receipt[] = ['type' => '2col', 'a' => $code, 'b' => date('m-d H:i')];
+		$receipt[] = ['type' => '2col', 'a' => $code.' - '.$payment, 'b' => date('m-d H:i')];
 		$receipt[] = ['type' => '2col', 'a' => 'Thu ngân: '.$info->phone, 'b' => $info->address ];
 		$receipt[] = ['type' => '2col', 'a' => 'NV: '.$staffName, 'b' => ''];
 		$receipt[] = ['type' => '2col', 'a' => 'Ghi chú: '.$note, 'b' => ''];
@@ -895,12 +918,14 @@ class Home extends MX_Controller {
 
 		}
 		$receipt[] = ['type' => 'line'];
+		$receipt[] = ['type' => '3col', 'a' => 'Tổng cộng: ', 'b' => $totalAmount, 'c' => number_format($subtotal,0) ];
 		if (($shippingtotal != 0 && $shippingtotal > 0)) {
-			$receipt[] = ['type' => '3col', 'a' => 'Tổng cộng: ', 'b' => $totalAmount, 'c' => number_format($subtotal,0) ];
 			$receipt[] = ['type' => '2col', 'a' => 'Phí giao hàng: ', 'b' => number_format($shippingtotal,0)];
 		}
+		if ($discount > 0) {
+			$receipt[] = ['type' => '2col', 'a' => $discountName, 'b' => '- '.number_format($discount,0)];
+		}
 		$receipt[] = ['type' => '3col', 'a' => 'Thành tiền: ', 'b' => $totalAmount, 'c' => number_format($grandtotal,0) ];
-		
 		$receipt[] = ['type' => 'center', 'text' => 'Cảm ơn quý khách!'];
 	
         // Nối chuỗi

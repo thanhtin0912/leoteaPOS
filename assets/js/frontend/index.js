@@ -195,11 +195,17 @@ function checkout(){
     let note =    $('#note').val()
     let rawValue = $('#shippingPrice').text(); 
     let shippingFee = Number(rawValue.replace(/\D/g, ''));
+    let discount = $('#discountPrice').text() ? Number($('#discountPrice').text().replace(/\D/g, '')) : 0;
+    let discountCode = $('#couponCode').val();
+    let discountName = $('#couponCode').val() ? $('#discountName').text() : '';
     $.post(root+'home/checkoutCart',{
         delivery:      delivery,
         payment: payment,
         note: note,
         shippingFee: shippingFee || 0,
+        discount: discount || 0,
+        discountCode: discountCode || '',
+        discountName: discountName || '',
         csrf_token:     $('#csrf_token').val()
     },function(res){
         // var res = JSON.parse(data);

@@ -74,6 +74,14 @@
                                         </div>
                                         <div class="row static-info">
                                             <div class="col-xs-5 name"> Tổng tiền: </div>
+                                            <div class="col-xs-7 value"> <?= number_format($result->subtotal)?></div>
+                                        </div>
+                                        <div class="row static-info">
+                                            <div class="col-xs-5 name"> KM: </div>
+                                            <div class="col-xs-7 value"> <?= number_format($result->discountcoupon) ? number_format($result->discountcoupon).' ('.$result->codecoupon.')' : '0' ?></div>
+                                        </div>
+                                        <div class="row static-info">
+                                            <div class="col-xs-5 name"> Thành tiền: </div>
                                             <div class="col-xs-7 value"> <?= number_format($result->grandtotal)?></div>
                                         </div>
                                     </div>
