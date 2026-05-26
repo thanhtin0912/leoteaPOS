@@ -83,10 +83,10 @@ function selectCoupon(code, element) {
         if(selected.type == 3) {
             let amount = Number($('#amount').text().replace(/\D/g, ''));
             let subTotal = Number($('#subTotalPrice').text().replace(/\D/g, ''));
-            if(Number(selected.condition) < amount) {
+            let condition = Number(selected.condition) + Number(selected.discount)
+            if(condition <= amount) {
                 // chia lấy số nguyên
-                let numberOfFreeItems = Math.floor(amount / (Number(selected.condition) +1)) || 1;
-                console.log('Số lượng sản phẩm miễn phí được áp dụng:', numberOfFreeItems);
+                let numberOfFreeItems = Math.floor(amount / Number(condition)) || 1;
                 let items = <?php echo json_encode($cart); ?>;
                 // mình muôn tìm ra sản phẩm có giá thấp nhất trong giỏ hàng để áp dụng giảm giá số ly
                 let minPriceItem = items.reduce((minItem, currentItem) => {
