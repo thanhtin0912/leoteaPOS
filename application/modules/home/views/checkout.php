@@ -84,13 +84,16 @@ function selectCoupon(code, element) {
             let amount = Number($('#amount').text().replace(/\D/g, ''));
             let subTotal = Number($('#subTotalPrice').text().replace(/\D/g, ''));
             if(Number(selected.condition) < amount) {
+                // chia lấy số nguyên
+                let numberOfFreeItems = Math.floor(amount / (Number(selected.condition) +1)) || 1;
+                console.log('Số lượng sản phẩm miễn phí được áp dụng:', numberOfFreeItems);
                 let items = <?php echo json_encode($cart); ?>;
                 // mình muôn tìm ra sản phẩm có giá thấp nhất trong giỏ hàng để áp dụng giảm giá số ly
                 let minPriceItem = items.reduce((minItem, currentItem) => {
                     return currentItem.totalPrice < minItem.totalPrice ? currentItem : minItem;
                 }, items[0]);
-                console.log(minPriceItem);
-                let discountAmount = Number(selected.discount) * (Number(minPriceItem.totalPrice)/Number(minPriceItem.amount));
+                
+                let discountAmount = Number(selected.discount) * numberOfFreeItems * (Number(minPriceItem.totalPrice)/Number(minPriceItem.amount));
                 $('#adddiscountPrice').val(discountAmount);
                 $('#discountName').html(selected.name);
                 couponSelect(element);
