@@ -22,23 +22,24 @@
             <div class="portlet-title">
                 <div class="caption">
                     <i class="icon-share font-red-sunglo hide"></i>
-                    <span class="caption-subject font-dark bold uppercase">Thông tin cửa hàng</span>
+                    <span class="caption-subject font-dark bold uppercase">Thông tin cửa hàng - <span class="label label-sm label-info fw ">CH: <?= $result->storeName ?></span> - <span class="label label-sm label-danger fw ">
+                            TK: <?= $result->user ?></span></span>
                 </div>
             </div>
             <div class="portlet-body">
                 <div style="margin: 20px 0 10px 30px">
                     <div class="row">
                         <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
-                            <span class="label label-sm label-success fw"> Cửa hàng: </span>
-                            <h3 class="fw"><?= $result->storeName ?></h3>
-                        </div>
-                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
-                            <span class="label label-sm label-info fw"> Tài khoản: </span>
-                            <h3 class="fw"><?= $result->user ?></h3>
-                        </div>
-                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-danger fw"> Tổng tiền bán: </span>
                             <h3 class="fw"><?= number_format($result->sales) ?></h3>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
+                            <span class="label label-sm label-danger fw"> Tổng TM: </span>
+                            <h3 class="fw"><?= number_format($result->actual) ?></h3>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
+                            <span class="label label-sm label-danger fw"> Tổng CK: </span>
+                            <h3 class="fw"><?= number_format($result->banking) ?></h3>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
                             <span class="label label-sm label-warning fw"> Tổng tiền nộp: </span>
