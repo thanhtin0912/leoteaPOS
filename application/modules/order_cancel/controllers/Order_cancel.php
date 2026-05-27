@@ -199,6 +199,22 @@ class Order_cancel extends MX_Controller {
 			modules::run('admincp/saveLog',$this->module,$this->input->post('id'),'status','update',$this->input->post('status'),$status);
 			$this->db->where('id', $this->input->post('id'));
 			$this->db->update(PREFIX.$this->table, $data);
+			$order = $this->model->getDetailManagement($this->input->post('id'));
+			if($order){
+				// Ghi log sự kiện HỦY hóa đơn
+				if ($status == 0) {
+					$event = array(
+						'name' => 'HỦY hóa đơn',
+						'orderCode' => $order[0]->orderId,
+						'user' => $order[0]->phone,
+						'isVerify' => 1,
+						'verifyBy' => 'admin',
+						'created' => date('Y-m-d H:i:s',time())
+					);
+					$this->db->insert(PREFIX.'order_events', $event);
+				}
+
+			}
 		}
 		
 		$update = array(

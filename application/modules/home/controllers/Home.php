@@ -116,7 +116,12 @@ class Home extends MX_Controller {
 
 	public function delivery()
 	{
-		$data['orders'] = $this->home->getListfulfillmentOrderStore();
+		if ($this->check_online_connection()) {
+			// Đồng bộ đơn hàng đang chờ hủy từ server online về local
+			$this->home->sync_orders_verify();
+
+		}
+		$data['orders'] = $this->home->getListOrdersToCancel();
 		$data['info'] = $this->home->getInfoSite();
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
@@ -317,7 +322,6 @@ class Home extends MX_Controller {
 		$data['info'] = $this->home->getInfoSite();
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
-		$data['listCancel'] = $this->home->getListOrderCancel();
 		$this->template->write_view('content', 'cancel_order', $data);
 		$this->template->render();
 		//
@@ -325,13 +329,9 @@ class Home extends MX_Controller {
 
 	public function viewCancelOrder($link)
 	{
-		$parts = explode('-', $link);
-		// Mảng 1: Lấy phần trước dấu "-", bỏ 4 ký tự cuối và viết hoa
-		$orderCode = strtoupper(substr($parts[0], 0, -4)); 
-		// Mảng 2: Lấy phần sau dấu "-"
-		$id = $parts[1];
+		$orderCode = urldecode($link);
 		$data['res'] = false;
-		$order = $this->home->getOrder($id, $orderCode);
+		$order = $this->home->getOrder($orderCode);
 		if($order){
 			$data['res'] = $order;
 		}
@@ -341,13 +341,23 @@ class Home extends MX_Controller {
 
 	public function verifyCancelOrder() {
 		if ($_POST["id"]) {
-			$this->db->where('id',$_POST["id"]);
+			$this->db->where('orderId',$_POST["id"]);
+			$this->db->where('phone',$_POST["account"]);
 			$dataUpdate = array(
 				'status' => 0,
 				'isVerify' => 0,
 				"updated"=> date('Y-m-d H:i:s',time())
 			);
 			if($this->db->update('orders', $dataUpdate)){
+				$event = array(
+					'name' => 'HỦY hóa đơn',
+					'orderCode' => $_POST["id"],
+					'user' => $_POST["account"],
+					'isVerify' => 1,
+					'verifyBy' => 'admin',
+					'created' => date('Y-m-d H:i:s',time())
+				);
+				$this->db->insert('order_events', $event);
 				$data = array(
 					'status'=>true,
 					'key' => $this->security->get_csrf_hash(),
@@ -411,8 +421,7 @@ class Home extends MX_Controller {
 					$note = $this->input->post('note');
 					$dataUpdate = array(
 						'note' => $note,
-						'isVerify' => 0,
-						'status' => 0,
+						'isVerify' => 1,
 						"updated"=> date('Y-m-d H:i:s',time())
 					);
 					if($this->db->update('orders', $dataUpdate)){

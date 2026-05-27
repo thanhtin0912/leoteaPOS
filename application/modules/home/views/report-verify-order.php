@@ -40,13 +40,15 @@
 <script>
 window.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('save-data').addEventListener('click', function() {   
-        let id = $('#idOrder').val();                  
+        let id = $('#idOrder').val(); 
+        let account = $('#account').val();               
         var url = root + 'verifyCancelOrder';
         $.ajax({
             url: url,
             type: 'POST',
             data: { 
                 id: id,
+                account: account,
                 csrf_token: $('#csrf_token').val()
             },
             success: function(res) {
@@ -87,7 +89,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 <div class="col-lg-6 offset-lg-3">
                     <div class="order-tracking-sidebar order-tracking-box">
                         <?php if($res) {?>
-                        <input type="hidden" id="idOrder" value="<?= $res[0]->id; ?>" />
+                        <input type="hidden" id="idOrder" value="<?= $res[0]->orderId; ?>" />
+                        <input type="hidden" id="account" value="<?= $res[0]->phone; ?>" />
                         <ul class="cart_total">
                             <li>
                                 <div class="total">
@@ -98,6 +101,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 </div>
                                 <div class="total">
                                     Tổng:<span><?= number_format($res[0]->grandtotal); ?></span>
+                                </div>
+                                <div class="total">
+                                    TN-TK:<span><?= $res[0]->fullname; ?> - <?= $res[0]->phone; ?></span>
                                 </div>
                                 <div class="total">
                                     Lý do:<span><?= $res[0]->note; ?></span>

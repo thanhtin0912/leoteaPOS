@@ -93,6 +93,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
         });
         let spent = $('#spent').val();
         let tip = $('#tip').val();
+        // nếu có giá trị và nhỏ hơn 1000 thì báo lỗi
+        if (tip!=0 && parseInt(tip) < 1000) {
+            notify('Số tiền tip phải lớn hơn hoặc bằng 1.000 VNĐ.', 'warning', true);
+            return;
+        }
+        if (spent!=0 && parseInt(spent) < 1000) {
+            notify('Số tiền chi tiêu phải lớn hơn hoặc bằng 1.000 VNĐ.', 'warning', true);
+            return;
+        }
         let cash = parseInt(grandTotalDisplay.innerText.replace(/\./g, ''));
         let cashSales = <?= $salesShift ?>;
         let id = <?= $res[0]->id ?>;

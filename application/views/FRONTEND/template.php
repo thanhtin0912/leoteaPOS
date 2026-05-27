@@ -113,9 +113,9 @@
                                         </li>
                                         <!--HOME-END-->
                                         <!--SHOP-->
-                                        <!-- <li>
-                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>trang-thai-don-hang">Đơn hàng</a>
-                                        </li> -->
+                                        <li>
+                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>trang-thai-don-hang">Xử lý</a>
+                                        </li>
                                         <!--SHOP-END-->
                                         <!--Shift-->
                                         <?php if ($this->session->userdata('userLogin')) {?>

@@ -224,7 +224,7 @@ class Home_model extends CI_Model {
 			'subtotal'		=> $total,
 			'discountmember'=> '',
 			'discountcoupon'=> $this->input->post('discount'),
-			'codecoupon'	=> $this->input->post('discountCode') ? $this->input->post('discountCode') : 'TN nhập KM',
+			'codecoupon'	=> $this->input->post('discountCode') ? $this->input->post('discountCode') : '',
 			'tax'			=> '',
 			'detailcart'	=> serialize($cart),
 			'shippingtotal'	=> $shippingTotal,
@@ -287,6 +287,7 @@ class Home_model extends CI_Model {
 		$this->db->where('status',1);
 		$this->db->where('delete',0);
 		$this->db->where('orderId',$key);
+		$this->db->order_by('created','DESC');
 		$this->db->limit(1);
 		$this->db->from(PREFIX.$this->tbl_order);
 		$query = $this->db->get();
@@ -297,12 +298,12 @@ class Home_model extends CI_Model {
 		}
 	}
 
-	function getOrder($id, $code) {
+	function getOrder($code) {
 		$this->db->select('*');
 		$this->db->where('status',1);
 		$this->db->where('delete',0);
-		$this->db->where('id',$id);
 		$this->db->where('orderId',$code);
+		$this->db->limit(1);
 		$this->db->from(PREFIX.$this->tbl_order);
 		$query = $this->db->get();
 		if($query->result()){
@@ -474,6 +475,25 @@ class Home_model extends CI_Model {
 			return false;
 		}
 	}
+	function getListOrdersToCancel(){
+		$date = date("Y-m-d H:i:s",time());
+		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
+		$this->db->select('*');
+		$this->db->where('phone',$info->phone);
+		$this->db->where('isVerify',1);
+		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
+		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
+		$this->db->order_by('orderId','ABS');
+		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	
+	}
 
 	function sync_pending_orders() {
 		// 1. Lấy danh sách đơn hàng chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
@@ -544,5 +564,40 @@ class Home_model extends CI_Model {
 			return "Server Online is unreachable.";
 		}
 	}
+	function sync_orders_verify() {
+
+		$DB_online = @$this->load->database('online', TRUE);
+		// query bảng order_events trên db oline để lấy danh sách đơn hàng đã được xác nhận nhưng chưa đồng bộ về local
+		$DB_online->select('*');
+		$DB_online->from('order_events');
+		$DB_online->where('isSync', 0);
+		$DB_online->limit(20);
+		$query = $DB_online->get();
+		$order_events = $query->result_array();
+		if (empty($order_events)) {
+			return "No data to sync";
+		}
+		if ($DB_online && $DB_online->conn_id) {
+			foreach ($order_events as $order) {
+				if (!$this->getOrder($order['orderCode'])) {
+					// Nếu chưa tồn tại, cập nhật trạng thái xác nhận vào local
+					$dataUpdate = array(
+						'status' => 0,
+						'isVerify' => 0,
+						"updated"=> date('Y-m-d H:i:s',time())
+					);
+					$this->db->where('orderId', $order['orderCode']);
+					if($this->db->update('orders', $dataUpdate)) {
+						// Cập nhật trạng thái đã đồng bộ trên Server Online
+						$DB_online->where('id', $order['id']);
+						$DB_online->update('order_events', array('isSync' => 1));
+					}
+				}
+			}
+		} else {
+			return "Server Online is unreachable.";
+		}
+	}
+
 }
 ?>

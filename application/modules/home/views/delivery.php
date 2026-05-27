@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="success-text">
-                    <h2>Đơn hàng đang được thực hiện</h2>
+                    <h2>Đơn hàng đang chờ hủy</h2>
                 </div>
             </div>
         </div>
@@ -37,8 +37,7 @@
                                 </a> </li>
                             <?php } ?>
                         </ul>
-                        <a href="javascript:void(0)" class="btn btn-rounded btn-block" id="fulfillmentOrder<?=$v->id;?>"
-                            onclick="updateFulfillmentOrder(<?=$v->id;?>)">Hoàn Thành</a>
+                        <a href="javascript:void(0)" class="btn btn-rounded btn-block" disabled>Chờ hủy</a>
                     </div>
                 </div>
             </div>
