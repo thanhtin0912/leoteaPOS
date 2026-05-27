@@ -579,7 +579,7 @@ class Home_model extends CI_Model {
 		}
 		if ($DB_online && $DB_online->conn_id) {
 			foreach ($order_events as $order) {
-				if (!$this->getOrder($order['orderCode'])) {
+				if ($this->getOrder($order['orderCode'])) {
 					// Nếu chưa tồn tại, cập nhật trạng thái xác nhận vào local
 					$dataUpdate = array(
 						'status' => 0,
