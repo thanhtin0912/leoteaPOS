@@ -465,6 +465,7 @@ class Home extends MX_Controller {
 					$note = $this->input->post('note');
 					$dataUpdate = array(
 						'payment' => 2,
+						'note' => $note,
 						"updated"=> date('Y-m-d H:i:s',time())
 					);
 					if($this->db->update('orders', $dataUpdate)){
@@ -489,6 +490,45 @@ class Home extends MX_Controller {
 						
 						return_json($data);
 
+						// Kiểm tra xem record này có tồn tại trên server online không
+						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
+						if ($check_online) {
+							// Nếu có thì tiến hành update online
+							$db_online->where('orderId', $lastNo);
+							$db_online->update('orders', $dataUpdate);
+						}
+						exit();
+					}
+				}
+				if ($type === 'tm') {
+					$this->db->where('orderId',$lastNo);
+					$note = $this->input->post('note');
+					$dataUpdate = array(
+						'payment' => 1,
+						'note' => $note,
+						"updated"=> date('Y-m-d H:i:s',time())
+					);
+					if($this->db->update('orders', $dataUpdate)){
+						$nv = $checkOrder[0]->fullname;
+						$tk = $checkOrder[0]->phone;
+						$created = $checkOrder[0]->created;
+						$now = date('Y-m-d H:i:s');
+						// Viết sao hiển thị vậy, rất dễ quản lý
+						$tr = "**Thay đổi Hóa đơn từ CK sang TM - " . $lastNo . " - " . $now . "!**\n"
+						. "+++++++++++++++++++++++++++++++++\n"
+						. "NV: " . $nv . " - TK: " . $tk . "\n"
+						. "Lý do: " . $note . "\n"
+						. "Ngày in: " . $created . "\n"
+						. "+++++++++++++++++++++++++++++++++\n";
+						$this->discord->sendsmsCancel($tr);
+
+						$data = array(
+							'status'=>true,
+							'mes' => 'Đã đổi thông tin thanh toán từ CK sang TM.',
+							'key' => $this->security->get_csrf_hash(),
+						);
+						
+						return_json($data);
 						// Kiểm tra xem record này có tồn tại trên server online không
 						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
 						if ($check_online) {

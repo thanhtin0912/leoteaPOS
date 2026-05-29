@@ -32,6 +32,13 @@ function submit() {
     });
 }
 </script>
+<style>
+    .card-product-option-item {
+        margin-right: 5px;
+        margin-top: 5px;
+        width: calc(25% - 5px);
+    }
+</style>
 <!-- thank-you section start -->
 <section class="section-big-py-space light-layout">
     <div class="container">
@@ -56,7 +63,7 @@ function submit() {
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 offset-lg-3">
+            <div class="col-lg-8 offset-lg-2">
                 <div class="row order-success-sec">
                     <form class="size-new py-3">
                         <div class="card-product-option-item custom-radio mb-0">
@@ -83,6 +90,15 @@ function submit() {
                             <label for="type3" class="size-radio-label p-1">
                                 <div class="size-radio-content">
                                     <p class="size-name">TM->CK</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="card-product-option-item custom-radio mb-0">
+                            <input type="radio" value="tm" name="typeProcess" id="type4"
+                                class="size-radio-input" data-size="0">
+                            <label for="type4" class="size-radio-label p-1">
+                                <div class="size-radio-content">
+                                    <p class="size-name">CK->TM</p>
                                 </div>
                             </label>
                         </div>

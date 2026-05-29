@@ -115,6 +115,63 @@ function couponSelect(element) {
     // 2. Thêm class 'active' vào thẻ vừa click
     element.classList.add('active');
 }
+
+function getNumericValue(selector) {
+    return Number($(selector).text().replace(/\D/g, '')) || 0;
+}
+
+function updateCashChange() {
+    let paid = Number($('#cashPaidAmount').val().replace(/\D/g, '')) || 0;
+    let finalAmount = getNumericValue('#finalPrice');
+    let change = paid - finalAmount;
+
+    $('#cashChangeAmount').text(formatCurrency(change > 0 ? change : 0));
+}
+
+function closeCashModal() {
+    $('#cashModalBackdrop').removeClass('show');
+    $('#cashModal').removeClass('show');
+}
+
+function addReturnMoney() {
+    let payment = $('input[name="orderPayment"]:checked').val();
+    if (payment !== '1') {
+        notify('Vui lòng chọn Tiền mặt để nhập tiền.', 'warning', true);
+        return;
+    }
+
+    let finalAmount = getNumericValue('#finalPrice');
+    $('#cashFinalAmount').text(formatCurrency(finalAmount));
+    $('#cashPaidAmount').val('');
+    $('#cashChangeAmount').text('0');
+    $('#cashModalBackdrop').addClass('show');
+    $('#cashModal').addClass('show');
+}
+
+function confirmCashPayment() {
+    let paid = Number($('#cashPaidAmount').val().replace(/\D/g, '')) || 0;
+    let finalAmount = getNumericValue('#finalPrice');
+    if (paid < finalAmount) {
+        notify('Số tiền khách trả phải lớn hơn hoặc bằng thành tiền.', 'danger', true);
+        return;
+    }
+
+    let change = paid - finalAmount;
+    $('#cashChangeAmount').text(formatCurrency(change));
+    checkout();
+    closeCashModal();
+}
+function selectCash(amount, element) {
+    // mình muốn khi click sẽ + amount vào input
+    let currentValue = Number($('#cashPaidAmount').val().replace(/\D/g, '')) || 0;
+    amount = currentValue + Number(amount);
+    $('#cashPaidAmount').val(amount);
+    updateCashChange();
+}
+function clearCash() {
+    $('#cashPaidAmount').val('');
+    updateCashChange();
+}
 </script>
 <style>
 .checkout-summary-card {
@@ -190,6 +247,11 @@ function couponSelect(element) {
     background-color: rgba(0, 186, 242, 0.08) !important;
     border: 1px dashed #00baf2 !important;
 }
+.coupon-item span:hover {
+    color: #00baf2 !important;
+    background-color: rgba(0, 186, 242, 0.08) !important;
+    border: 1px dashed #00baf2 !important;
+}
 .offer-contain ul {
     display: flex;
     flex-wrap: wrap;
@@ -221,6 +283,82 @@ function couponSelect(element) {
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.5px;
+}
+
+.custom-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    z-index: 1050;
+}
+
+.custom-modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.custom-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    z-index: 1055;
+}
+
+.custom-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.custom-modal-content {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 1.25rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.custom-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.custom-modal-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.custom-modal-header button {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.custom-modal-body {
+    color: #333;
+}
+
+.custom-modal-body .form-group {
+    margin-top: 1rem;
+}
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
 }
 </style>
 <section class="section-big-py-space light-layout">
@@ -330,8 +468,8 @@ function couponSelect(element) {
                         <div class="input-group w-100">
                             <input type="text" id="adddiscountPrice" class="form-control" aria-label="Nhập chiết khấu"
                                 placeholder="Nhập chiết khấu" disabled>
-                            <button class="btn btn-danger" onclick="addCoupon()"><i class="fa fa-tag"></i> Áp
-                                dụng</button>
+                            <!-- <button class="btn btn-danger" onclick="addCoupon()"><i class="fa fa-tag"></i> Áp
+                                dụng</button> -->
                         </div>
                         <div class="py-3">
                             <input type="hidden" id="couponCode" value="">
@@ -419,8 +557,8 @@ function couponSelect(element) {
                     <div class="col-12 pt-5 text-center">
                         <?php if($this->session->userdata('staffName')){ ?>
                         <button class="btn btn-sm bg-danger btn-normal" onclick="saveForWaiting();">Lưu đơn</button>
-                        <button class="btn btn-normal btn-sm" onclick="checkout();" id="btnCheckout">Xác nhận
-                            đơn</button>
+                        <button class="btn btn-normal btn-sm" onclick="checkout();" id="btnCheckout">Xác nhận</button>
+                        <button class="btn btn-normal btn-sm" onclick="addReturnMoney();" id="btnReturnMoney">Nhập tiền</button>
 
                         <?php }else{ ?>
                         <div class="title6">
@@ -434,3 +572,47 @@ function couponSelect(element) {
     </div>
 </section>
 <!-- Section ends -->
+<div id="cashModalBackdrop" class="custom-modal-backdrop"></div>
+<div id="cashModal" class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="cashModalTitle">
+    <div class="custom-modal-content">
+        <div class="custom-modal-header">
+            <h4 id="cashModalTitle">Nhập tiền khách trả</h4>
+            <button type="button" onclick="closeCashModal();" aria-label="Đóng">×</button>
+        </div>
+        <div class="custom-modal-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="mb-3">
+                    <label class="form-label">Thành tiền</label>
+                    <div><strong id="cashFinalAmount">0</strong> đ</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tiền thối lại</label>
+                    <div><strong id="cashChangeAmount">0</strong> đ</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cashPaidAmount" class="form-label">Số tiền khách đưa</label>
+                <input type="text" id="cashPaidAmount" class="form-control" placeholder="Nhập số tiền" oninput="updateCashChange();" autocomplete="off">
+            </div>
+            <?php $cashs=[500000,200000,100000,50000,20000,10000,5000,2000,1000]; ?>
+            <div class="product-offer pb-2">
+                <div class="offer-contain">
+                    <ul>
+                        <?php foreach ($cashs as $c) { ?>
+                        <li onclick="selectCash('<?=$c?>', this)" class="coupon-item" style="cursor: pointer;">
+                            <span class="code-lable px-2"><?=$c?></span>
+                        </li>
+                        <?php } ?>
+                        <li onclick="clearCash()" class="coupon-item" style="cursor: pointer;">
+                            <span class="code-lable">Del</span>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeCashModal();">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="confirmCashPayment();">Xác nhận</button>
+        </div>
+    </div>
+</div>
