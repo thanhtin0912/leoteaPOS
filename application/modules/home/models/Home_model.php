@@ -256,7 +256,7 @@ class Home_model extends CI_Model {
 		$this->db->where('delete',0);
 		$this->db->where('status',1);
 		$this->db->where('fulfillment',2);
-		$this->db->order_by('orderId','ABS');
+		$this->db->order_by('orderId','ASC');
 		$this->db->from(PREFIX.$this->tbl_order);
 		$this->db->limit(20);
 		$query = $this->db->get();
@@ -334,7 +334,7 @@ class Home_model extends CI_Model {
 		$date = date("Y-m-d H:i:s",time());
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
-		$this->db->order_by('orderId','ABS');
+		$this->db->order_by('orderId','ASC');
 		$this->db->from(PREFIX.$this->tbl_order);
 		$query = $this->db->get();
 		if($query->result()){
@@ -378,7 +378,7 @@ class Home_model extends CI_Model {
 		$this->db->where('created >=', $today . ' 00:00:00');
 		$this->db->where('created <=', $today . ' 23:59:59');
 		$this->db->where('to IS NULL');
-		$this->db->order_by('id','ABS');
+		$this->db->order_by('id','ASC');
 		$this->db->from(PREFIX.$this->tbl_shift);
 		$this->db->limit(1);
 		$query = $this->db->get();
@@ -453,7 +453,7 @@ class Home_model extends CI_Model {
 		$date = date("Y-m-d H:i:s",time());
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
-		$this->db->order_by('orderId','ABS');
+		$this->db->order_by('orderId','ASC');
 		$this->db->from(PREFIX.$this->tbl_order);
 		$query = $this->db->get();
 		if($query->result()){
@@ -484,7 +484,29 @@ class Home_model extends CI_Model {
 		$this->db->where('isVerify',1);
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
-		$this->db->order_by('orderId','ABS');
+		$this->db->order_by('orderId','ASC');
+		$this->db->from(PREFIX.$this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	
+	}
+
+	function getListOrdersToPaymentBanking(){
+		$date = date("Y-m-d H:i:s",time());
+		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
+		$this->db->select('*');
+		$this->db->where('phone',$info->phone);
+		$this->db->where('payment', 2);
+		$this->db->where('status', 1);
+		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
+		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
+		//lất theo thời gian từ sớm nhất đến muộn nhất để dễ dàng đối chiếu với lịch sử giao dịch ngân hàng
+		$this->db->order_by('created','ASC');	
 		$this->db->from(PREFIX.$this->tbl_order);
 		$query = $this->db->get();
 		if($query->result()){

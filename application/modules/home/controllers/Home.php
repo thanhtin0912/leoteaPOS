@@ -122,6 +122,7 @@ class Home extends MX_Controller {
 
 		}
 		$data['orders'] = $this->home->getListOrdersToCancel();
+		$data['banking'] = $this->home->getListOrdersToPaymentBanking();
 		$data['info'] = $this->home->getInfoSite();
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
@@ -487,9 +488,18 @@ class Home extends MX_Controller {
 							'mes' => 'Đã đổi thông tin thanh toán từ TM sang CK.',
 							'key' => $this->security->get_csrf_hash(),
 						);
-						
-						return_json($data);
-
+						$res = $checkOrder[0];
+						$info = $this->session->userdata('userLogin');
+						try {
+							$printBill = $this->home->getPrinter($info->storeId,'BILL');
+							if($printBill) {
+								@$this->printBill($printBill[0]->ip, $this->input->post('orderCode'), $res);
+							}
+						} catch (Exception $e) {
+							// Ghi log lỗi in nhưng không làm dừng chương trình
+							log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
+						}
+					
 						// Kiểm tra xem record này có tồn tại trên server online không
 						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
 						if ($check_online) {
@@ -497,6 +507,7 @@ class Home extends MX_Controller {
 							$db_online->where('orderId', $lastNo);
 							$db_online->update('orders', $dataUpdate);
 						}
+						return_json($data);
 						exit();
 					}
 				}
