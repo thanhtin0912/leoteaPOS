@@ -268,8 +268,6 @@ class Home_model extends CI_Model {
 	}
 	function getLastOrderStore($key){
 		$this->db->select('*');
-		$this->db->where('status',1);
-		$this->db->where('delete',0);
 		$this->db->like('orderId',$key);
 		$this->db->order_by('orderId','DESC');
 		$this->db->limit(1);

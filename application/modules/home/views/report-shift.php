@@ -204,7 +204,7 @@ function calculateGrandTotal() {
                             <h5>Tiền Tip</h5>
                             <input class="form-control" value=0 style="width: 150px !important" id="tip">
                         </div>
-                        <div class="coupan-block">
+                        <div class="coupan-block d-none" >
                             <h5>Chi phí khác</h5>
                             <input class="form-control" value=0 style="width: 150px !important" id="spent">
                         </div>
