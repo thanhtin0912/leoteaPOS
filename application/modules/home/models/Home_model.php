@@ -476,9 +476,10 @@ class Home_model extends CI_Model {
 	function getListOrdersToCancel(){
 		$date = date("Y-m-d H:i:s",time());
 		$info = $this->session->userdata('userLogin');
-		if(!$info) return false;
+		$staffName = $this->session->userdata('staffName');
+		if(!$staffName) return false;
 		$this->db->select('*');
-		$this->db->where('phone',$info->phone);
+		$this->db->where('fullname',$staffName);
 		$this->db->where('isVerify',1);
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));
 		$this->db->where('created <=', date('Y-m-d 23:59:59', strtotime($date)));
@@ -495,10 +496,10 @@ class Home_model extends CI_Model {
 
 	function getListOrdersToPaymentBanking(){
 		$date = date("Y-m-d H:i:s",time());
-		$info = $this->session->userdata('userLogin');
-		if(!$info) return false;
+		$staffName = $this->session->userdata('staffName');
+		if(!$staffName) return false;
 		$this->db->select('*');
-		$this->db->where('phone',$info->phone);
+		$this->db->where('fullname',$staffName);
 		$this->db->where('payment', 2);
 		$this->db->where('status', 1);
 		$this->db->where('created >=', date('Y-m-d 00:00:01', strtotime($date)));

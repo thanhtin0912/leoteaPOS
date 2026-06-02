@@ -21,7 +21,7 @@ function submit() {
             if (res.mes) {
                 notify(res.mes, 'primary', true);
             } else {
-                notify('Yêu cầu xử lý hóa đơn đã gửi thành công.', 'primary', true);
+                notify('Yêu cầu xử lý bill đã gửi thành công.', 'primary', true);
             }
             // Vô hiệu hóa nút
             btn.disabled = true;
@@ -45,7 +45,7 @@ function submit() {
         <div class="row">
             <div class="col-md-12">
                 <div class="success-text">
-                    <h2>Thông tin hóa đơn</h2>
+                    <h2>Thông tin bill</h2>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@ function submit() {
             <div class="col-12">
                 <div class="order-payment">
                     <div class="title6">
-                        <h4>Nhập mã hóa đơn xử lý</h4>
+                        <h4>Nhập mã bill xử lý</h4>
                     </div>
                 </div>
             </div>

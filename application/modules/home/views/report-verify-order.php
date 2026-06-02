@@ -54,12 +54,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
             success: function(res) {
                 $('#csrf_token').val(res.key);
                 if(res.status) {
-                    notify('Hóa đơn đã được HỦY thành công.', 'primary', true);
+                    notify('Bill đã được HỦY thành công.', 'primary', true);
                     const btn = document.getElementById('save-data');
                     // Vô hiệu hóa nút
                     btn.disabled = true;
                 } else {
-                    notify('Hệ thống không thể ghi nhận thông tin HỦY hóa đơn.', 'danger', true); 
+                    notify('Hệ thống không thể ghi nhận thông tin HỦY BILL.', 'danger', true); 
                 }
             }
         });
@@ -117,7 +117,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             
                         </ul>
                         <?php } else { ?>
-                        <h4 class="text-center">Hóa đơn không tìm thấy hoặc đã thực hiện xác nhận.</h4>
+                        <h4 class="text-center">Bill không tìm thấy hoặc đã thực hiện xác nhận.</h4>
                         <?php } ?>
                     </div>
 

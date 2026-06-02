@@ -351,7 +351,7 @@ class Home extends MX_Controller {
 			);
 			if($this->db->update('orders', $dataUpdate)){
 				$event = array(
-					'name' => 'HỦY hóa đơn',
+					'name' => 'HỦY bill',
 					'orderCode' => $_POST["id"],
 					'user' => $_POST["account"],
 					'isVerify' => 1,
@@ -433,14 +433,14 @@ class Home extends MX_Controller {
 						$now = date('Y-m-d H:i:s');
 						$url = "https://61579.net/xac-nhan-huy-hoa-don/" . $lastNo;
 						// Viết sao hiển thị vậy, rất dễ quản lý
-						$tr = "**Yêu cầu hủy hóa đơn - " . $lastNo . " - " . $now . "!**\n"
+						$tr = "**Yêu cầu hủy bill - " . $lastNo . " - " . $now . "!**\n"
 						. "+++++++++++++++++++++++++++++++++\n"
 						. "NV: " . $nv . " - TK: " . $tk . "\n"
 						. "Lý do: " . $note . "\n"
 						. "Tổng: " . $total . "\n"
 						. "Ngày in: " . $created . "\n"
 						. "+++++++++++++++++++++++++++++++++\n"
-						. " [Xác nhận hủy hóa đơn: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
+						. " [Xác nhận hủy bill: " . $lastNo . "](" . $url . ") \n" // Thêm link kiểu Markdown Discord
 						. "+++++++++++++++++++++++++++++++++";
 						$this->discord->sendsmsCancel($tr);
 
@@ -475,7 +475,7 @@ class Home extends MX_Controller {
 						$created = $checkOrder[0]->created;
 						$now = date('Y-m-d H:i:s');
 						// Viết sao hiển thị vậy, rất dễ quản lý
-						$tr = "**Thay đổi Hóa đơn từ TM sang CK - " . $lastNo . " - " . $now . "!**\n"
+						$tr = "**Thay đổi Bill từ TM sang CK - " . $lastNo . " - " . $now . "!**\n"
 						. "+++++++++++++++++++++++++++++++++\n"
 						. "NV: " . $nv . " - TK: " . $tk . "\n"
 						. "Lý do: " . $note . "\n"
@@ -489,17 +489,7 @@ class Home extends MX_Controller {
 							'key' => $this->security->get_csrf_hash(),
 						);
 						$res = $checkOrder[0];
-						$info = $this->session->userdata('userLogin');
-						try {
-							$printBill = $this->home->getPrinter($info->storeId,'BILL');
-							if($printBill) {
-								@$this->printBill($printBill[0]->ip, $this->input->post('orderCode'), $res);
-							}
-						} catch (Exception $e) {
-							// Ghi log lỗi in nhưng không làm dừng chương trình
-							log_message('error', 'Lỗi in Bill: ' . $e->getMessage());
-						}
-					
+						$info = $this->session->userdata('userLogin');	
 						// Kiểm tra xem record này có tồn tại trên server online không
 						$check_online = $db_online->get_where('orders', array('orderId' => $lastNo))->row();
 						if ($check_online) {
@@ -525,7 +515,7 @@ class Home extends MX_Controller {
 						$created = $checkOrder[0]->created;
 						$now = date('Y-m-d H:i:s');
 						// Viết sao hiển thị vậy, rất dễ quản lý
-						$tr = "**Thay đổi Hóa đơn từ CK sang TM - " . $lastNo . " - " . $now . "!**\n"
+						$tr = "**Thay đổi Bill từ CK sang TM - " . $lastNo . " - " . $now . "!**\n"
 						. "+++++++++++++++++++++++++++++++++\n"
 						. "NV: " . $nv . " - TK: " . $tk . "\n"
 						. "Lý do: " . $note . "\n"
@@ -883,7 +873,7 @@ class Home extends MX_Controller {
 					$info = $this->session->userdata('userLogin');
 					// In hóa đơn
 
-					if($_POST["payment"] == 2 || (isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery") || $this->input->post('discount') > 0) {
+					if((isset($info->bill) && $info->bill > 0 && $_POST["delivery"] === "Delivery") || $this->input->post('discount') > 0) {
 						 // Nếu là thanh toán chuyển khoản hoặc có giảm giá thì in bill
 						try {
 							$printBill = $this->home->getPrinter($info->storeId,'BILL');

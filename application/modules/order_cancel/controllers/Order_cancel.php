@@ -204,7 +204,7 @@ class Order_cancel extends MX_Controller {
 				// Ghi log sự kiện HỦY hóa đơn
 				if ($status == 0) {
 					$event = array(
-						'name' => 'HỦY hóa đơn',
+						'name' => 'HỦY Bill',
 						'orderCode' => $order[0]->orderId,
 						'user' => $order[0]->phone,
 						'isVerify' => 1,

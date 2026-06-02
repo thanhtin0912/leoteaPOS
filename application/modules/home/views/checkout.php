@@ -366,7 +366,7 @@ function clearCash() {
         <div class="row">
             <div class="col-md-12">
                 <div class="success-text">
-                    <h2>XÁC NHẬN HÓA ĐƠN</h2>
+                    <h2>XÁC NHẬN BILL</h2>
                 </div>
             </div>
         </div>
