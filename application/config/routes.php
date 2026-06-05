@@ -82,6 +82,7 @@ $route['addForWaiting'] = "home/addForWaiting";
 $route['getForWaiting'] = "home/getForWaiting";
 $route['viewHoldCart'] = "home/viewHoldCart";
 $route['removeAllHold'] = "home/removeAllHold";
+$route['selectedCardItem'] = "home/selectedCardItem";
 
 $route['send'] = "home/sendMessage";
 // $route['getCatelogiesProduct'] = "home/getCatelogiesProduct";

@@ -1,44 +1,6 @@
 <script type="text/javascript">
-$(document).on('click', '#listToppingCheck .qty-box', function(e) {
-    const qtyBox = e.target.closest('.qty-box');
-    if (!qtyBox) return; // Không click vào .qty-box thì bỏ qua
 
-    const target = e.target;
-
-    const input = qtyBox.querySelector('.qty-input');
-    let value = parseInt(input.value) || 1;
-    const min = parseInt(input.min) || 1;
-    const max = parseInt(input.max) || Infinity;
-
-    if (target.classList.contains('quantity-left-minus')) {
-        value = Math.max(min, value - 1);
-        input.value = value;
-    }
-    if (target.classList.contains('quantity-right-plus')) {
-        value = Math.min(max, value + 1);
-        input.value = value;
-    }
-});
-$(document).on('click', '#qtyProduct .qty-box', function(e) {
-    const qtyBox = e.target.closest('.qty-box');
-    if (!qtyBox) return; // Không click vào .qty-box thì bỏ qua
-
-    const target = e.target;
-
-    const input = qtyBox.querySelector('.qty-adj');
-    let value = parseInt(input.value) || 1;
-    const min = parseInt(input.min) || 1;
-    const max = parseInt(input.max) || Infinity;
-
-    if (target.classList.contains('qty-minus')) {
-        value = Math.max(min, value - 1);
-        input.value = value;
-    }
-    if (target.classList.contains('qty-plus')) {
-        value = Math.min(max, value + 1);
-        input.value = value;
-    }
-});
+// hàm này để hiển thị sản phẩm, mình muốn khi click vào sản phẩm giỏ hàng có thể edit đc sản phẩm đó, ví dụ như thay đổi số lượng, chọn size, chọn topping, ghi chú,... nên mình sẽ hiển thị tất cả thông tin sản phẩm trong modal để có thể thao tác dễ dàng hơn
 
 function quickViewDetailProduct(id) {
     var isLogin = $('#checkUserInfo').val();
@@ -176,87 +138,14 @@ function quickViewDetailProduct(id) {
 }
 
 
-function selectItem(ind, id) {
-    var itemCheck = document.getElementById('topping' + ind);
-    var count = 0;
-    var priceRealTime = parseInt($('#txtPrice').html().replace(',', ''));
-    let toppingPrice = parseInt($('#txtToppingPrice' + ind).html().replace(',', ''));
-    //lấy sl topping selected
-    let qtyValue = 1
-    let $checkbox = $('#topping' + ind);
-    let $toppingContainer = $checkbox.closest('.collection-filter-checkbox');
-    let $qtyBox = $toppingContainer.find('.qty-box');
-    if ($qtyBox.length) {
-        qtyValue = Number($qtyBox.find('.qty-input').val());
-    }
-    if (itemCheck.checked == true) {
-        // check 
-        $('#txtPrice').html(priceRealTime + (toppingPrice * qtyValue)).number(true, 0)
-        if ($qtyBox.length) {
-            $qtyBox.find('.qty-input').prop('disabled', true);
-            $qtyBox.find('.add-to-cart-qty').prop('disabled', true);
-        }
-        for (var i = 0; i < $("form#listToppingCheck :checkbox").length; i++) {
-            if (document.getElementById('topping' + i) != null) {
-                itemCheck = document.getElementById('topping' + i);
-                if (itemCheck.checked) {
-                    count++;
-                }
-            }
-        }
-        let limitTopping = $('#limitTopping').html();
-        if (count >= limitTopping) {
-            for (var i = 0; i < $("form#listToppingCheck :checkbox").length; i++) {
-                if (document.getElementById('topping' + i) != null) {
-                    itemCheck = document.getElementById('topping' + i);
-                    if (!itemCheck.checked) {
-                        document.getElementById('topping' + i).disabled = true;
-                    }
-                }
-            }
-        }
-        // if(count == $("tbody tr").length) {
-        //     $('#selectAllItems').parent('span').addClass('checked');
-        //     document.getElementById('selectAllItems').checked = true;
-        // }
-    } else {
-        $('#txtPrice').html(priceRealTime - (toppingPrice * qtyValue)).number(true, 0)
-        if ($qtyBox.length) {
-            $qtyBox.find('.qty-input').prop('disabled', false);
-            $qtyBox.find('.add-to-cart-qty').prop('disabled', false);
-        }
-        let countChecked = 0
-        for (var i = 0; i < $("form#listToppingCheck :checkbox").length; i++) {
-            if (document.getElementById('topping' + i) != null) {
-                itemCheck = document.getElementById('topping' + i);
-                if (itemCheck.checked) {
-                    countChecked++;
-                }
-            }
-        }
-        let limitTopping = $('#limitTopping').html();
-        if (countChecked <= limitTopping) {
-            for (var i = 0; i < $("form#listToppingCheck :checkbox").length; i++) {
-                if (document.getElementById('topping' + i) != null) {
-                    itemCheck = document.getElementById('topping' + i);
-                    if (!itemCheck.checked) {
-                        document.getElementById('topping' + i).disabled = false;
-                    }
-                }
-            }
-        }
-    }
-}
 
-function selectSizeProduct() {
-    var priceRealTime = parseInt($('#txtPrice').html().replace(',', ''));
-    var priceSize = $('input[name="sizeProduct"]:checked').data('size');
-    var sizePriceNow = parseInt($('#sizePriceNow').val());
 
-    $('#txtPrice').html(priceRealTime - sizePriceNow + priceSize).number(true, 0)
-    $('#sizePriceNow').val(priceSize)
-}
+// Open edit modal for a cart item. Accepts an object or JSON string with keys:
+// { id, qty, size, toppings: [ids], toppings_qty: {id:qty}, note, cart_key }
+
 </script>
+
+
 
 
 <!--tab product-->

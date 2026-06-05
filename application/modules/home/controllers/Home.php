@@ -852,6 +852,42 @@ class Home extends MX_Controller {
 
 		return_json($data);
 	}
+	public function selectedCardItem() {
+		$id  = $_POST["productId"];
+		$cartKey = isset($_POST["cartKey"]) ? $_POST["cartKey"] : false;
+		$selected = false;
+		$product = false;
+		if ($id) {
+			$cart_products = $this->session->userdata('cart_products');
+			foreach ($cart_products as $key => $c) {
+				if($c->id == $id && $key == $cartKey) {
+					$selected = $c;
+					break;
+				}
+			}
+			$products = $this->getAllProduct();
+			foreach ($products as $p) {
+				if ($p->id == $id) {
+					$product = $p;
+					break;
+				}
+			}
+			$data = array(
+				'status'=>true,
+				'key' => $this->security->get_csrf_hash(),
+				'selected' => $selected,
+				'product' => $product
+			);
+		
+		} else {
+			$data = array(
+				'status'=>false,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+
+		return_json($data);
+	}
 
 	public function checkoutCart() {
 		if($_POST["delivery"]){

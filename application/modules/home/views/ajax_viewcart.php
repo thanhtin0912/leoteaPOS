@@ -16,12 +16,13 @@
             <?php foreach ($cart as $key => $v): ?>
             <li>
                 <div class="media">
-                    <a href="javascript:void(0)">
+                    <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
                         <img alt="megastore1" class="me-3" src="<?=GLOBAL_URL.$v->image ?>">
                     </a>
                     <div class="media-body">
-
-                        <h4 class="mb-0"><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>
+                        <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
+                            <h4 class="mb-0"><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>
+                        </a>
                         <?php if($v->priceTopping > 0) { ?>
                         <h5><?= $v->topping; ?></h5>
                         <?php } ?>

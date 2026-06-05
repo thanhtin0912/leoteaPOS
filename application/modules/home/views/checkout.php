@@ -385,10 +385,16 @@ function clearCash() {
                     <?php $total = 0;$amount = 0;?>
                     <?php foreach ($cart as $key => $v): ?>
                     <div class="row product-order-detail py-2">
-                        <div class="col-3"><img src="<?=GLOBAL_URL.$v->image ?>" alt="" class="img-fluid "></div>
+                        <div class="col-3">
+                            <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
+                                <img src="<?=GLOBAL_URL.$v->image ?>" alt="" class="img-fluid ">
+                            </a>
+                        </div>
                         <div class="col-4 order_detail">
                             <div>
+                                <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
                                 <h4><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>
+                                </a>
                                 <?php if($v->priceTopping > 0) { ?>
                                 <h5><?= $v->topping; ?></h5>
                                 <?php } ?>
