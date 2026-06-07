@@ -181,6 +181,7 @@ class Home extends MX_Controller {
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
+		$encoded = short_encode($_POST["id"]);
 		if ($req) {
 			$printTem = $this->home->getPrinter($shift[0]->store,'TEM');
 			if($printTem) {
@@ -191,19 +192,34 @@ class Home extends MX_Controller {
 					log_message('error', 'Lỗi in Tem: ' . $e->getMessage());
 				}
 			}
+			// Gửi thông tin kết ca lên Discord
+			$nv = $shift[0]->name;
+			$storename = $shift[0]->storeName;
+			$from = $shift[0]->from;
+			$to = date('Y-m-d H:i:s');
+			$url = PATH_URL . "bao-cao-ca-lam-viec?id=" . $encoded;
+			$tr = "**Link báo cáo kết ca theo của hàng - " . $to . "!**\n"
+			. "+++++++++++++++++++++++++++++++++\n"
+			. "NV: " . $nv . " - CH: " . $storename . "\n"
+			. "Giờ vào: " . $from . "\n"
+			. "Giờ ra: " . $to . "\n"
+			. "+++++++++++++++++++++++++++++++++\n"
+			// Thêm link kiểu Markdown Discord
+			. $url." \n"
+			. "+++++++++++++++++++++++++++++++++";
+			$this->discord->sendLinkReport($tr);
 		}
 		$data = array(
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
 		);
-		$encoded = short_encode($_POST["id"]);
-		//
 		$this->session->unset_userdata('staffName');
 		if ($this->check_online_connection()) {
 			$this->home->sync_pending_shift();
 		} else {
 			log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
 		}
+
 		if($req) {
 			$data = array(
 				'status'=>true,
