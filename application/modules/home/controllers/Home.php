@@ -29,7 +29,6 @@ class Home extends MX_Controller {
 	{
 		if ($this->check_online_connection()) {
 			$this->home->sync_pending_orders();
-			$this->home->sync_pending_shift();
 		}
 		$data['info'] = $this->home->getInfoSite();
 		$data['sales'] = $this->home->getProductsSales();
@@ -280,7 +279,6 @@ class Home extends MX_Controller {
 			"spent"=> $_POST['spent'],
 			"tip"=> $_POST['tip'],
 			"spentNote"=> $_POST['spentNote'],
-			"completed" => 1,
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -289,7 +287,7 @@ class Home extends MX_Controller {
 			'key' => $this->security->get_csrf_hash(),
 		);
 		if($req) {
-			$s = $this->home->getShiftofDay($_POST["id"], 1);
+			$s = $this->home->getShiftofDay($_POST["id"], 0);
 			if ($s) {
 				$now = date('Y-m-d H:i:s');
 				$diff = (($s[0]->actual + $_POST['spent'] - $_POST['tip']) - $s[0]->cash);

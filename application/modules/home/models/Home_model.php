@@ -554,9 +554,8 @@ class Home_model extends CI_Model {
 		}
 	}
 	function sync_pending_shift() {
-		// 1. Lấy danh sách đơn hàng chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
-		$this->db->where('is_synced', 0);
-		$this->db->where('completed', 1);
+		// 1. Lấy danh sách ca làm việc chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
+		$this->db->where('completed', 0);
 		$this->db->limit(20);
 		$query = $this->db->get('shift');
 		$pending_shift = $query->result_array();
@@ -569,15 +568,31 @@ class Home_model extends CI_Model {
 			$success_count = 0;
 			foreach ($pending_shift as $shift) {
 				$local_id = $shift['id'];
-				unset($shift['id']); 
-				$shift['is_synced'] = 1;
-				// 3. Insert lên Server Online
-				if ($DB_online->insert('shift', $shift)) {
-					// 4. Nếu thành công, cập nhật trạng thái tại Local ngay lập tức
+				if($shift['id_online']!=NULL && $shift['id_online'] > 0 && $shift['is_synced'] == 1){
+					$id_online = $shift['id_online'];
+					unset($shift['id']); 
+					unset($shift['id_online']); 
+					$shift['completed'] = 1;
+					$DB_online->where('id', $id_online);
+					$DB_online->update('shift', $shift);
+
 					$this->db->where('id', $local_id);
-					$this->db->update('shift', array('is_synced' => 1));
-					$success_count++;
+					$this->db->update('shift', array('completed' => 1));
+					
+				} else {
+					unset($shift['id']); 
+					// 3. Insert lên Server Online
+					$shift['is_synced'] = 1;
+					$insert = $DB_online->insert('shift', $shift);
+					if ($insert) {
+						$insert_id = $DB_online->insert_id();
+						// 4. Nếu thành công, cập nhật trạng thái tại Local ngay lập tức
+						$this->db->where('id', $local_id);
+						$this->db->update('shift', array('is_synced' => 1, 'id_online' => $insert_id));
+						$success_count++; 
+					}
 				}
+				
 			}
 			$DB_online->close();
 			return "Synced $success_count orders successfully.";
