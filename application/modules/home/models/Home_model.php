@@ -583,6 +583,7 @@ class Home_model extends CI_Model {
 					unset($shift['id']); 
 					// 3. Insert lên Server Online
 					$shift['is_synced'] = 1;
+					unset($shift['id_online']); 
 					$insert = $DB_online->insert('shift', $shift);
 					if ($insert) {
 						$insert_id = $DB_online->insert_id();
