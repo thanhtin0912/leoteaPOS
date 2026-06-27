@@ -21,6 +21,16 @@ class Report_model extends CI_Model {
 		if($this->input->post('username')!=''){
 			$this->db->where('n.phone', $this->input->post('username'));
 		}
+		if($this->input->post('url')!=''){
+			$this->db->where('n.codecoupon', $this->input->post('url'));
+		}
+		if($this->input->post('ischeck')!=2){
+			if($this->input->post('ischeck')==1){
+				$this->db->where('n.codecoupon !=', '');
+			}else{
+				$this->db->where('n.codecoupon', '');
+			}
+		}
 		if($this->input->post('name')!=''){
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
@@ -72,6 +82,16 @@ class Report_model extends CI_Model {
 		if($this->input->post('username')!=''){
 			$this->db->where('n.phone', $this->input->post('username'));
 		}
+		if($this->input->post('url')!=''){
+			$this->db->where('n.codecoupon', $this->input->post('url'));
+		}
+		if($this->input->post('ischeck')!=2){
+			if($this->input->post('ischeck')==1){
+				$this->db->where('n.codecoupon !=', '');
+			}else{
+				$this->db->where('n.codecoupon', '');
+			}
+		}
 		if($this->input->post('name')!=''){
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
@@ -121,6 +141,16 @@ class Report_model extends CI_Model {
 		if($this->input->post('username')!=''){
 			$this->db->where('n.phone', $this->input->post('username'));
 		}
+		if($this->input->post('url')!=''){
+			$this->db->where('n.codecoupon', $this->input->post('url'));
+		}
+		if($this->input->post('ischeck')!=2){
+			if($this->input->post('ischeck')==1){
+				$this->db->where('n.codecoupon !=', '');
+			}else{
+				$this->db->where('n.codecoupon', '');
+			}
+		}
 		if($this->input->post('name')!=''){
 			// Sử dụng group_start để cô lập điều kiện Search
 			$this->db->like('n.fullname', $this->input->post('name'));
@@ -165,6 +195,16 @@ class Report_model extends CI_Model {
 		}
 		if($this->input->post('username')!=''){
 			$this->db->where('n.phone', $this->input->post('username'));
+		}
+		if($this->input->post('url')!=''){
+			$this->db->where('n.codecoupon', $this->input->post('url'));
+		}
+		if($this->input->post('ischeck')!=2){
+			if($this->input->post('ischeck')==1){
+				$this->db->where('n.codecoupon !=', '');
+			}else{
+				$this->db->where('n.codecoupon', '');
+			}
 		}
 		if($this->input->post('name')!=''){
 			$this->db->like('n.fullname', $this->input->post('name'));

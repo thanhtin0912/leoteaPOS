@@ -189,15 +189,20 @@
                         <span class="title">Hóa đơn && báo cáo</span>
                         <span class="arrow"></span>
                     </a>
-                    <ul class="sub-menu" <?php if (($this->uri->segment(2) == 'reports' ) || ($this->uri->segment(2) == 'order_cancel' )) { print "style='display: block;' ";} ?>>
+                    <ul class="sub-menu" <?php if (($this->uri->segment(2) == 'reports' ) || ($this->uri->segment(2) == 'order_cancel' ) || ($this->uri->segment(2) == 'report_size' )) { print "style='display: block;' ";} ?>>
                         <li class="nav-item  last<?php if ($this->uri->segment(2) == 'report') { print 'active open';} ?>">
                             <a href="<?= PATH_URL_ADMIN . 'report' ?>" class="nav-link ">
-                                <i class="icon-graph"></i><span class="title">Hóa đơn</span>
+                                <i class="icon-pie-chart"></i><span class="title"> Hóa đơn</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  last<?php if ($this->uri->segment(2) == 'report_size') { print 'active open';} ?>">
+                            <a href="<?= PATH_URL_ADMIN . 'report_size' ?>" class="nav-link ">
+                                <i class="icon-pie-chart"></i><span class="title"> Size</span>
                             </a>
                         </li>
                         <li class="nav-item  last<?php if ($this->uri->segment(2) == 'order_cancel') { print 'active open';} ?>">
                             <a href="<?= PATH_URL_ADMIN . 'order_cancel' ?>" class="nav-link ">
-                                <i class="icon-graph"></i><span class="title">Hủy hóa đơn</span>
+                                <i class="icon-pie-chart"></i><span class="title"> Hủy hóa đơn</span>
                             </a>
                         </li>
                     </ul>
@@ -308,7 +313,7 @@
 <![endif]-->
 <!-- <script src="<?= PATH_URL . 'assets/js/' ?>jquery.smoothscroll.js"></script> -->
 <script src="<?= PATH_URL . 'assets/js/admin/' ?>jquery.url.js"></script>
-<script src="<?= PATH_URL . 'assets/js/admin/' ?>admin.js"></script>
+<script src="<?= PATH_URL . 'assets/js/admin/' ?>admin.js?v=20260624"></script>
 <script src="<?= PATH_URL . 'assets/js/admin/' ?>jquery-migrate.min.js" type="text/javascript"></script>
 <!-- IMPORTANT! Load jquery-ui-1.10.3.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
 <script src="<?= PATH_URL . 'assets/js/admin/' ?>jquery-ui-1.10.3.custom.min.js" type="text/javascript"></script>

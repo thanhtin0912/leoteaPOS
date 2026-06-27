@@ -80,18 +80,29 @@
 									<label class="col-sm-2 control-label">Tên Nhân viên:</label>
 									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_name"></div>
 								</div>
+
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Tên món:</label>
 									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_content"></div>
 									<label class="col-sm-2 control-label">Thanh toán:</label>
 									<div class="col-sm-4">
-										<select class="select form-control" data-live-search="true" data-size="8" name="search_url" id="search_description">
+										<select class="select form-control" data-live-search="true" data-size="8" id="search_description">
 											<option value="">None</option>
 											<option value="1">TM</option>
 											<option value="2">CK</option>
 										</select>
 									</div>
-								</div>	
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Mã KM:</label>
+									<div class="col-sm-4"><input onkeypress="return enterSearch(event)" type="text" class="form-control" id="search_url"></div>
+									<label class="col-sm-2 control-label">Loại order:</label>
+									<div class="col-sm-4">
+										<label class="radio-inline"><input type="radio" name="search_check" value="2" checked> All</label>
+										<label class="radio-inline"><input type="radio" name="search_check" value="1"> Có KM</label>
+										<label class="radio-inline"><input type="radio" name="search_check" value="0"> Không</label>
+                                    </div>
+								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Create Date:</label>
 									<div class="col-sm-4">

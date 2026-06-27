@@ -107,6 +107,7 @@ function searchContent(start,per_page,sum=0,exp=0){
 		username: $('#search_username').val(),
 		module_name: $('#search_module_name').val(),
 		status: $("input[name=search_status]:checked").val(),
+		ischeck: $("input[name=search_check]:checked").val() || 2,
 		showData: $("#hdshowData").val(),
 		csrf_token: token_value
 	},function(data){
