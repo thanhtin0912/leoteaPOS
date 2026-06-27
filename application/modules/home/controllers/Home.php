@@ -374,7 +374,7 @@ class Home extends MX_Controller {
 						. $tr_diff_size
 						. "-----------------------------";
 				
-					$this->discord->sendLinkReport($tr_size);
+					$this->discord->sendDiffSizeinShift($tr_size);
 				}
 				$this->home->updateShiftDay($_POST["id"], $data);
 				if ($this->check_online_connection()) {
