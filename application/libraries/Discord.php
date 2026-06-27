@@ -92,4 +92,34 @@ class Discord {
         }
     }
 
+    public function sendDiffSizeinShift($text){
+        $webhook_url = "https://discord.com/api/webhooks/1509025624247898182/lSlOGP0S6yoWm-0xZqZC4Fvp6gVNFWRWgrFYh-MaKuvKOQmXgFwngLY_mwoopskp2I4V";
+		
+        $data = [
+            "username" => "Report Bot",
+            "content"  => $text
+        ];
+
+        $json_data = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        // Khởi tạo cURL
+        $ch = curl_init($webhook_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+
+        $response = curl_exec($ch);
+        $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($ch);
+        curl_close($ch);
+
+        // Kiểm tra kết quả
+        if ($http_status == 204) {
+            return true;
+        } else {
+            log_message('error', "❌ Lỗi gửi webhook. Mã lỗi HTTP: $http_status <br>Chi tiết: $curl_error <br>Response: $response");
+        }
+    }
+
 }

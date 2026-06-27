@@ -136,13 +136,24 @@ class Home extends MX_Controller {
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
 		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
 		$this->template->write_view('content', 'shift_in', $data);
 		$this->template->render();
 		//
 	}
 	
 	function checkIn(){
-    	$req = $this->home->checkinShiftDay();
+		$sizeCups = array();
+		foreach ($this->input->post('dataSizes') as $key => $value) {
+			$sizeIn = new stdClass();
+			$sizeIn->name = $key;
+			$sizeIn->in = $value;
+			$sizeCups[] = $sizeIn;
+		}
+		$thungan = $this->input->post('user');
+		$size_cups = serialize($sizeCups);
+
+    	$req = $this->home->checkinShiftDay($thungan, $size_cups);
 		// 1. Lấy data từ session ra
 		$this->session->set_userdata('staffName', $_POST["user"]);
 		$data = array(
@@ -260,6 +271,7 @@ class Home extends MX_Controller {
 	{
 		$key = short_decode($_GET["id"]); // Giải mã bằng chính hàm đó
 		$shift = $this->home->getShiftofDay($key, 0);
+		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
 		$data['res'] = false;
 		if($_GET["id"] && $shift){
 			$data['salesShift']= $shift[0]->cash; // tổng tiền mặt thu đc
@@ -273,12 +285,38 @@ class Home extends MX_Controller {
 		if (!is_array($money_data)) {
 			$money_data = []; // Đảm bảo luôn là mảng trước khi serialize
 		}
+		$data_cups = $this->input->post('data_cups');
+
+		$shift = $this->home->getShiftofDay($_POST["id"], 0);
+		$new_size_cups = array();
+		$size_cups = unserialize($shift[0]->size_cups);
+		$listSize = $this->home->getCategories('PRODUCTSIZE');
+		$dataOrder = $this->home->getTotalOrderShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
+		$sizeCounter = $this->countCupBySize($dataOrder, $listSize);
+		foreach ($size_cups as $size) {
+			$size_name = $size->name;
+			$size_in = $size->in;
+			$size_out = isset($data_cups[$size_name]) ? $data_cups[$size_name] : 0;
+			$size_diff = $size_in - $size_out;
+			$size_sale_count = isset($sizeCounter[$size_name]) ? $sizeCounter[$size_name] : 0;
+			$check_sale_count = $size_diff - $size_sale_count;
+			$new_size_cups[] = (object)[
+				'name' => $size_name,
+				'in' => $size_in,
+				'out' => $size_out,
+				'diff' => $size_diff,
+				'sale' => $size_sale_count,
+				'check_sale' => $check_sale_count
+			];
+		}
+
 		$data=array(
 			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
 			"spent"=> $_POST['spent'],
 			"tip"=> $_POST['tip'],
 			"spentNote"=> $_POST['spentNote'],
+			"size_cups"=> serialize($new_size_cups),
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -319,6 +357,25 @@ class Home extends MX_Controller {
 					"diff" => $diff,
 					"updated"=> date('Y-m-d H:i:s',time())
 				);
+
+				// Viết sao hiển thị vậy, rất dễ quản lý
+				$tr_diff_size ='';
+				foreach ($new_size_cups as $size) {
+					if($size->check_sale != 0) {
+						$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Kiểm tra: " . $size->check_sale . "\n";
+					}
+				}
+				if($tr_diff_size != '') {
+					$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . $now . "!**\n"
+						. "-----------------------------\n"
+						. "NV: " . $s[0]->name . " - CH: " . $s[0]->storeName . "\n"
+						. "CA: " . $gio_vao . " - " . $gio_ra . "\n"
+						. "-----------------------------\n"
+						. $tr_diff_size
+						. "-----------------------------";
+				
+					$this->discord->sendLinkReport($tr_size);
+				}
 				$this->home->updateShiftDay($_POST["id"], $data);
 				if ($this->check_online_connection()) {
 					$this->home->sync_pending_shift();
@@ -330,6 +387,77 @@ class Home extends MX_Controller {
 			);
 		}
 		return_json($data);
+	}
+
+	private function countCupBySize($dataOrder, $listSize){
+		$counter = $this->buildEmptySizeCounter($listSize);
+
+		if(!$dataOrder){
+			return $counter;
+		}
+
+		foreach($dataOrder as $order){
+			if(!isset($order->detailcart) || $order->detailcart === ''){
+				continue;
+			}
+
+			$cartDetails = @unserialize($order->detailcart);
+			if($cartDetails === false && $order->detailcart !== 'b:0;'){
+				continue;
+			}
+
+			if(is_object($cartDetails)){
+				$cartDetails = array($cartDetails);
+			}
+
+			if(!is_array($cartDetails)){
+				continue;
+			}
+
+			foreach($cartDetails as $item){
+				$sizeName = '';
+				if(is_object($item) && isset($item->size)){
+					$sizeName = trim((string)$item->size);
+				}elseif(is_array($item) && isset($item['size'])){
+					$sizeName = trim((string)$item['size']);
+				}
+
+				if($sizeName === ''){
+					continue;
+				}
+
+				$amount = 1;
+				if(is_object($item) && isset($item->amount) && is_numeric($item->amount)){
+					$amount = (int)$item->amount;
+				}elseif(is_array($item) && isset($item['amount']) && is_numeric($item['amount'])){
+					$amount = (int)$item['amount'];
+				}
+
+				if($amount < 0){
+					$amount = 0;
+				}
+
+				if(array_key_exists($sizeName, $counter)){
+					$counter[$sizeName] += $amount;
+				}
+			}
+		}
+
+		return $counter;
+	}
+
+	private function buildEmptySizeCounter($listSize){
+		$counter = array();
+		if($listSize){
+			foreach($listSize as $size){
+				$sizeName = isset($size->name) ? trim((string)$size->name) : '';
+				if($sizeName !== ''){
+					$counter[$sizeName] = 0;
+				}
+			}
+		}
+
+		return $counter;
 	}
 
 	public function cancelOrder()

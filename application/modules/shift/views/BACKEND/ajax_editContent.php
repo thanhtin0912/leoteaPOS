@@ -16,7 +16,7 @@
 <!-- END PAGE HEADER-->
 <!-- BEGIN PAGE CONTENT-->
 <div class="row">
-    <div class="col-lg-12 col-xs-12 col-sm-12">
+    <div class="col-lg-8 col-xs-12 col-sm-8">
         <!-- BEGIN PORTLET-->
         <div class="portlet light bordered">
             <div class="portlet-title">
@@ -67,7 +67,7 @@
         </div>
         <!-- END PORTLET-->
     </div>
-    <div class="col-lg-6 col-xs-12 col-sm-12">
+    <div class="col-lg-4 col-xs-12 col-sm-4">
         <!-- BEGIN PORTLET-->
         <div class="portlet light bordered">
             <div class="portlet-title">
@@ -120,6 +120,51 @@
 									<td> <?= number_format($key) ?> </td>
 									<td> <?= ($v) ?> </td>
 									<td> <?= number_format($v*$key) ?> </td>
+								</tr>
+								<?php } ?>
+
+							<?php } ?> 
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+        <div class="col-lg-6 col-xs-12 col-sm-12">
+        <!-- BEGIN PORTLET-->
+        <div class="portlet light bordered">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class="icon-bar-chart font-dark hide"></i>
+                    <span class="caption-subject font-dark bold uppercase">Thông tin size ly</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="table-scrollable table-scrollable-borderless">
+                    <table class="table table-hover table-light">
+                        <thead>
+                            <tr class="uppercase">
+                                <th> Size </th>
+                                <th> Vào </th>
+                                <th> Ra</th>
+                                <th> Xuất</th>
+                                <th> Bán</th>
+                                <th> Kiểm tra</th>
+                            </tr>
+                        </thead>
+						<?php $sizeCups = unserialize($result->size_cups) ?>
+                        <tbody>
+							<?php if($sizeCups) { ?>
+								<?php foreach ($sizeCups as $size) { ?>
+								<tr>
+									<td> <?= $size->name ?> </td>
+									<td> <?= $size->in ?> </td>
+									<td> <?= $size->out ?> </td>
+									<td> <?= $size->diff ?> </td>
+									<td> <?= $size->sale ?> </td>
+									<td><span <?php if($size->check_sale != 0) { echo 'class="label label-sm label-danger fw"'; } ?>><?= $size->check_sale ?></span></td>
 								</tr>
 								<?php } ?>
 

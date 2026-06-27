@@ -341,14 +341,15 @@ class Home_model extends CI_Model {
 			return false;
 		}
 	}
-	function checkinShiftDay() {
+	function checkinShiftDay($thungan, $size_cups) {
 		$info = $this->session->userdata('userLogin');
 		if(!$info) return false;
 		$data=array(
 			"from" => date('Y-m-d H:i:s',time()),
 			"store"=> $info->storeId,
 			"user"=> $info->phone,
-			"name"=> $_POST["user"],
+			"name"=> $thungan,
+			"size_cups"=> $size_cups,
 			"created" => date('Y-m-d H:i:s',time())
 		);
 		if($this->db->insert(PREFIX.$this->tbl_shift,$data)){
@@ -419,6 +420,23 @@ class Home_model extends CI_Model {
 		$query = $this->db->get();
 		$result = $query->row();
 		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
+	}
+	function getTotalOrderShift($from, $to, $user) {
+		$this->db->select('*');
+		$this->db->where('phone',$user);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		// Đảm bảo so sánh chính xác thời gian
+		$this->db->where('created >=', $from);
+		$this->db->where('created <=', $to);
+		$this->db->from(PREFIX . $this->tbl_order);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	
 	}
 
 	function getLastOrderShift($from, $to, $user){
@@ -554,7 +572,6 @@ class Home_model extends CI_Model {
 		}
 	}
 	function sync_pending_shift() {
-		// 1. Lấy danh sách ca làm việc chưa đồng bộ từ Local (giới hạn 20 đơn mỗi lần)
 		$this->db->where('completed', 0);
 		$this->db->limit(20);
 		$query = $this->db->get('shift');
@@ -574,7 +591,7 @@ class Home_model extends CI_Model {
 					unset($shift['id_online']); 
 					$shift['completed'] = 1;
 					$DB_online->where('id', $id_online);
-					$DB_online->update('shift', $shift);
+					$DB_online->update('shift ', $shift);
 
 					$this->db->where('id', $local_id);
 					$this->db->update('shift', array('completed' => 1));
