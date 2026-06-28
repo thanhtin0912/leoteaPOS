@@ -273,9 +273,8 @@ class Home extends MX_Controller {
 				. $tr_diff_size
 				. "+++++++++++++++++++++++++++++++++";
 		
-			$this->discord->sendLinkReport($tr_size);
+			$this->discord->sendDiffSizeinShift($tr_size);
 		}
-
 
 		$data = array(
 			'status'=>false,
