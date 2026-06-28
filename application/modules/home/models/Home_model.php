@@ -591,17 +591,18 @@ class Home_model extends CI_Model {
 			$success_count = 0;
 			foreach ($pending_shift as $shift) {
 				$local_id = $shift['id'];
-				if($shift['id_online']!=NULL && $shift['id_online'] > 0 && $shift['is_synced'] == 1 && $shift['report'] != NULL && $shift['report'] != '') {
+				if(($shift['id_online']!=NULL || $shift['id_online'] > 0) && $shift['is_synced'] == 1) {
 					$id_online = $shift['id_online'];
 					unset($shift['id']); 
 					unset($shift['id_online']);
 					$shift['completed'] = 1;
+					$shift['updated'] = date('Y-m-d H:i:s',time());
 					$DB_online->where('id', $id_online);
 					$DB_online->update('shift ', $shift);
-
-					$this->db->where('id', $local_id);
-					$this->db->update('shift', array('completed' => 1));
-					
+					if ($shift['report']!= NULL || $shift['report'] != '') {
+						$this->db->where('id', $local_id);
+						$this->db->update('shift', array('completed' => 1));
+					}
 				} else {
 					unset($shift['id']); 
 					// 3. Insert lên Server Online
@@ -616,7 +617,6 @@ class Home_model extends CI_Model {
 						$success_count++; 
 					}
 				}
-				
 			}
 			$DB_online->close();
 			return "Synced $success_count shift successfully.";
