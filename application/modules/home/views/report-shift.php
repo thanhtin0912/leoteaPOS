@@ -76,19 +76,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         `;
         container.appendChild(block);
     });
-    const sizes = <?php echo json_encode($sizes); ?>;
-    const containerSizes = document.getElementById('sizes-container');
-    // 2. Hàm tạo giao diện
-    sizes.forEach(val => {
-        const block = document.createElement('div');
-        block.className = 'coupan-block d-flex align-items-center flex-content-center gap-2';
-        block.style.width = '45%';
-        block.innerHTML = `
-            <h5>${val.name}</h5>
-            <input class="form-control size-input" type="number" min="0" value="0" data-unit="${val.name}" style="width: 50px; display: inline-block;">
-        `;
-        containerSizes.appendChild(block);
-    });
 
     // 3. Hàm tính toán khi nhập liệu tiền mặt (không tính size)
     container.addEventListener('input', function(e) {
@@ -120,14 +107,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
             // Chỉ lưu những mệnh giá nào có số lượng lớn hơn 0 (tùy chọn)
             if (quantity > 0) {
                 dataResult[unit] = quantity;
-            }
-        });
-        let dataSizes = {}; // Đây là nơi chứa kết quả ['size ly': số lượng]
-        document.querySelectorAll('.size-input').forEach(input => {
-            const unit = input.getAttribute('data-unit');
-            const quantity = parseInt(input.value) || 0;
-            if (quantity > 0) {
-                dataSizes[unit] = quantity;
             }
         });
         let spent = $('#spent').val();
@@ -175,7 +154,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 spent: spent,
                                 tip: tip,
                                 spentNote: spentNote,
-                                data_cups: dataSizes,
                                 csrf_token: $('#csrf_token').val()
                             },
                             success: function(res) {
@@ -246,9 +224,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             <input class="form-control" style="width: 150px !important" id="spentNote">
                         </div>
                         <div id="coupan-container">
-                            
-                        </div>
-                        <div id="sizes-container" class="d-flex flex-wrap gap-3 mb-3">
                             
                         </div>
                         <ul class="cart_total">

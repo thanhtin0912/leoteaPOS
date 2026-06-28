@@ -406,6 +406,8 @@ class Home_model extends CI_Model {
 	}
 
 	function getTotalRevenueShift($from, $to, $user, $payment_type= null) {
+		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
+		$to = !empty($to) ? $to : date('Y-m-d H:i:s');
 		$this->db->select_sum('grandtotal');
 		$this->db->where('phone',$user);
 		$this->db->where('status',1);
@@ -422,6 +424,8 @@ class Home_model extends CI_Model {
 		return ($result && $result->grandtotal) ? $result->grandtotal : 0;
 	}
 	function getTotalOrderShift($from, $to, $user) {
+		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
+		$to = !empty($to) ? $to : date('Y-m-d H:i:s');
 		$this->db->select('*');
 		$this->db->where('phone',$user);
 		$this->db->where('status',1);
@@ -440,6 +444,8 @@ class Home_model extends CI_Model {
 	}
 
 	function getLastOrderShift($from, $to, $user){
+		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
+		$to = !empty($to) ? $to : date('Y-m-d H:i:s');
 		$this->db->select('orderId');
 		$this->db->where('phone',$user);
 		$this->db->where('delete',0);
@@ -547,7 +553,7 @@ class Home_model extends CI_Model {
 		// 2. Thử kết nối Database Online
 		// Dùng @ để ẩn các lỗi cảnh báo kết nối nếu mất mạng
 		$DB_online = @$this->load->database('online', TRUE);
-	
+
 		if ($DB_online && $DB_online->conn_id) {
 			$success_count = 0;
 			foreach ($pending_orders as $order) {
@@ -585,10 +591,10 @@ class Home_model extends CI_Model {
 			$success_count = 0;
 			foreach ($pending_shift as $shift) {
 				$local_id = $shift['id'];
-				if($shift['id_online']!=NULL && $shift['id_online'] > 0 && $shift['is_synced'] == 1){
+				if($shift['id_online']!=NULL && $shift['id_online'] > 0 && $shift['is_synced'] == 1 && $shift['report'] != NULL && $shift['report'] != '') {
 					$id_online = $shift['id_online'];
 					unset($shift['id']); 
-					unset($shift['id_online']); 
+					unset($shift['id_online']);
 					$shift['completed'] = 1;
 					$DB_online->where('id', $id_online);
 					$DB_online->update('shift ', $shift);
@@ -613,7 +619,7 @@ class Home_model extends CI_Model {
 				
 			}
 			$DB_online->close();
-			return "Synced $success_count orders successfully.";
+			return "Synced $success_count shift successfully.";
 		} else {
 			return "Server Online is unreachable.";
 		}

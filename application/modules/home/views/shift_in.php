@@ -33,18 +33,26 @@
 
             // 1. Danh sách các cups sizes từ PHP sang JavaScript
         const sizes = <?php echo json_encode($sizes); ?>;
-       
-        const containerSizes = document.getElementById('sizes-container');
-        // 2. Hàm tạo giao diện
-        sizes.forEach(val => {
-            const block = document.createElement('div');
-            block.className = 'coupan-block';
-            block.innerHTML = `
-                <h5>${val.name}</h5>
-                <input class="form-control size-input" type="number" min="0" value="0" data-unit="${val.name}" style="width: 70px; display: inline-block;">
-            `;
-            containerSizes.appendChild(block);
-        });
+        let checkShift = <?= json_encode($checkShift); ?>;
+        if (!checkShift) {
+            const containerSizes = document.getElementById('sizes-container');
+            // 2. Hàm tạo giao diện
+            sizes.forEach(val => {
+                if (val.name === "Latte") return;
+                const block = document.createElement('div');
+                let unit = val.name; // Lấy tên mệnh giá từ val.name
+                if (unit === "L") {
+                    unit = "L-Latte";
+                }
+                block.className = 'coupan-block';
+                block.innerHTML = `
+                    <h5>${unit}</h5>
+                    <input class="form-control size-input" type="number" min="0" value="0" data-unit="${unit}" style="width: 70px; display: inline-block;">
+                `;
+                containerSizes.appendChild(block);
+            });
+        }
+
     });
     function checkIn() {
         let user = $('#user-input').val();
@@ -53,16 +61,12 @@
             $('#user-input').focus();
             return false;
         }
-        let dataSizes = {}; // Đây là nơi chứa kết quả ['mệnh giá': số lượng]
+        let dataSizes = {};
         // Duyệt qua tất cả các ô nhập liệu
         document.querySelectorAll('.size-input').forEach(input => {
             const unit = input.getAttribute('data-unit');
             const quantity = parseInt(input.value) || 0;
-            
-            // Chỉ lưu những mệnh giá nào có số lượng lớn hơn 0 (tùy chọn)
-            if (quantity > 0) {
-                dataSizes[unit] = quantity;
-            }
+            dataSizes[unit] = quantity;
         });
         var url = root + 'checkIn';
         $.post(url, {

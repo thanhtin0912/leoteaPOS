@@ -174,6 +174,7 @@ class Home extends MX_Controller {
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
 		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$data['cups_sizes_in'] = $data['checkShift'] && $data['checkShift'][0]->size_cups ? unserialize($data['checkShift'][0]->size_cups) : [];
 		$this->template->write_view('content', 'shift_out', $data);
 		$this->template->render();
 		//
@@ -183,11 +184,45 @@ class Home extends MX_Controller {
 		$salesShiftCash = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user, 1);
 		$salesShiftBanking = $this->home->getTotalRevenueShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user, 2);
 		$lastOrder = $this->home->getLastOrderShift($shift[0]->from, date('Y-m-d H:i:s',time()), $shift[0]->user);
+		
+		$data_cups_in = $this->input->post('data_cups_in');
+		$data_cups_out = $this->input->post('data_cups_out');
+		$new_size_cups = array();
+		$size_cups = unserialize($shift[0]->size_cups);
+		$listSize = $this->home->getCategories('PRODUCTSIZE');
+		$dataOrder = $this->home->getTotalOrderShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
+		$sizeCounter = $this->countCupBySize($dataOrder, $listSize);
+		foreach ($size_cups as $size) {
+			$size_name = $size->name;
+			$size_sale_count = 0;
+			if (isset($size->name) && $size->name === 'L-Latte') {
+				$size_sale_count_l = isset($sizeCounter['L']) ? $sizeCounter['L'] : 0;
+				$size_sale_count_latte = isset($sizeCounter['Latte']) ? $sizeCounter['Latte'] : 0;
+				$size_sale_count = $size_sale_count_l + $size_sale_count_latte;
+			} else {
+				$size_sale_count = isset($sizeCounter[$size_name]) ? $sizeCounter[$size_name] : 0;
+			}
+				
+			$size_in = isset($data_cups_in[$size_name]) ? $data_cups_in[$size_name] : 0;
+			$size_out = isset($data_cups_out[$size_name]) ? $data_cups_out[$size_name] : 0;
+			$size_diff = $size_in - $size_out;
+			$check_sale_count = $size_diff - $size_sale_count;
+			$new_size_cups[] = (object)[
+				'name' => $size_name,
+				'in' => $size_in,
+				'out' => $size_out,
+				'diff' => $size_diff,
+				'sale' => $size_sale_count,
+				'check_sale' => $check_sale_count
+			];				
+		}
+
  		$data=array(
 			"to"=> date('Y-m-d H:i:s',time()),
 			"sales"=> $salesShiftCash + $salesShiftBanking,
 			"cash"=> $salesShiftCash,
 			"banking"=> $salesShiftBanking,
+			"size_cups"=> serialize($new_size_cups),
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -219,6 +254,29 @@ class Home extends MX_Controller {
 			. "+++++++++++++++++++++++++++++++++";
 			$this->discord->sendLinkReport($tr);
 		}
+
+		// Viết sao hiển thị vậy, rất dễ quản lý
+		$tr_diff_size ='';
+		foreach ($new_size_cups as $size) {
+			if($size->check_sale != 0) {
+				$text = $size->check_sale > 0 ? " (Thiếu)" : " (Thừa)";
+				$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Kiểm tra: " . abs($size->check_sale) . $text . "\n";
+			}
+		}
+		if($tr_diff_size != '') {
+			$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "!**\n"
+				. "+++++++++++++++++++++++++++++++++\n"
+				. "NV: " . $nv . " - CH: " . $storename . "\n"
+				. "Giờ vào: " . $from . "\n"
+				. "Giờ ra: " . $to . "\n"
+				. "-----------------------------\n"
+				. $tr_diff_size
+				. "+++++++++++++++++++++++++++++++++";
+		
+			$this->discord->sendLinkReport($tr_size);
+		}
+
+
 		$data = array(
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
@@ -285,38 +343,12 @@ class Home extends MX_Controller {
 		if (!is_array($money_data)) {
 			$money_data = []; // Đảm bảo luôn là mảng trước khi serialize
 		}
-		$data_cups = $this->input->post('data_cups');
-
-		$shift = $this->home->getShiftofDay($_POST["id"], 0);
-		$new_size_cups = array();
-		$size_cups = unserialize($shift[0]->size_cups);
-		$listSize = $this->home->getCategories('PRODUCTSIZE');
-		$dataOrder = $this->home->getTotalOrderShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
-		$sizeCounter = $this->countCupBySize($dataOrder, $listSize);
-		foreach ($size_cups as $size) {
-			$size_name = $size->name;
-			$size_in = $size->in;
-			$size_out = isset($data_cups[$size_name]) ? $data_cups[$size_name] : 0;
-			$size_diff = $size_in - $size_out;
-			$size_sale_count = isset($sizeCounter[$size_name]) ? $sizeCounter[$size_name] : 0;
-			$check_sale_count = $size_diff - $size_sale_count;
-			$new_size_cups[] = (object)[
-				'name' => $size_name,
-				'in' => $size_in,
-				'out' => $size_out,
-				'diff' => $size_diff,
-				'sale' => $size_sale_count,
-				'check_sale' => $check_sale_count
-			];
-		}
-
 		$data=array(
 			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
 			"spent"=> $_POST['spent'],
 			"tip"=> $_POST['tip'],
 			"spentNote"=> $_POST['spentNote'],
-			"size_cups"=> serialize($new_size_cups),
 			"updated"=> date('Y-m-d H:i:s',time())
 		);
     	$req = $this->home->updateShiftDay($_POST["id"], $data);
@@ -357,25 +389,6 @@ class Home extends MX_Controller {
 					"diff" => $diff,
 					"updated"=> date('Y-m-d H:i:s',time())
 				);
-
-				// Viết sao hiển thị vậy, rất dễ quản lý
-				$tr_diff_size ='';
-				foreach ($new_size_cups as $size) {
-					if($size->check_sale != 0) {
-						$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Kiểm tra: " . $size->check_sale . "\n";
-					}
-				}
-				if($tr_diff_size != '') {
-					$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . $now . "!**\n"
-						. "-----------------------------\n"
-						. "NV: " . $s[0]->name . " - CH: " . $s[0]->storeName . "\n"
-						. "CA: " . $gio_vao . " - " . $gio_ra . "\n"
-						. "-----------------------------\n"
-						. $tr_diff_size
-						. "-----------------------------";
-				
-					$this->discord->sendDiffSizeinShift($tr_size);
-				}
 				$this->home->updateShiftDay($_POST["id"], $data);
 				if ($this->check_online_connection()) {
 					$this->home->sync_pending_shift();
@@ -1077,15 +1090,15 @@ class Home extends MX_Controller {
 						}
 					}
 					$this->session->unset_userdata('cart_products');
-					$data['status'] = true;
-					$data['key'] = $this->security->get_csrf_hash();
-	
-					return_json($data);
 					if ($this->check_online_connection()) {
 						$this->home->sync_pending_orders();
 					} else {
 						log_message('error', 'Server Online không phản hồi sau 2s, bỏ qua đồng bộ.');
 					}
+					$data['status'] = true;
+					$data['key'] = $this->security->get_csrf_hash();
+	
+					return_json($data);
 				} else {
 					$data['status'] = false;
 					$data['key'] = $this->security->get_csrf_hash();
