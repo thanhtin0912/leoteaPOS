@@ -272,11 +272,11 @@ class Home extends MX_Controller {
 				. "-----------------------------\n"
 				. $tr_diff_size
 				. "+++++++++++++++++++++++++++++++++";
-		
+			
 			$this->discord->sendDiffSizeinShift($tr_size);
 		}
 
-		$data = array(
+		$data = array( 
 			'status'=>false,
 			'key' => $this->security->get_csrf_hash(),
 		);
@@ -427,7 +427,19 @@ class Home extends MX_Controller {
 			}
 
 			foreach($cartDetails as $item){
+				$isCupCustomer = 0;
+				if(is_object($item) && isset($item->isCupCustomer)){
+					$isCupCustomer = (int)$item->isCupCustomer;
+				}elseif(is_array($item) && isset($item['isCupCustomer'])){
+					$isCupCustomer = (int)$item['isCupCustomer'];
+				}
+
+				if($isCupCustomer === 1){
+					continue;
+				}
+
 				$sizeName = '';
+				// if isCupCustomer là 1 thì không tính size ly vào báo cáo kết ca
 				if(is_object($item) && isset($item->size)){
 					$sizeName = trim((string)$item->size);
 				}elseif(is_array($item) && isset($item['size'])){
@@ -828,6 +840,7 @@ class Home extends MX_Controller {
 				$product->topping = $_POST["topping"];
 				$product->amount = $_POST["amount"];
 				$product->note = $_POST["note"];
+				$product->isCupCustomer = $_POST["isCupCustomer"];
 				$product->size = $_POST["size"];
 				$cart[] = $product;
 				$this->session->set_userdata('cart_products', $cart);
@@ -840,7 +853,7 @@ class Home extends MX_Controller {
 			} else {
 				$check = true;
 				foreach ($cart_products as $item) {
-					if ($item->id == $_POST["id"] && $_POST["topping"] === '' && $item->topping == '' && $item->size == $_POST["size"] && $item->note == $_POST["note"]) {
+					if ($item->id == $_POST["id"] && $_POST["topping"] === '' && $item->topping == '' && $item->size == $_POST["size"] && ( $item->note == $_POST["note"] || $item->isCupCustomer == $_POST["isCupCustomer"])) {
 						$item->amount += $_POST["amount"];
 						$check = false;
 						break;
@@ -853,6 +866,7 @@ class Home extends MX_Controller {
 					$product->amount = $_POST["amount"];
 					$product->size = $_POST["size"];
 					$product->note = $_POST["note"];
+					$product->isCupCustomer = $_POST["isCupCustomer"];
 					$cart_products[] = $product;
 				}
 				$this->session->set_userdata('cart_products', $cart_products);
@@ -911,6 +925,7 @@ class Home extends MX_Controller {
 					$productCart->image = $dataProduct[0]->image;
 					$productCart->size = $p->size;
 					$productCart->note = $p->note;
+					$productCart->isCupCustomer = $p->isCupCustomer;
 					$productCart->totalPriceSize = 0;
 					if($p->size!='') {
 						$dataPriceSize = unserialize($dataProduct[0]->price_size);

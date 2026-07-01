@@ -26,9 +26,13 @@
                         <?php if($v->priceTopping > 0) { ?>
                         <h5><?= $v->topping; ?></h5>
                         <?php } ?>
+                        <?php if($v->isCupCustomer && $v->isCupCustomer == 1) { ?>
+                        <h5 style="font-style: italic">*Sử dụng ly của khách.</h5>
+                        <?php } ?>
                         <?php if($v->note!='' || $v->note!= NULL) { ?>
                         <h5 class="py-2" style="font-style: italic">*Note: <?= $v->note; ?></h5>
                         <?php } ?>
+                        
                         <h6><?php echo number_format($v->totalPrice); ?></h6>
                         <div class="addit-box d-flex justify-content-between">
                             <div class="qty-box">

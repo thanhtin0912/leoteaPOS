@@ -43,6 +43,15 @@ function quickViewDetailProduct(id) {
                 str += '<div class="input-group">'
                 str += '<input type="text" id="note" class="form-control" placeholder="Ghi chú">'
                 str += '</div>'
+                str += '<div class="input-group">'
+                str += '<div class=" pt-3 custom-control custom-checkbox  form-check collection-filter-checkbox d-flex justify-content-between align-items-center">';
+                str += '<div>';
+                // tôi muốn lấy giá trị chỗ này 0-1
+                str += '<input type="checkbox" class="custom-control-input form-check-input" id="isCupCustomer' + id + '" value="1">';
+                str += '<label class="custom-control-label form-check-label fw-bold text-uppercase" for="isCupCustomer' + id + '">Khách sử dụng ly</label>';
+                str += '</div>';
+                str += '</div>';
+                str += '</div>'
                 str += '</div>'
                 //
                 str += '<hr>';

@@ -398,9 +398,14 @@ function clearCash() {
                                 <?php if($v->priceTopping > 0) { ?>
                                 <h5><?= $v->topping; ?></h5>
                                 <?php } ?>
+                                <?php if($v->isCupCustomer && $v->isCupCustomer == 1) { ?>
+                                <h5 style="font-style: italic">*Sử dụng ly của khách.</h5>
+                                <?php } ?>
                                 <?php if($v->note!='' || $v->note!= NULL) { ?>
                                 <h5 style="font-style: italic">*Note: <?= $v->note; ?></h5>
                                 <?php } ?>
+                                
+                                
                             </div>
                         </div>
                         <div class="col-1 order_detail">

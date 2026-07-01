@@ -148,7 +148,12 @@ function addCart(id) {
     let size = $('input[name="sizeProduct"]:checked').val();
     let amount = $('#qtyItem' + id).val();
     let note = $('#note').val();
-
+    // Checkbox được render theo id sản phẩm: isCupCustomer{id}
+    let $cupCustomerCheckbox = $('#isCupCustomer' + id);
+    if (!$cupCustomerCheckbox.length) {
+        $cupCustomerCheckbox = $('#isCupCustomer');
+    }
+    let isCupCustomer = $cupCustomerCheckbox.length && $cupCustomerCheckbox.prop('checked') ? 1 : 0;
     if (!toppingSelected.length) {
         toppingSelected = toppingSelected.toString()
     }
@@ -157,6 +162,7 @@ function addCart(id) {
         size: size,
         amount: amount,
         note: note,
+        isCupCustomer: isCupCustomer,
         topping: toppingSelected,
         csrf_token: $('#csrf_token').val()
     }, function (res) {
