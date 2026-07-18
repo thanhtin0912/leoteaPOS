@@ -69,6 +69,8 @@ $route['updateCancelOrder'] = "home/updateCancelOrder";
 $route['xac-nhan-huy-hoa-don/(:any)'] 	  = "home/viewCancelOrder/$1";
 $route['verifyCancelOrder'] 	  = "home/verifyCancelOrder";
 $route['syncProduct'] = "home/syncProduct";
+
+$route['huy-mot-phan-hoa-don'] = "home/cancelSingleTransaction";
 //
 $route['login'] = "home/login";
 $route['logout'] = "home/logout";
@@ -83,6 +85,7 @@ $route['getForWaiting'] = "home/getForWaiting";
 $route['viewHoldCart'] = "home/viewHoldCart";
 $route['removeAllHold'] = "home/removeAllHold";
 $route['selectedCardItem'] = "home/selectedCardItem";
+$route['saveCancelSingleOrder'] = "home/saveCancelSingleOrder";
 
 $route['send'] = "home/sendMessage";
 // $route['getCatelogiesProduct'] = "home/getCatelogiesProduct";

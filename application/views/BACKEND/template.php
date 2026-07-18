@@ -207,6 +207,9 @@
                         </li>
                     </ul>
                 </li>
+                <li class="start">
+                    <a href="<?= PATH_URL_ADMIN . 'order_cancel_single' ?>"><i class="icon-settings"></i><span class="title">Hủy TM & Size Ly</span></a>
+                </li>
                 <li class="nav-item">
                     <a href="javascript:;" class="nav-link nav-toggle">
                         <i class="icon-user"></i>

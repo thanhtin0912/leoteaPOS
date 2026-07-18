@@ -12,6 +12,7 @@ class Home_model extends CI_Model {
 	private $tbl_users				= 'users';
 	private $tbl_printer				= 'printer';
 	private $tbl_shift				= 'shift';
+	private $tbl_cancel_single		= 'order_cancel_single';
 
 	function getInfoSite(){
 		$this->db->select('*');
@@ -658,6 +659,102 @@ class Home_model extends CI_Model {
 			return "Server Online is unreachable.";
 		}
 	}
+	function saveCancelSingleOrder($size_cups, $amount, $note) {
+		$info = $this->session->userdata('userLogin');
+		$staffName = $this->session->userdata('staffName');
+		if(!$info) return false;
+		$data=array(
+			"name" => $staffName,
+			"user"=> $info->phone,
+			"store"=> $info->storeId,
+			"isVerify"=> 0,
+			"isSync"=> 0,
+			"amount_price"=> $amount,
+			"amount_sizes"=> $size_cups,
+			"note"=> $note,
+			"created" => date('Y-m-d H:i:s',time()),
+			"createdBy" => $staffName,
+		);
+		if($this->db->insert(PREFIX.$this->tbl_cancel_single,$data)){
+			$insert_id = $this->db->insert_id();
+			$DB_online = @$this->load->database('online', TRUE);
+			if ($DB_online && $DB_online->conn_id) {
+				$res = $DB_online->insert(PREFIX.$this->tbl_cancel_single,$data);
+				if ($res) {
+					$insert_online_id = $DB_online->insert_id();
+					$this->db->where('id', $insert_id);
+					$this->db->update(PREFIX.$this->tbl_cancel_single, array('isSync' => 1, 'id_online' => $insert_online_id));
+				}
+			}
+			return true;
+		}
+		return false;
+	
+	}
+	function getTotalCancelSingleOrders($from, $to, $user) {
+		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
+		$to = !empty($to) ? $to : date('Y-m-d H:i:s');
+		$this->db->select('*');
+		$this->db->where('user',$user);
+		$this->db->where('isVerify',1);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		// Đảm bảo so sánh chính xác thời gian
+		$this->db->where('created >=', $from);
+		$this->db->where('created <=', $to);
+		$this->db->from(PREFIX . $this->tbl_cancel_single);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
 
+	function getOrderToCancelSingleTransaction($name, $from) {
+		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
+		$this->db->select('*');
+		$this->db->where('name',$name);
+		$this->db->where('isVerify',0);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		// Đảm bảo so sánh chính xác thời gian
+		$this->db->where('created >=', $from);
+		$this->db->from(PREFIX . $this->tbl_cancel_single);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	}
+
+	function sync_all_cancel_single_orders() {
+		$this->db->where('isVerify', 0);
+		$this->db->limit(100);
+		$query = $this->db->get(PREFIX.$this->tbl_cancel_single);
+		$pending_cancel_orders = $query->result_array();
+		if (empty($pending_cancel_orders)) {
+			return "No data to sync";
+		}
+		$DB_online = @$this->load->database('online', TRUE);
+		if ($DB_online && $DB_online->conn_id) {
+			foreach ($pending_cancel_orders as $cancel_order) {
+				$DB_online->select('isVerify');
+				$DB_online->where('id', $cancel_order['id_online']);
+				$DB_online->where('isVerify', 1);
+				$DB_online->from(PREFIX.$this->tbl_cancel_single);
+				$query = $DB_online->get();
+				$online_cancel_order = $query->row();
+				if ($online_cancel_order) {
+					$this->db->where('id', $cancel_order['id']);
+					$this->db->update(PREFIX.$this->tbl_cancel_single, array('isVerify' => 1));
+				}
+			}
+			return "Synced cancel single orders successfully.";
+		} else {
+			return "Server Online is unreachable.";
+		}
+	}
 }
 ?>

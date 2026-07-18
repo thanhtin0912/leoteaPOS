@@ -141,6 +141,64 @@ class Home extends MX_Controller {
 		$this->template->render();
 		//
 	}
+
+	public function cancelSingleTransaction()
+	{
+		if ($this->check_online_connection()) {
+			$this->home->sync_all_cancel_single_orders();
+		}
+		$data['info'] = $this->home->getInfoSite();
+		$data['cart'] =$this->getListCart();
+		$data['countCart'] = $this->countSessionCart();
+		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
+		$data['transactionNotVerify'] = false;
+		if ($data['checkShift']) {
+			$data['transactionNotVerify'] = $this->home->getOrderToCancelSingleTransaction($data['checkShift'][0]->name, $data['checkShift'][0]->from);
+		}
+		$this->template->write_view('content', 'cancel_single_transaction', $data);
+		$this->template->render();
+		//
+	}
+	public function saveCancelSingleOrder() {
+		if (!$this->check_online_connection()) {
+			$data = array(
+				'status'=> false,
+				'mes' => 'Tính năng này chỉ áp dụng khi online.',
+				'key' => $this->security->get_csrf_hash(),
+			);
+			return_json($data);
+			exit();
+		}
+		$sizeCups = array();
+		$allSizes = $this->input->post('dataSizes');
+		foreach ($allSizes as $key => $value) {
+			$sizeIn = new stdClass();
+			$sizeIn->name = $key;
+			$sizeIn->in = $value;
+			$sizeCups[] = $sizeIn;
+		}
+
+		$amount = $this->input->post('amount');
+		$note = $this->input->post('note');
+		$size_cups = serialize($sizeCups);
+
+		$req = $this->home->saveCancelSingleOrder($size_cups, $amount, $note);
+		
+		$data = array(
+			'status'=>false,
+			'key' => $this->security->get_csrf_hash(),
+		);
+		
+		if($req) {
+			$data = array(
+				'status'=>true,
+				'key' => $this->security->get_csrf_hash(),
+			);
+		}
+		
+		return_json($data);
+	}
 	
 	function checkIn(){
 		$sizeCups = array();
@@ -168,8 +226,13 @@ class Home extends MX_Controller {
 		}
 		return_json($data);
 	}
+
+
 	public function shiftOut()
 	{
+		if ($this->check_online_connection()) {
+			$this->home->sync_all_cancel_single_orders();
+		}
 		$data['info'] = $this->home->getInfoSite();
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
@@ -192,27 +255,74 @@ class Home extends MX_Controller {
 		$listSize = $this->home->getCategories('PRODUCTSIZE');
 		$dataOrder = $this->home->getTotalOrderShift($shift[0]->from, $shift[0]->to, $shift[0]->user);
 		$sizeCounter = $this->countCupBySize($dataOrder, $listSize);
+		$totalCancelSingleOrders = $this->home->getTotalCancelSingleOrders($shift[0]->from, $shift[0]->to, $shift[0]->user);
+		$size_cups_cancel = array();
+		$total_cancel_amount_price = 0;
+		if ($totalCancelSingleOrders) {
+			foreach ($totalCancelSingleOrders as $cancel) {
+				$cancel_sizes = array();
+				if (isset($cancel->amount_sizes) && $cancel->amount_sizes !== '') {
+					$cancel_sizes = @unserialize($cancel->amount_sizes);
+				}
+
+				if (is_object($cancel_sizes)) {
+					$cancel_sizes = array($cancel_sizes);
+				}
+
+				if (!is_array($cancel_sizes)) {
+					continue;
+				}
+
+				foreach ($cancel_sizes as $cancel_size) {
+					$cancel_size_name = '';
+					$cancel_size_qty = 0;
+
+					if (is_object($cancel_size)) {
+						$cancel_size_name = isset($cancel_size->name) ? trim((string)$cancel_size->name) : '';
+						$cancel_size_qty = isset($cancel_size->in) && is_numeric($cancel_size->in) ? (int)$cancel_size->in : 0;
+					} elseif (is_array($cancel_size)) {
+						$cancel_size_name = isset($cancel_size['name']) ? trim((string)$cancel_size['name']) : '';
+						$cancel_size_qty = isset($cancel_size['in']) && is_numeric($cancel_size['in']) ? (int)$cancel_size['in'] : 0;
+					}
+
+					if ($cancel_size_name === '' || $cancel_size_qty <= 0) {
+						continue;
+					}
+
+					if (!isset($size_cups_cancel[$cancel_size_name])) {
+						$size_cups_cancel[$cancel_size_name] = 0;
+					}
+
+					$size_cups_cancel[$cancel_size_name] += $cancel_size_qty;
+					$total_cancel_amount_price += $cancel->amount_price;
+				}
+			}
+		}
+
 		foreach ($size_cups as $size) {
 			$size_name = $size->name;
 			$size_sale_count = 0;
+			$size_cancel_count = 0;
 			if (isset($size->name) && $size->name === 'L-Latte') {
 				$size_sale_count_l = isset($sizeCounter['L']) ? $sizeCounter['L'] : 0;
 				$size_sale_count_latte = isset($sizeCounter['Latte']) ? $sizeCounter['Latte'] : 0;
 				$size_sale_count = $size_sale_count_l + $size_sale_count_latte;
 			} else {
-				$size_sale_count = isset($sizeCounter[$size_name]) ? $sizeCounter[$size_name] : 0;
+				$size_sale_count = isset($sizeCounter[$size_name]) ? $sizeCounter[$size_name] : 0;			
 			}
-				
+			// tổng số ly xin hủy
+			$size_cancel_count = isset($size_cups_cancel[$size_name]) ? $size_cups_cancel[$size_name] : 0;
 			$size_in = isset($data_cups_in[$size_name]) ? $data_cups_in[$size_name] : 0;
 			$size_out = isset($data_cups_out[$size_name]) ? $data_cups_out[$size_name] : 0;
 			$size_diff = $size_in - $size_out;
-			$check_sale_count = $size_diff - $size_sale_count;
+			$check_sale_count = $size_diff - ($size_sale_count - $size_cancel_count);
 			$new_size_cups[] = (object)[
 				'name' => $size_name,
 				'in' => $size_in,
 				'out' => $size_out,
 				'diff' => $size_diff,
 				'sale' => $size_sale_count,
+				'cancel' => $size_cancel_count,
 				'check_sale' => $check_sale_count
 			];				
 		}
@@ -221,6 +331,7 @@ class Home extends MX_Controller {
 			"to"=> date('Y-m-d H:i:s',time()),
 			"sales"=> $salesShiftCash + $salesShiftBanking,
 			"cash"=> $salesShiftCash,
+			"spent"=> $total_cancel_amount_price,
 			"banking"=> $salesShiftBanking,
 			"size_cups"=> serialize($new_size_cups),
 			"updated"=> date('Y-m-d H:i:s',time())
@@ -256,25 +367,25 @@ class Home extends MX_Controller {
 		}
 
 		// Viết sao hiển thị vậy, rất dễ quản lý
-		$tr_diff_size ='';
+		$tr_diff_size ='Không có sự khác biệt về size ly.';
 		foreach ($new_size_cups as $size) {
 			if($size->check_sale != 0) {
 				$text = $size->check_sale > 0 ? " (Thiếu)" : " (Thừa)";
-				$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Kiểm tra: " . abs($size->check_sale) . $text . "\n";
+				$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Xin hủy: " . $size->cancel . " - Kiểm tra: " . abs($size->check_sale) . $text . "\n";
 			}
 		}
-		if($tr_diff_size != '') {
-			$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "!**\n"
-				. "+++++++++++++++++++++++++++++++++\n"
-				. "NV: " . $nv . " - CH: " . $storename . "\n"
-				. "Giờ vào: " . $from . "\n"
-				. "Giờ ra: " . $to . "\n"
-				. "-----------------------------\n"
-				. $tr_diff_size
-				. "+++++++++++++++++++++++++++++++++";
-			
-			$this->discord->sendDiffSizeinShift($tr_size);
-		}
+		
+		$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "!**\n"
+			. "+++++++++++++++++++++++++++++++++\n"
+			. "NV: " . $nv . " - CH: " . $storename . "\n"
+			. "Giờ vào: " . $from . "\n"
+			. "Giờ ra: " . $to . "\n"
+			. "-----------------------------\n"
+			. $tr_diff_size
+			. "+++++++++++++++++++++++++++++++++";
+		
+		$this->discord->sendDiffSizeinShift($tr_size);
+		
 
 		$data = array( 
 			'status'=>false,
@@ -331,7 +442,7 @@ class Home extends MX_Controller {
 		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
 		$data['res'] = false;
 		if($_GET["id"] && $shift){
-			$data['salesShift']= $shift[0]->cash; // tổng tiền mặt thu đc
+			$data['salesShift']= $shift[0]->cash - $shift[0]->spent; // tổng tiền mặt thu đc
 			$data['res'] = $shift;
 		}
 		$this->load->view('report-shift', $data);
@@ -345,7 +456,6 @@ class Home extends MX_Controller {
 		$data=array(
 			"report"=> serialize($money_data),
 			"actual"=> $_POST['actual'],
-			"spent"=> $_POST['spent'],
 			"tip"=> $_POST['tip'],
 			"spentNote"=> $_POST['spentNote'],
 			"updated"=> date('Y-m-d H:i:s',time())
@@ -359,7 +469,7 @@ class Home extends MX_Controller {
 			$s = $this->home->getShiftofDay($_POST["id"], 0);
 			if ($s) {
 				$now = date('Y-m-d H:i:s');
-				$diff = (($s[0]->actual + $_POST['spent'] - $_POST['tip']) - $s[0]->cash);
+				$diff = ($s[0]->actual + $s[0]->spent - $_POST['tip'] - $s[0]->cash);
 				$sales = number_format($s[0]->sales);
 				$actual = number_format($s[0]->actual);
 				$cash = number_format($s[0]->cash);
@@ -367,7 +477,7 @@ class Home extends MX_Controller {
 				$tip = number_format($s[0]->tip);
 				$gio_vao = date('H:i:s', strtotime($s[0]->from));
 				$gio_ra  = date('H:i:s', strtotime($s[0]->to));
-				$chi = number_format($_POST['spent']);
+				$chi = number_format($s[0]->spent);
 				$note = $_POST['spentNote'];
 
 				// Viết sao hiển thị vậy, rất dễ quản lý

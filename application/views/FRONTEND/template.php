@@ -133,6 +133,11 @@
                                             <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-hoa-don">Hóa đơn</a>
                                         </li>
                                         <!--cancel-order-END-->
+                                        <!--cancel order-->
+                                        <li>
+                                            <a class="dark-menu-item" href="<?= PATH_URL; ?>huy-mot-phan-hoa-don">Hủy chi tiết HD</a>
+                                        </li>
+                                        <!--cancel-order-END-->
                                         <li>
                                             <a href="javascript:;" onclick="syncProduct()">Đồng bộ</a>
                                         </li>

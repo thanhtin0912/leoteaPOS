@@ -46,7 +46,7 @@
                             <h3 class="fw"><?= number_format($result->actual) ?></h3>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
-                            <span class="label label-sm label-info fw"> Chi phí: </span>
+                            <span class="label label-sm label-info fw"> Tổng xin hủy: </span>
                             <h3 class="fw"><?= number_format($result->spent) ?></h3>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-6 text-stat">
@@ -151,6 +151,7 @@
                                 <th> Ra</th>
                                 <th> Xuất</th>
                                 <th> Bán</th>
+                                <th> Xin hủy</th>
                                 <th> Kiểm tra</th>
                             </tr>
                         </thead>
@@ -164,6 +165,7 @@
 									<td> <?= $size->out ?> </td>
 									<td> <?= $size->diff ?> </td>
 									<td> <?= $size->sale ?> </td>
+                                    <td> <?php if(isset($size->cancel) && $size->cancel != 0) { ?><span class="label label-sm label-warning fw"> <?= $size->cancel ?> </span><?php } ?> </td>
 									<td><span <?php if($size->check_sale != 0) { echo 'class="label label-sm label-danger fw"'; } ?>><?= $size->check_sale ?></span></td>
 								</tr>
 								<?php } ?>
