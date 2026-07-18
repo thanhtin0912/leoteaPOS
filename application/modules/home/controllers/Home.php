@@ -291,7 +291,7 @@ class Home extends MX_Controller {
 						$cancel_size_qty = isset($cancel_size['in']) && is_numeric($cancel_size['in']) ? (int)$cancel_size['in'] : 0;
 					}
 
-					if ($cancel_size_name === '' || $cancel_size_qty <= 0) {
+					if ($cancel_size_name === '') {
 						continue;
 					}
 
