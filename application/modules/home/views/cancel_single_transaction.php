@@ -71,10 +71,6 @@
         });
         const amountRaw = ($('#amount-input').val() || '').replace(/[^\d]/g, '');
         const amount = amountRaw ? parseInt(amountRaw, 10) : 0;
-        if (amount <= 0) {
-            notify('Vui lòng nhập số tiền hợp lệ.', 'danger', true);
-            return;
-        }
         var url = root + 'saveCancelSingleOrder';
         $.post(url, {
             dataSizes: dataSizes,
