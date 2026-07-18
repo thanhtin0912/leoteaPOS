@@ -16,7 +16,7 @@ $(document).ready(function() {
                     <h5>${unit}</h5>
                     <input class="form-control size-in-input" type="number" min="0" step="1" value="${inValue}" data-unit="${unit}" disabled>
                     <select class="form-control size-add-select" data-unit="${unit}" style="width: 70px; display: inline-block;">
-                        <option value="0">0</option>
+                        <option value="0" disabled selected>Add</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="150">150</option>
@@ -71,8 +71,6 @@ function checkOut() {
 
         $('.loader-wrapper').addClass('active');
         $('#btnSubmit').prop('disabled', true);
-        console.log('Data Sizes In:', dataSizesIn);
-        return;
         $.post(url, {
             id: id,
             data_cups_in: dataSizesIn,
