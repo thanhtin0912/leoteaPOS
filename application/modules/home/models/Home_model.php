@@ -728,6 +728,27 @@ class Home_model extends CI_Model {
 			return false;
 		}
 	}
+	function getLastShift(){
+		$info = $this->session->userdata('userLogin');
+		if(!$info) return false;
+		$this->db->select('id, size_cups');
+		$this->db->where('store',$info->storeId);
+		$this->db->where('user',$info->phone);
+		$this->db->where('`from` IS NOT NULL', null, false);
+		$this->db->where('`to` IS NOT NULL', null, false);
+		$this->db->where('status',1);
+		$this->db->where('delete',0);
+		$this->db->order_by('id','DESC');
+		$this->db->from(PREFIX.$this->tbl_shift);
+		$this->db->limit(1);
+		$query = $this->db->get();
+		if($query->result()){
+			return $query->result();
+		}else{
+			return false;
+		}
+	
+	}
 
 	function sync_all_cancel_single_orders() {
 		$this->db->where('isVerify', 0);

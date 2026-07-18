@@ -136,6 +136,12 @@ class Home extends MX_Controller {
 		$data['cart'] =$this->getListCart();
 		$data['countCart'] = $this->countSessionCart();
 		$data['checkShift'] = $this->home->checkExsitShiftofDay();
+		$lastShift = $this->home->getLastShift();
+		if ($lastShift) {
+			$data['lastShiftSizeCupsAmount'] = $lastShift[0]->size_cups ? unserialize($lastShift[0]->size_cups) : [];
+		} else {
+			$data['lastShiftSizeCupsAmount'] = null;
+		}
 		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
 		$this->template->write_view('content', 'shift_in', $data);
 		$this->template->render();

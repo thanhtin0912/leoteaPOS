@@ -34,23 +34,40 @@
             // 1. Danh sách các cups sizes từ PHP sang JavaScript
         const sizes = <?php echo json_encode($sizes); ?>;
         let checkShift = <?= json_encode($checkShift); ?>;
+        let lastShiftSizeCupsAmount = <?= json_encode($lastShiftSizeCupsAmount); ?>;
         if (!checkShift) {
             const containerSizes = document.getElementById('sizes-container');
-            // 2. Hàm tạo giao diện
-            sizes.forEach(val => {
-                if (val.name === "Latte") return;
-                const block = document.createElement('div');
-                let unit = val.name; // Lấy tên mệnh giá từ val.name
-                if (unit === "L") {
-                    unit = "L-Latte";
-                }
-                block.className = 'coupan-block';
-                block.innerHTML = `
-                    <h5>${unit}</h5>
-                    <input class="form-control size-input" type="number" min="0" value="0" data-unit="${unit}" style="width: 70px; display: inline-block;">
-                `;
-                containerSizes.appendChild(block);
-            });
+            if(lastShiftSizeCupsAmount) {
+                let sizes = lastShiftSizeCupsAmount;
+                // 2. Hàm tạo giao diện
+                sizes.forEach(val => {
+                    const block = document.createElement('div');
+                    block.className = 'coupan-block';
+                    block.innerHTML = `
+                        <h5>${val.name}</h5>
+                        <input class="form-control size-input" type="number" min="0" value="${val.out || 0}" data-unit="${val.name}" style="width: 70px; display: inline-block;" disabled>
+                    `;
+                    containerSizes.appendChild(block);
+                });
+            } else {
+                
+                // 2. Hàm tạo giao diện
+                sizes.forEach(val => {
+                    if (val.name === "Latte") return;
+                    const block = document.createElement('div');
+                    let unit = val.name; // Lấy tên mệnh giá từ val.name
+                    if (unit === "L") {
+                        unit = "L-Latte";
+                    }
+                    block.className = 'coupan-block';
+                    block.innerHTML = `
+                        <h5>${unit}</h5>
+                        <input class="form-control size-input" type="number" min="0" value="0" data-unit="${unit}" style="width: 70px; display: inline-block;">
+                    `;
+                    containerSizes.appendChild(block);
+                });
+            }
+
         }
 
     });

@@ -14,7 +14,14 @@ $(document).ready(function() {
             block.innerHTML = `
                 <div class="size-head d-flex align-items-center gap-2">
                     <h5>${unit}</h5>
-                    <input class="form-control size-in-input" type="number" min="0" step="1" value="${inValue}" data-unit="${unit}">
+                    <input class="form-control size-in-input" type="number" min="0" step="1" value="${inValue}" data-unit="${unit}" disabled>
+                    <select class="form-control size-add-select" data-unit="${unit}" style="width: 70px; display: inline-block;">
+                        <option value="0">0</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="150">150</option>
+                        <option value="200">200</option>
+                    </select>
                     <input class="form-control size-out-input" type="number" min="0" step="1" value="0" data-unit="${unit}">
                 </div>
             `;
@@ -39,11 +46,20 @@ function checkOut() {
         var url = root + 'checkOutShift';
         let dataSizesIn = {};
         let dataSizesOut = {};
+        let dataSizesAdd = {};
+
+        document.querySelectorAll('.size-add-select').forEach(select => {
+            const unit = select.getAttribute('data-unit');
+            const addQuantity = parseInt(select.value, 10);
+            dataSizesAdd[unit] = Number.isNaN(addQuantity) || addQuantity < 0 ? 0 : addQuantity;
+        });
 
         document.querySelectorAll('.size-in-input').forEach(input => {
             const unit = input.getAttribute('data-unit');
             const quantity = parseInt(input.value, 10);
-            dataSizesIn[unit] = Number.isNaN(quantity) || quantity < 0 ? 0 : quantity;
+            const baseQuantity = Number.isNaN(quantity) || quantity < 0 ? 0 : quantity;
+            const addQuantity = dataSizesAdd[unit] || 0;
+            dataSizesIn[unit] = baseQuantity + addQuantity;
         });
 
         document.querySelectorAll('.size-out-input').forEach(input => {
@@ -55,6 +71,8 @@ function checkOut() {
 
         $('.loader-wrapper').addClass('active');
         $('#btnSubmit').prop('disabled', true);
+        console.log('Data Sizes In:', dataSizesIn);
+        return;
         $.post(url, {
             id: id,
             data_cups_in: dataSizesIn,
