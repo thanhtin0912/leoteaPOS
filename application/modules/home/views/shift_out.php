@@ -17,10 +17,11 @@ $(document).ready(function() {
                     <input class="form-control size-in-input" type="number" min="0" step="1" value="${inValue}" data-unit="${unit}" disabled>
                     <select class="form-control size-add-select" data-unit="${unit}" style="width: 70px; display: inline-block;">
                         <option value="0" selected>Nhập</option>
-                        <option value="50">50</option>
                         <option value="100">100</option>
-                        <option value="150">150</option>
                         <option value="200">200</option>
+                        <option value="300">300</option>
+                        <option value="400">400</option>
+                        <option value="500">500</option>
                     </select>
                     <input class="form-control size-out-input" type="number" min="0" step="1" value="0" data-unit="${unit}">
                 </div>
