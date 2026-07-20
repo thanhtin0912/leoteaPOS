@@ -158,7 +158,7 @@
                         <td><?= number_format($transaction->amount_price) ?></td>
                         <td><?php $amount_sizes = unserialize($transaction->amount_sizes); if(is_array($amount_sizes)) { foreach($amount_sizes as $size) { echo $size->name . ': ' . $size->in . '<br>'; } } ?></td>
                         <td><?= $transaction->note ?></td>
-                        <td><span class="badge bg-warning">Chờ xác nhận</span></td>
+                        <td><?php if($transaction->isVerify == 0) { ?><span class="badge bg-warning">Chờ xác nhận</span><?php } else { ?><span class="badge bg-success">Đã xác nhận</span><?php } ?></td>
                         <td><?= date('H:i:s', strtotime($transaction->created)) ?></td>
                     </tr>
                     </tbody>

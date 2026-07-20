@@ -715,7 +715,7 @@ class Home_model extends CI_Model {
 		$from = !empty($from) ? $from : date('Y-m-d 00:00:00');
 		$this->db->select('*');
 		$this->db->where('name',$name);
-		$this->db->where('isVerify',0);
+		// $this->db->where('isVerify',0);
 		$this->db->where('status',1);
 		$this->db->where('delete',0);
 		// Đảm bảo so sánh chính xác thời gian
