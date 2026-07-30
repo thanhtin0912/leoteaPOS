@@ -171,14 +171,15 @@ function showResponse(responseText, statusText, xhr, $form) {
 								<input value="<?php if(isset($result->price)) { print $result->price; }else{ print '';} ?>" type="text" name="priceAdmincp" id="priceAdmincp" class="form-control"/>
 							</div>
 						</div>
-						<?php if(isset($result->price_size)) { 
+						<?php if(isset($result->price_size)) {
 							$priceSize = unserialize($result->price_size);
+							$priceSize = is_array($priceSize) ? $priceSize : array();
 						?>
 						<div class="form-group">
 							<?php foreach ($productSize as $key => $p): ?>
-							<label class="control-label col-md-2">Giá bán <?= $p->name?> (+ thêm): <span class="required" aria-required="true">*</span></label>
-							<div class="col-md-1">
-								<input value="<?= $priceSize[$p->name] ? $priceSize[$p->name] : ''; ?>" type="text" name="priceSizeAdmincp[<?= $p->name?>]" class="form-control"/>
+							<label class="control-label col-md-2" style="margin: 5px 0;">Giá <?= $p->name?> (+ thêm): <span class="required" aria-required="true">*</span></label>
+							<div class="col-md-1" style="margin: 5px 0;">
+								<input value="<?= isset($priceSize[$p->name]) ? $priceSize[$p->name] : ''; ?>" type="text" name="priceSizeAdmincp[<?= $p->name?>]" class="form-control"/>
 							</div>
 							<?php endforeach; ?>
 						</div>
