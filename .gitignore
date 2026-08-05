@@ -1,5 +1,4 @@
 # Bỏ qua thư mục session
 application/sessions/*
-index.php
 assets/uploads/imagecache/*
 system

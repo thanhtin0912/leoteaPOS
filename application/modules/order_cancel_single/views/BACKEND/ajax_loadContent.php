@@ -28,6 +28,8 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
         <table class="table table-striped table-bordered table-hover dataTable no-footer">
             <thead>
                 <tr role="row">
+                    <th class="table-checkbox sorting_disabled" width="25"><input type="checkbox" id="selectAllItems"
+                            onclick="selectAllItems(<?= (is_array($result) ? count($result) : 0) ?>)"></th>
                     <th class="center sorting_disabled" width="35">No.</th>
                     <th class="sorting" width="150">Xác nhận</th>
                     <th class="sorting" width="150" onclick="sort('store')" id="store">Cửa hàng</th>
@@ -47,6 +49,7 @@ token_value = '<?=$this->security->get_csrf_hash()?>';
 							if($v->delete==0){
 				?>
                 <tr class="item_row<?=$i?> gradeX <?php ($k%2==0) ? print 'odd' : print 'even' ?>" role="row">
+                    <td><input type="checkbox" id="item<?=$i?>" onclick="selectItem(<?=$i?>)" value="<?=$v->id?>"></td>
                     <td class="center"><?=$k+1+$start?></td>
                     <td class="center" id="loadStatusID_<?=$v->id?>"><?php ($v->isVerify==0) ? print '<a class="no_underline" href="javascript:void(0)" onclick="updateStatus('.$v->id.','.$v->isVerify.',\''.$module.'\')"><span class="label label-sm label-default status-blocked">Chờ xác nhận</span></a>' : print '<span class="label label-sm label-success status-approved">Đã xác nhận</span>' ?></td>
                     <td><?= ($v->storeName); ?></td>

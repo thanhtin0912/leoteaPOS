@@ -110,16 +110,14 @@ class Order_cancel_single extends MX_Controller {
 				if($value->delete == 0){
 					modules::run('admincp/saveLog',$this->module,$id,'Trash','Trash');
 					$this->db->where('id',$id);
-					if($this->db->update(PREFIX.$this->table,$data)){
+					if($this->db->delete(PREFIX.$this->table)){
 						print $this->security->get_csrf_hash();
 						exit;
 					}
-				}
-				else{
+				}else{
 					modules::run('admincp/saveLog',$this->module,$id,'Delete','Delete');
 					$this->db->where('id',$id);
 					if($this->db->delete(PREFIX.$this->table)){
-						@unlink(BASEFOLDER.DIR_UPLOAD_BANNER.$result[0]->image);
 						print $this->security->get_csrf_hash();
 						exit;
 					}
