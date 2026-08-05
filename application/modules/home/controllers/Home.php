@@ -178,13 +178,14 @@ class Home extends MX_Controller {
 		}
 		$sizeCups = array();
 		$allSizes = $this->input->post('dataSizes');
-		foreach ($allSizes as $key => $value) {
-			$sizeIn = new stdClass();
-			$sizeIn->name = $key;
-			$sizeIn->in = $value;
-			$sizeCups[] = $sizeIn;
+		if (is_array($allSizes)) {
+			foreach ($allSizes as $key => $value) {
+				$sizeIn = new stdClass();
+				$sizeIn->name = $key;
+				$sizeIn->in = $value;
+				$sizeCups[] = $sizeIn;
+			}
 		}
-
 		$amount = $this->input->post('amount');
 		$note = $this->input->post('note');
 		$size_cups = serialize($sizeCups);

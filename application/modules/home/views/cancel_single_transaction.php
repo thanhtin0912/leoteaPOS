@@ -62,6 +62,8 @@
 
     });
     function saveCancelSingleOrder() {
+        const btn = document.getElementById('btnSave');
+        btn.disabled = true;
         let dataSizes = {};
         // Duyệt qua tất cả các ô nhập liệu
         document.querySelectorAll('.size-input').forEach(input => {
@@ -82,11 +84,11 @@
             $('#csrf_token').val(res.key);
             if(res.status) {
                 notify('Lệnh hủy đơn thành công. Vui lòng chờ hệ thống xác nhận.', 'primary', true);
-                const btn = document.getElementById('btnSave');
-                btn.disabled = true;
+                
                 window.location.reload();
             } else {
                 notify(res.mes || 'Hệ thống không thể ghi nhận thông tin hủy đơn của bạn.', 'danger', true);
+                btn.disabled = false;
             }
         });        
     }
