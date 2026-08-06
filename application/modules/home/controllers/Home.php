@@ -301,8 +301,9 @@ class Home extends MX_Controller {
 					}
 
 					$size_cups_cancel[$cancel_size_name] += $cancel_size_qty;
-					$total_cancel_amount_price += $cancel->amount_price;
 				}
+				$total_cancel_amount_price += $cancel->amount_price;
+				
 			}
 		}
 
@@ -446,8 +447,14 @@ class Home extends MX_Controller {
 	{
 		$key = short_decode($_GET["id"]); // Giải mã bằng chính hàm đó
 		$shift = $this->home->getShiftofDay($key, 0);
-		$data['sizes'] = $this->home->getCategories('PRODUCTSIZE');
 		$data['res'] = false;
+		$data['diffCups'] = array();
+		if($shift) {
+			$size_cups = unserialize($shift[0]->size_cups);
+			foreach ($size_cups as $size) {
+				$data['diffCups'][$size->name] = $size->check_sale;
+			}
+		}
 		if($_GET["id"] && $shift){
 			$data['salesShift']= $shift[0]->cash - $shift[0]->spent; // tổng tiền mặt thu đc
 			$data['res'] = $shift;

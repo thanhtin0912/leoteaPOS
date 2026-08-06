@@ -127,44 +127,60 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
         const btn = document.getElementById('save-data');
         btn.style.display = 'none';
-        $.confirm({
-            title: 'Báo cáo kết ca!',
-            content: `Tổng số tiền mặt bạn đã đếm là: <b>${cash.toLocaleString('vi-VN')} VNĐ</b> <b>(${str})</b>.<br>Bạn có chắc chắn muốn nộp báo cáo không?`,
-            type: 'success',
-            typeAnimated: true,
-            buttons: {
-                confirm: {
-                    text: 'Xác nhận nộp',
-                    btnClass: 'btn-success',
-                    action: function () {
-                        let spentNote = $('#spentNote').val();
-                        var url = root + 'updateCheckoutShift';
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: { 
-                                id: id,
-                                money_data: dataResult,
-                                actual: cash,
-                                tip: tip,
-                                spentNote: spentNote,
-                                csrf_token: $('#csrf_token').val()
-                            },
-                            success: function(res) {
-                                $('#csrf_token').val(res.key);
-                                if(res.status) {
-                                    notify('Bạn đã nộp doanh thu thành công.', 'primary', true);
 
-                                } else {
-                                    notify('Hệ thống không thể ghi nhận thông tin doanh thu của bạn.', 'danger', true); 
-                                    btn.style.display = 'inline-block';
+        let spentNote = $('#spentNote').val();
+        var url = root + 'updateCheckoutShift';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { 
+                id: id,
+                money_data: dataResult,
+                actual: cash,
+                tip: tip,
+                spentNote: spentNote,
+                csrf_token: $('#csrf_token').val()
+            },
+            success: function(res) {
+                $('#csrf_token').val(res.key);
+                if(res.status) {
+                    notify('Bạn đã nộp doanh thu thành công.', 'primary', true);
+                    // Hiển thị modal tóm tắt dữ liệu đã gửi
+                    let diffCups = <?= json_encode($diffCups) ?>;
+                    let strCups  = '';
+                    for (const [key, check_sale] of Object.entries(diffCups)) {
+                        strCups += `<p><strong>${key}:</strong> ${check_sale}</p>`;
+                    }
+                    $.confirm({
+                        title: 'Báo cáo đã nộp',
+                        content: `
+                            <div style="text-align:left">
+                                <p><strong>Tổng số tiền mặt bạn đã đếm là: <b>${cash.toLocaleString('vi-VN')} VNĐ</b> <b>(${str})</b></p>
+                                ${strCups}
+                                <p><strong>Ghi chú:</strong> Lớn > 0 (Thiếu), Nhỏ < 0 (Thừa)</p>
+                            </div>
+                        `,
+                        type: 'green',
+                        typeAnimated: true,
+                        buttons: {
+                            ok: {
+                                text: 'Đóng',
+                                btnClass: 'btn-primary',
+                                action: function() {
+                                    // Đóng modal — không chuyển hướng, tuỳ chỉnh được
                                 }
                             }
-                        });
-                    }
+                        }
+                    });
+
+                } else {
+                    notify('Hệ thống không thể ghi nhận thông tin doanh thu của bạn.', 'danger', true); 
+                    btn.style.display = 'inline-block';
                 }
             }
-        }); 
+        });
+
+
     });
 })
 </script>

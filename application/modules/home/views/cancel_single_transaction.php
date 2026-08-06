@@ -74,6 +74,12 @@
         const amountRaw = ($('#amount-input').val() || '').replace(/[^\d]/g, '');
         const amount = amountRaw ? parseInt(amountRaw, 10) : 0;
         var url = root + 'saveCancelSingleOrder';
+        let note = $('#note-input').val();
+        if(!note) {
+            notify('Vui lòng nhập nội dung hủy.', 'danger', true);
+            btn.disabled = false;
+            return;
+        }
         $.post(url, {
             dataSizes: dataSizes,
             user: $('#user-input').val(),
