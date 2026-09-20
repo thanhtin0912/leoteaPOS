@@ -125,6 +125,7 @@ class Products_model extends CI_Model {
 				'favorite'=> trim($this->input->post('favoriteAdmincp', true)),
 				'sales'=> trim($this->input->post('salesAdmincp', true)),
 				'status'=> $this->input->post('statusAdmincp'),
+				'is_promotion'=> $this->input->post('isPromotionAdmincp'),
 				'created'=> date('Y-m-d H:i:s',time()),
 			);
 			if($this->db->insert(PREFIX.$this->table,$data)){
@@ -162,6 +163,7 @@ class Products_model extends CI_Model {
 				'price_size'=> serialize($this->input->post('priceSizeAdmincp', true)),
 				'favorite'=> trim($this->input->post('favoriteAdmincp', true)),
 				'sales'=> trim($this->input->post('salesAdmincp', true)),
+				'is_promotion'=> $this->input->post('isPromotionAdmincp'),
 				'status'=> $this->input->post('statusAdmincp'),
 			);
 			modules::run('admincp/saveLog',$this->module,$this->input->post('hiddenIdAdmincp'),'','Update',$result,$data);

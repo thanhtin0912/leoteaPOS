@@ -163,6 +163,7 @@ function quickViewDetailProduct(id) {
         <div class="tab-prodcut-contain">
             <ul class="tabs tab-title">
                 <li class="current"><a href="tab-all">TẤT CẢ</a></li>
+                <li><a href="tab-km">KHUYẾN MÃI</a></li>
                 <?php if($cates) { ?>
                 <?php foreach ($cates as $key => $c): ;?>
                 <li class=""><a href="tab-<?=$c->id ?>"><?=$c->name ?> </a></li>
@@ -208,6 +209,39 @@ function quickViewDetailProduct(id) {
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php endforeach ?>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="tab-km" class="tab-content">
+                            <div class="collection-product-wrapper">
+                                <div class="product-wrapper-grid product">
+                                    <div class="row">
+                                        <?php foreach ($products as $key => $p): ;?>
+                                        <?php if($p->is_promotion == 1) { ?>
+                                        <div class="col-xl-2 col-lg-3 col-md-3 col-12 col-grid-box">
+                                            <div class="product-box d-flex d-md-block">
+                                                <div class="product-imgbox w-responsive">
+                                                    <div class="product-front">
+                                                        <a href="javascript:void(0)"
+                                                            onclick="quickViewDetailProduct(<?=$p->id?>)"> <img
+                                                                src="<?=GLOBAL_URL.$p->image ?>" class="img-fluid  "
+                                                                alt="product"> </a>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="product-detail detail-center1 text-left text-md-center align-content-center w-100 pt-2">
+                                                    <a href="javascript:void(0)"
+                                                        onclick="quickViewDetailProduct(<?=$p->id?>)">
+                                                        <h6><?=$p->name ?></h6>
+                                                    </a>
+                                                    <span class="detail-price"><?=number_format($p->price) ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
                                         <?php endforeach ?>
                                     </div>
                                 </div>

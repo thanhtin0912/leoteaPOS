@@ -81,16 +81,34 @@ function selectCoupon(code, element) {
             
         }
         if(selected.type == 3) {
-            let amount = Number($('#amount').text().replace(/\D/g, ''));
+            let amountPromotion = 0;
             let subTotal = Number($('#subTotalPrice').text().replace(/\D/g, ''));
             let condition = Number(selected.condition) + Number(selected.discount)
-            if(condition <= amount) {
+            let items = <?php echo json_encode($cart); ?>;
+            items.forEach(item => {
+                if (item && (item.isPromotion) == 1) {
+                    amountPromotion = amountPromotion + Number(item.amount);
+                }
+            });
+            if (amountPromotion === 0) {
+                notify('Đơn hàng không đủ điều kiện sử dụng mã giảm giá.', 'danger', true);
+                return;
+            }
+            if (!items.length) {
+                notify('Đơn hàng không đủ điều kiện sử dụng mã giảm giá.', 'danger', true);
+                return;
+            }
+            console.log('Amount Promotion:', amountPromotion);
+            if(condition <= amountPromotion) {
                 // chia lấy số nguyên
-                let numberOfFreeItems = Math.floor(amount / Number(condition)) || 1;
-                let items = <?php echo json_encode($cart); ?>;
+                let numberOfFreeItems = Math.floor(amountPromotion / Number(condition)) || 1;
                 // mình muôn tìm ra sản phẩm có giá thấp nhất trong giỏ hàng để áp dụng giảm giá số ly
                 let minPriceItem = items.reduce((minItem, currentItem) => {
-                    return currentItem.totalPrice < minItem.totalPrice ? currentItem : minItem;
+                    // Tìm sản phẩm có giá thấp nhất trong giỏ hàng để áp dụng giảm giá số lượng và có khuyến mãi
+                    if ((currentItem.isPromotion) == 1) {
+                        return (currentItem.totalPrice/Number(currentItem.amount)) < (minItem.totalPrice/Number(minItem.amount)) ? currentItem : minItem;
+                    }
+                    return minItem;
                 }, items[0]);
                 
                 let discountAmount = Number(selected.discount) * numberOfFreeItems * (Number(minPriceItem.totalPrice)/Number(minPriceItem.amount));
@@ -385,6 +403,7 @@ function clearCash() {
                     <?php $total = 0;$amount = 0;?>
                     <?php foreach ($cart as $key => $v): ?>
                     <div class="row product-order-detail py-2">
+                        
                         <div class="col-3">
                             <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
                                 <img src="<?=GLOBAL_URL.$v->image ?>" alt="" class="img-fluid ">
@@ -393,7 +412,12 @@ function clearCash() {
                         <div class="col-4 order_detail">
                             <div>
                                 <a href="javascript:void(0)" onclick="editCartItem(<?=$v->id?>,<?=$key?>)">
-                                <h4><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?></h4>
+                                <h4><?= $v->name; ?> <?php if ($v->size != '') { echo "(".$v->size.")";}?>
+                                    <?php if($v->isPromotion && $v->isPromotion == 1) { ?>
+                                    <span class="badge bg-success" style="font-size: 0.6rem; font-style: italic;">KM</span>
+                                    <?php } ?>
+                                </h4>
+                                
                                 </a>
                                 <?php if($v->priceTopping > 0) { ?>
                                 <h5><?= $v->topping; ?></h5>
@@ -436,6 +460,7 @@ function clearCash() {
                                             <line x1="14" y1="11" x2="14" y2="17"></line>
                                         </svg></a>
                                 </h5>
+                                
                             </div>
                         </div>
                     </div>

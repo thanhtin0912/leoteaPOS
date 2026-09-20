@@ -52,6 +52,7 @@ function showResponse(responseText, statusText, xhr, $form) {
 	$('#csrf_token').val(token_value);
 	if(responseText[0]=='success'){
 		show_perm_success();
+		window.location = module_url;
 	}
 
 	if(responseText[0]=='redirect'){
@@ -170,8 +171,9 @@ function showResponse(responseText, statusText, xhr, $form) {
 								<input value="<?php if(isset($result->saleableQty)) { print $result->saleableQty; }else{ print '';} ?>" type="text" name="saleableQtyAdmincp" id="saleableQtyAdmincp" class="form-control"/>
 							</div>
 						</div>
-						<!-- <div class="form-group">
-							<label class="control-label col-md-2">Products: <span class="required" aria-required="true">*</span></label>
+						<?php if(!($result)) { ?>
+						<div class="form-group">
+							<label class="control-label col-md-2">Sản phẩm áp dụng: <span class="required" aria-required="true">*</span></label>
 							<div class="col-md-8">
 								<select class="3col active" multiple="multiple" name="productAdmincp[]" id="productAdmincp">
 									<?php $select = ''  ?>
@@ -193,7 +195,8 @@ function showResponse(responseText, statusText, xhr, $form) {
 									<?php endforeach; ?>
 								</select>
 							</div>
-						</div> -->
+						</div>
+						<?php } ?>
 
 
 					</div>

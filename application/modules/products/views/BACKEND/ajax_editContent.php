@@ -155,14 +155,19 @@ function showResponse(responseText, statusText, xhr, $form) {
 						</div>
 						<div class="form-group">
 							<label class="control-label col-md-2">Bán chạy:</label>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<label class="radio-inline"><input type="radio" name="salesAdmincp" value="0" <?= isset($result->sales) ? $result->sales == 0 ? 'checked' : '' : '' ?> > Không</label>
 								<label class="radio-inline"><input type="radio" name="salesAdmincp" value="1" <?= isset($result->sales) ? $result->sales == 1 ? 'checked' : '' : 'checked' ?> > Có</label>
 							</div>
 							<label class="control-label col-md-2">Yêu thích:</label>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<label class="radio-inline"><input type="radio" name="favoriteAdmincp" value="0" <?= isset($result->favorite) ? $result->favorite == 0 ? 'checked' : '' : '' ?> > Không</label>
 								<label class="radio-inline"><input type="radio" name="favoriteAdmincp" value="1" <?= isset($result->favorite) ? $result->favorite == 1 ? 'checked' : '' : 'checked' ?> > Có</label>
+							</div>
+							<label class="control-label col-md-2">Khuyến mãi:</label>
+							<div class="col-md-2">
+								<label class="radio-inline"><input type="radio" name="isPromotionAdmincp" value="0" <?= isset($result->is_promotion) ? $result->is_promotion == 0 ? 'checked' : '' : 'checked' ?> > Không</label>
+								<label class="radio-inline"><input type="radio" name="isPromotionAdmincp" value="1" <?= isset($result->is_promotion) ? $result->is_promotion == 1 ? 'checked' : '' : '' ?> > Có</label>
 							</div>
 						</div>
 						<div class="form-group">

@@ -51,7 +51,7 @@ class Home extends MX_Controller {
 			$info = $this->session->userdata('userLogin');
 			$data['info'] = $this->home->getInfoSite();
 			$data['store'] = $this->home->getInfoStore($info->storeId);
-			$data['cart'] =$this->getListCart();
+			$data['cart'] = $this->getListCart();
 			$data['countCart'] = $this->countSessionCart();
 			$data['coupons'] = $this->home->getCoupons();
 			if($data['coupons']) {
@@ -1051,6 +1051,7 @@ class Home extends MX_Controller {
 					$productCart->note = $p->note;
 					$productCart->isCupCustomer = $p->isCupCustomer;
 					$productCart->totalPriceSize = 0;
+					$productCart->isPromotion= $dataProduct[0]->is_promotion || 0;
 					if($p->size!='') {
 						$dataPriceSize = unserialize($dataProduct[0]->price_size);
 						$productCart->totalPriceSize = $dataPriceSize[$p->size];

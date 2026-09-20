@@ -125,21 +125,22 @@ class Toppings_model extends CI_Model {
 				$lastid = $this->db->insert_id();
 				modules::run('admincp/saveLog',$this->module,$this->db->insert_id(),'Add new','Add new');
 				// add 
-				// $products = $this->input->post('productAdmincp', true);
-				// if ($products) {
-				// 	foreach ($products as $pro) {
-				// 		$toppings = [];
-				// 		$product = $this->products_model->getDetailManagement($pro);
-				// 		if ($product[0]) {
-				// 			if (!is_null(unserialize($product[0]->toppings))) {
-				// 				$toppings = unserialize($product[0]->toppings);
-				// 			}
-				// 			array_push($toppings, $lastid);
-				// 			$data = array('toppings' => serialize($toppings) );
-				// 			$this->products_model->updateDataId($pro, $data);
-				// 		}
-				// 	}
-				// }
+				$products = $this->input->post('productAdmincp', true);
+				if ($products) {
+					foreach ($products as $pro) {
+						$toppings = [];
+						$product = $this->products_model->getDetailManagement($pro);
+						if ($product[0]) {
+							if (!is_null(unserialize($product[0]->toppings))) {
+								$toppings = unserialize($product[0]->toppings);
+							}
+							array_push($toppings, $lastid);
+							$data = array('toppings' => serialize($toppings) );
+							$this->db->where('id', $pro);
+							$this->db->update(PREFIX.$this->table_product, $data);
+						}
+					}
+				}
 				return true;
 			}
 		}else{
@@ -152,17 +153,6 @@ class Toppings_model extends CI_Model {
 					exit;
 				}
 			}
-			// $products = $this->products_model->getData();
-			// foreach ($products as $key => $pro) {
-			// 	$toppings = unserialize($pro->toppings);
-			// 	if(!is_null($toppings) || !empty($toppings) ) {
-			// 		if (($key = array_search($result[0]->id, $toppings)) !== false) {
-			// 			unset($toppings[$key]);
-			// 			$data = array('toppings' => serialize($toppings) );
-			// 			$this->products_model->updateDataId($pro->id, $data);
-			// 		}
-			// 	}
-			// }
 			
 			$data = array(
 				'name'=> trim($this->input->post('nameAdmincp', true)),
@@ -175,19 +165,6 @@ class Toppings_model extends CI_Model {
 			modules::run('admincp/saveLog',$this->module,$this->input->post('hiddenIdAdmincp'),'','Update',$result,$data);
 			$this->db->where('id',$this->input->post('hiddenIdAdmincp'));
 			if($this->db->update(PREFIX.$this->table,$data)){
-			// 	$products = $this->input->post('productAdmincp', true);
-			// 	if ($products) {
-			// 		foreach ($products as $pro) {
-			// 			$toppings = [];
-			// 			$product = $this->products_model->getDetailManagement($pro);
-			// 			if ($product[0]) {
-			// 				$topping =  unserialize($product[0]->toppings);
-			// 				array_push($toppings, $result[0]->id);
-			// 			}
-			// 			$data = array('toppings' => serialize($toppings) );
-			// 			$this->products_model->updateDataId($pro, $data);
-			// 		}
-			// 	}
 				return true;
 			}
 		}
