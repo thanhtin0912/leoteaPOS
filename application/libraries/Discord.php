@@ -63,7 +63,7 @@ class Discord {
     }
 
     public function sendLinkReport($text){
-        $webhook_url = "https://discordapp.com/api/webhooks/1477136233015541871/Km3Zzo2cfd5QWbHRwFR1Y1hpqghn6v1rZgHxYgbMtJSLuMCmLO3TxyXZO___WZ7DIsKH";
+        $webhook_url = "https://discord.com/api/webhooks/1551394212296265858/Gl4orgBSMMH4NJ4NTD7v8Sjcm7W_IIhyJRDW5AmCnlg2tWFv54ozPpFPjwSvJzRjdFcE";
 		
         $data = [
             "username" => "Report Bot",
