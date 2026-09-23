@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Discord {
     public function sendsms($text){
-        $webhook_url = "https://discordapp.com/api/webhooks/1470706833671847956/wV_Qd3_e2UDEaNkOCS8pBRDttH_4SsloMcQ5axGxnfV952FZcb-42mb9MrId-_ne4_zD";
+        $webhook_url = "https://discord.com/api/webhooks/1551394212296265858/Gl4orgBSMMH4NJ4NTD7v8Sjcm7W_IIhyJRDW5AmCnlg2tWFv54ozPpFPjwSvJzRjdFcE";
 		
         $data = [
             "username" => "Report Bot",
@@ -63,7 +63,8 @@ class Discord {
     }
 
     public function sendLinkReport($text){
-        $webhook_url = "https://discord.com/api/webhooks/1551394212296265858/Gl4orgBSMMH4NJ4NTD7v8Sjcm7W_IIhyJRDW5AmCnlg2tWFv54ozPpFPjwSvJzRjdFcE";
+        $webhook_url = "https://discordapp.com/api/webhooks/1477136233015541871/Km3Zzo2cfd5QWbHRwFR1Y1hpqghn6v1rZgHxYgbMtJSLuMCmLO3TxyXZO___WZ7DIsKH";
+
 		
         $data = [
             "username" => "Report Bot",
