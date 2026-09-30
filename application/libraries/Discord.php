@@ -37,9 +37,7 @@ load_env(FCPATH . '.env');
 class Discord {
     
     public function sendsms($text){
-        // $webhook_url = getenv('DIS_SMS');
-        
-        $webhook_url = getenv('DIS_LINK');
+        $webhook_url = getenv('DIS_SMS');
 		
         $data = [
             "username" => "Report Bot",
@@ -69,8 +67,7 @@ class Discord {
     }
 
     public function sendsmsCancel($text){
-        // $webhook_url = getenv('DIS_CANCEL');
-        $webhook_url = getenv('DIS_LINK');
+        $webhook_url = getenv('DIS_CANCEL');
 		
         $data = [
             "username" => "Report Bot",
@@ -129,8 +126,7 @@ class Discord {
     }
 
     public function sendDiffSizeinShift($text){
-        // $webhook_url = getenv('DIS_ALERT');
-        $webhook_url = getenv('DIS_LINK');
+        $webhook_url = getenv('DIS_ALERT');
 		
         $data = [
             "username" => "Report Bot",
