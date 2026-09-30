@@ -2,3 +2,4 @@
 application/sessions/*
 assets/uploads/imagecache/*
 system
+.env
