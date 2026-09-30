@@ -383,7 +383,7 @@ class Home extends MX_Controller {
 			}
 		}
 		
-		$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "!**\n"
+		$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "**\n"
 			. "+++++++++++++++++++++++++++++++++\n"
 			. "NV: " . $nv . " - CH: " . $storename . "\n"
 			. "Giờ vào: " . $from . "\n"
@@ -495,12 +495,12 @@ class Home extends MX_Controller {
 				$note = $_POST['spentNote'];
 
 				// Viết sao hiển thị vậy, rất dễ quản lý
-                $tr = "**Báo cáo kết ca - " . $now . "!**\n"
+                $tr = "**Báo cáo kết ca - " . $now . "**\n"
                     . "-----------------------------\n"
                     . "NV: " . $s[0]->name . " - CH: " . $s[0]->storeName . "\n"
                     . "CA: " . $gio_vao . " - " . $gio_ra . "\n"
                     . "-----------------------------\n"
-					. "Chi: " . $chi . " - Nội dung: " . $note . "\n"
+					. "Tổng Hủy: " . $chi . " - Nội dung: " . $note . "\n"
 					. "TM: " . $cash . " - CK: " . $banking . "\n"
                     . "TN: " . $actual . " - DT: " . $sales . "\n"
 					. "Tip: " . $tip . "\n"
