@@ -375,11 +375,15 @@ class Home extends MX_Controller {
 		}
 
 		// Viết sao hiển thị vậy, rất dễ quản lý
-		$tr_diff_size ='Không có sự khác biệt về size ly.';
+		$tr_diff_size ='';
 		foreach ($new_size_cups as $size) {
 			if($size->check_sale != 0) {
 				$text = $size->check_sale > 0 ? " (Thiếu)" : " (Thừa)";
 				$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Xin hủy: " . $size->cancel . " - Kiểm tra: " . abs($size->check_sale) . $text . "\n";
+			} else {
+				if($tr_diff_size == '') {
+					$tr_diff_size ='Không có sự khác biệt về size ly.';
+				}
 			}
 		}
 		
