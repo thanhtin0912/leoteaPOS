@@ -149,8 +149,9 @@
                                 <th> Size </th>
                                 <th> Vào </th>
                                 <th> Ra</th>
-                                <th> Xuất</th>
                                 <th> Bán</th>
+                                <th> Xuất</th>
+                                
                                 <th> Xin hủy</th>
                                 <th> Kiểm tra</th>
                             </tr>
@@ -162,11 +163,16 @@
 								<tr>
 									<td> <?= $size->name ?> </td>
 									<td> <?= $size->in ?> </td>
-									<td> <?= $size->out ?> </td>
-									<td> <?= $size->diff ?> </td>
-									<td> <?= $size->sale ?> </td>
-                                    <td> <?php if(isset($size->cancel) && $size->cancel != 0) { ?><span class="label label-sm label-warning fw"> <?= $size->cancel ?> </span><?php } ?> </td>
-									<td><span <?php if($size->check_sale != 0) { echo 'class="label label-sm label-danger fw"'; } ?>><?= $size->check_sale ?></span></td>
+									<td> <?= isset($size->out) ? $size->out : ''  ?> </td>
+									<td> <?= isset($size->sale) ? $size->sale : ''  ?> </td>
+									<td> <?= isset($size->diff) ? $size->diff : ''  ?> </td>
+									
+									<td> <?php if(isset($size->cancel) && $size->cancel != 0) { ?><span class="label label-sm label-warning fw"> <?= $size->cancel ?> </span><?php } ?> </td>
+									<?php $text = '';
+                                        if($size->check_sale > 0) $text = " (Thiếu)"; 
+                                        if($size->check_sale < 0) $text = " (Thừa)"; 
+                                    ?>
+									<td><span <?php if(isset($size->check_sale) && $size->check_sale != 0) { echo 'class="label label-sm label-danger fw"'; } ?>><?= isset($size->check_sale) ? abs($size->check_sale).' '.$text : ''  ?></span></td>
 								</tr>
 								<?php } ?>
 

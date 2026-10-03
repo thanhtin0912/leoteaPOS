@@ -380,11 +380,10 @@ class Home extends MX_Controller {
 			if($size->check_sale != 0) {
 				$text = $size->check_sale > 0 ? " (Thiếu)" : " (Thừa)";
 				$tr_diff_size .= "Size: " . $size->name . " - Vào: " . $size->in . " - Ra: " . $size->out . " - Xuất: " . $size->diff . " - Bán: " . $size->sale . " - Xin hủy: " . $size->cancel . " - Kiểm tra: " . abs($size->check_sale) . $text . "\n";
-			} else {
-				if($tr_diff_size == '') {
-					$tr_diff_size ='Không có sự khác biệt về size ly.';
-				}
 			}
+		}
+		if ($tr_diff_size === '') {
+			$tr_diff_size = "Không có sự khác biệt về số lượng ly theo size.";
 		}
 		
 		$tr_size = "**Báo cáo kết ca THEO SIZE LY- " . date('Y-m-d H:i:s',time()) . "**\n"
